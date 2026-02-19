@@ -4,3 +4,4 @@ kind: Kustomization
 # Only the ClusterSecretStore is managed here by ArgoCD.
 resources:
   - cluster-secret-store.yaml
+  - networkpolicy.yaml

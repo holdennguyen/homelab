@@ -18,6 +18,10 @@ spec:
         app.kubernetes.io/name: openclaw
         app.kubernetes.io/instance: openclaw
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       serviceAccountName: openclaw
       initContainers:
         - name: init-workspaces
@@ -44,6 +48,8 @@ spec:
       containers:
         - name: openclaw
           image: openclaw:latest
+          securityContext:
+            runAsNonRoot: true
           imagePullPolicy: Never
           command:
             - node

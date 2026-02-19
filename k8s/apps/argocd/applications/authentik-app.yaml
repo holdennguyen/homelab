@@ -42,6 +42,12 @@ spec:
 
         server:
           replicas: 1
+          podSecurityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+          securityContext:
+            runAsNonRoot: true
           service:
             type: NodePort
             nodePortHttp: 30500
@@ -49,6 +55,12 @@ spec:
 
         worker:
           replicas: 1
+          podSecurityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            fsGroup: 1000
+          securityContext:
+            runAsNonRoot: true
 
         postgresql:
           enabled: true

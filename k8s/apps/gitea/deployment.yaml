@@ -18,6 +18,10 @@ spec:
         app.kubernetes.io/name: gitea
         app.kubernetes.io/instance: gitea
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       initContainers:
         - name: init-config
           image: busybox:1.36
@@ -31,6 +35,8 @@ spec:
       containers:
         - name: gitea
           image: gitea/gitea:1.22
+          securityContext:
+            runAsNonRoot: true
           env:
             - name: GITEA__database__PASSWD
               valueFrom:
