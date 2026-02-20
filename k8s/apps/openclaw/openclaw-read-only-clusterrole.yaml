@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: openclaw-read-only
+rules:
+# Core resources (namespaced and cluster-scoped)
+- apiGroups: [""]
+  resources: ["*"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch"]
+# Subresources
+- apiGroups: [""]
+  resources: ["pods/exec"]
+  verbs: ["create"]
+- apiGroups: [""]
+  resources: ["pods/log"]
+  verbs: ["get"]

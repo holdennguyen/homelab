@@ -6,5 +6,15 @@ resources:
   - external-secret.yaml
   - configmap.yaml
   - rbac.yaml
+  - openclaw-self-role.yaml
+  - openclaw-self-rolebinding.yaml
+  - openclaw-read-only-clusterrole.yaml
+  - openclaw-read-only-clusterrolebinding.yaml
   - deployment.yaml
   - service.yaml
+  # Network policies
+  - 00-default-deny-all.yaml
+  - 01-allow-dns-egress.yaml
+  - 02-allow-intra-namespace.yaml
+  - 03-allow-egress-api.yaml
+  - 04-allow-egress-git.yaml

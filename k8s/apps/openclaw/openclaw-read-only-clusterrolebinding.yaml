@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: openclaw-read-only-binding
+subjects:
+- kind: ServiceAccount
+  name: openclaw
+  namespace: openclaw
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: openclaw-read-only

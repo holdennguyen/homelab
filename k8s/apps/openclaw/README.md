@@ -60,7 +60,7 @@ flowchart TD
 | `configmap.yaml` | Multi-agent `openclaw.json` config (gateway, agents, skills, tools) |
 | `deployment.yaml` | Single-replica deployment with config/skills/workspace volumes |
 | `service.yaml` | NodePort service exposing port 30789 |
-| `rbac.yaml` | ServiceAccount + ClusterRoleBinding (cluster-admin) |
+| `rbac.yaml` | ServiceAccount (openclaw), Role (self-namespace full access), RoleBinding, ClusterRole (cluster-wide read-only + exec/log), ClusterRoleBinding (read-only) |
 | `kustomization.yaml` | Kustomize resource list |
 
 Related files outside this directory:
@@ -522,7 +522,11 @@ When the primary model fails, OpenClaw automatically falls through to Gemini. Au
 
 Agent configuration is in the `openclaw-config` ConfigMap (mounted at `/config/openclaw.json`). Each agent has its own AGENTS.md personality file in `agents/workspaces/<id>/AGENTS.md`, copied into the pod workspace on every restart by the `init-workspaces` init container.
 
-The pod runs with a `cluster-admin` ServiceAccount so agents can execute `kubectl`, `helm`, and other ops tools against the cluster directly.
+The pod uses the `openclaw` ServiceAccount, which has been scoped down from cluster-admin to:
+- Full access within the `openclaw` namespace (via Role).
+- Read-only access to most Kubernetes resources across the cluster, plus the ability to view pod logs and exec into pods (via ClusterRole and ClusterRoleBinding).
+This follows the principle of least privilege while still enabling agents to perform necessary kubectl operations.
+
 
 ### Skills
 
