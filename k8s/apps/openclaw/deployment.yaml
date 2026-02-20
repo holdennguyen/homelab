@@ -18,6 +18,11 @@ spec:
         app.kubernetes.io/name: openclaw
         app.kubernetes.io/instance: openclaw
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        runAsNonRoot: true
+        fsGroup: 1000
       serviceAccountName: openclaw
       initContainers:
         - name: init-workspaces

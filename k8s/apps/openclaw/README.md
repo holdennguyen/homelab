@@ -73,6 +73,19 @@ Related files outside this directory:
 | `skills/` (repo root) | Homelab-specific skills (mounted into pod via hostPath) |
 | `agents/workspaces/` (repo root) | Agent AGENTS.md personality files (copied into pod by init container) |
 
+## Security
+
+The OpenClaw pod runs as a non-root user to reduce the impact of a potential container breakout. The pod-level securityContext is configured as:
+
+- `runAsUser: 1000`
+- `runAsGroup: 1000`
+- `runAsNonRoot: true`
+- `fsGroup: 1000`
+
+This ensures that the container processes do not have root privileges on the host node. The `fsGroup` setting also ensures that any shared volumes (like the PVC for workspace data) are accessible by the non-root user.
+
+Note: OpenClaw uses a `hostPath` volume to inject agent workspace definitions from the host (`/Users/holden.nguyen/homelab/agents/workspaces`). This is an exception to the cluster's default-deny network policies and requires the `openclaw` namespace to be exempt from the `restricted` pod security profile (due to the use of `hostPath`).
+
 ## How It Fits in the Homelab
 
 OpenClaw runs as a standard Kustomize application managed by ArgoCD, following the same App of Apps pattern as every other service. Its secrets flow through the Infisical → ESO → K8s Secret pipeline.
