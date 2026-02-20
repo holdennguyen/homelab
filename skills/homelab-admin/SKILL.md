@@ -61,7 +61,7 @@ The Mac mini's Tailscale hostname is `holdens-mac-mini` on the tailnet `story-la
 | `external-secrets` | ESO operator, cert-controller, webhook |
 | `gitea-system` | Gitea, PostgreSQL (Gitea's DB) |
 | `infisical` | Infisical standalone, PostgreSQL, Redis, ingress-nginx |
-| `monitoring` | Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics |
+| `monitoring` | Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics, Trivy Operator, trivy-server |
 | `openclaw` | OpenClaw gateway (this pod) |
 
 ## ArgoCD applications
@@ -72,8 +72,14 @@ The Mac mini's Tailscale hostname is `holdens-mac-mini` on the tailnet `story-la
 | `external-secrets` | `secrets` | ESO Helm chart (installs CRDs) — sync wave 0 |
 | `external-secrets-config` | `secrets` | ClusterSecretStore for Infisical — sync wave 1 |
 | `infisical` | `secrets` | Infisical secret manager (managed by Terraform, not App of Apps) |
+| `authentik` | `apps` | Authentik SSO (Helm chart) |
+| `authentik-config` | `apps` | Authentik ExternalSecret and config |
 | `gitea` | `apps` | Gitea git forge |
 | `monitoring` | `apps` | kube-prometheus-stack (Prometheus + Grafana + Alertmanager) |
+| `monitoring-config` | `apps` | Monitoring ExternalSecret and config |
+| `trivy-operator` | `apps` | Container image vulnerability scanning (ClientServer mode) |
+| `namespace-security` | `apps` | Pod Security Standard labels per namespace |
+| `networking-policies` | `apps` | Default-deny NetworkPolicy per namespace |
 | `openclaw` | `apps` | OpenClaw AI gateway (this service) |
 | `postgresql` | `data` | PostgreSQL for Gitea |
 
@@ -83,7 +89,7 @@ The Mac mini's Tailscale hostname is `holdens-mac-mini` on the tailnet `story-la
 |---|---|---|
 | `secrets` | Secret management infra (ESO, Infisical) | `external-secrets`, `infisical` |
 | `data` | Databases and persistent stores | `gitea-system` |
-| `apps` | User-facing applications | `gitea-system`, `kubernetes-dashboard`, `openclaw` |
+| `apps` | User-facing applications | `gitea-system`, `authentik`, `monitoring`, `openclaw`, `argocd` (for cluster-wide policies) |
 
 ## Persistent volumes
 
@@ -94,6 +100,7 @@ The Mac mini's Tailscale hostname is `holdens-mac-mini` on the tailnet `story-la
 | `data-postgresql-0` | `infisical` | 8Gi | Infisical's PostgreSQL data |
 | `redis-data-redis-master-0` | `infisical` | 8Gi | Infisical's Redis data |
 | `openclaw-data` | `openclaw` | 5Gi | OpenClaw state, workspaces, sessions |
+| `data-trivy-server-0` | `monitoring` | 5Gi | Trivy vulnerability DB cache (ClientServer mode) |
 
 ## ExternalSecrets
 
@@ -188,7 +195,8 @@ The repo structure:
 3. Add to `k8s/apps/argocd/kustomization.yaml`
 4. If the service needs secrets: add to Infisical, create ExternalSecret, reference in deployment
 5. If the service needs a Tailscale endpoint: `tailscale serve --bg --https <port> http://localhost:<nodeport>`
-6. Push to `main`
+6. Update root `README.md` — architecture diagram, repository structure, deployed services table, documentation index
+7. Push to `main`
 
 ## Adding secrets for a service
 

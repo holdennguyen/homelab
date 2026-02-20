@@ -124,6 +124,22 @@ Before merging PRs that modify cluster resources:
 - Check container image compatibility with `securityContext` changes
 - Review ArgoCD sync wave dependencies
 
+### Release checklist
+
+Before tagging a new release (e.g. `v1.1.0`), complete every item:
+
+1. **All milestone PRs merged** — no open PRs targeting this release
+2. **ArgoCD health** — all applications `Synced` + `Healthy` (`kubectl get applications -n argocd`)
+3. **Doc freshness** — run `python scripts/doc-freshness.py` and resolve any stale entries
+4. **Root README review** — the root `README.md` is the public face of the repo. It is tracked in `.doc-manifest.yml` with narrow sources (kustomization.yaml, mkdocs.yml), but those triggers only catch structural additions. Manually review and update:
+   - Architecture diagram — does it reflect all current namespaces and services?
+   - Repository structure — any new top-level directories or service directories?
+   - Deployed services table — any new services, changed ports, or removed services?
+   - Documentation index — does the table list every doc file?
+   - Quick Start / secrets table — any new secrets or changed bootstrap steps?
+   - Future Plans — move completed items out, add new plans
+5. **Tag and release** — `git tag -a vX.Y.Z -m "release description" && git push origin vX.Y.Z`
+
 ## Documentation Rule (mandatory)
 
 After every implementation, update the related documentation before considering the task complete. This is not optional.
@@ -179,6 +195,7 @@ Every `k8s/apps/<service>/README.md` should include these sections (adapt as nee
 | Secrets pipeline (ExternalSecret, Infisical) | `docs/secret-management.md` |
 | Networking (Tailscale, services, ports) | `docs/networking.md` |
 | New service added | See "Adding a new service" checklist below |
+| **Release milestone** | Review and update root `README.md` (see release checklist above) |
 
 ### Adding a new service (documentation checklist)
 
@@ -187,8 +204,9 @@ Every `k8s/apps/<service>/README.md` should include these sections (adapt as nee
 3. Add `<service>.md` to the `nav` in `mkdocs.yml`
 4. Add doc → source mapping to `.doc-manifest.yml`
 5. Update the service map and repository layout in `docs/architecture.md`
-6. If the service has secrets, update `docs/secret-management.md` and `k8s/apps/infisical/README.md` inventory
-7. If the service has a Tailscale endpoint, update `docs/networking.md` and `docs/bootstrap.md` (Tailscale Serve commands)
+6. Update root `README.md` — architecture diagram, repository structure, deployed services table, and documentation index
+7. If the service has secrets, update `docs/secret-management.md` and `k8s/apps/infisical/README.md` inventory
+8. If the service has a Tailscale endpoint, update `docs/networking.md` and `docs/bootstrap.md` (Tailscale Serve commands)
 
 ### Rules
 

@@ -214,7 +214,8 @@ Every PR that changes the project MUST include documentation updates. A PR witho
 | `skills/` or `agents/` or `k8s/apps/openclaw/` | `k8s/apps/openclaw/README.md`, `docs/ai-agents.md` |
 | Secrets pipeline (ExternalSecret, Infisical) | `docs/secret-management.md`, the consuming service's README |
 | Networking (Tailscale, services, ports) | `docs/networking.md`, the affected service's README |
-| New service added | Full checklist: service README, `docs/<service>.md` wrapper, `mkdocs.yml` nav, `docs/architecture.md` service map |
+| New service added | Full checklist: service README, `docs/<service>.md` wrapper, `mkdocs.yml` nav, `docs/architecture.md` service map, root `README.md` (architecture diagram, repo structure, deployed services, doc index) |
+| **Release milestone** | Review and update root `README.md` (see pre-release checklist in [Cutting a release](#cutting-a-release)) |
 
 ### Documentation conventions
 
@@ -227,8 +228,9 @@ Every PR that changes the project MUST include documentation updates. A PR witho
 Before creating a PR, ask yourself:
 1. Did I change any manifest, config, or code? → Update the service README.
 2. Did I add/remove/rename a service, port, secret, or endpoint? → Update `docs/architecture.md`, `docs/networking.md`, or `docs/secret-management.md` as applicable.
-3. Did I add a new service? → Create its README, create the `docs/` wrapper, add to `mkdocs.yml` nav, update `docs/architecture.md`.
-4. Can a reader of the docs still understand the current state of the system after my change? → If not, the docs are incomplete.
+3. Did I add a new service? → Create its README, create the `docs/` wrapper, add to `mkdocs.yml` nav, update `docs/architecture.md`, **update root `README.md`**.
+4. Am I cutting a release? → Run the pre-release checklist including full root `README.md` review.
+5. Can a reader of the docs still understand the current state of the system after my change? → If not, the docs are incomplete.
 
 ## Release Management
 
@@ -275,7 +277,13 @@ When all issues in a milestone are closed:
 
 2. **Determine version** from the highest-impact PR (check for `semver:breaking` first, then `type:feat`)
 
-3. **Create tag and GitHub Release:**
+3. **Pre-release checklist** — complete before tagging:
+   - All ArgoCD applications are `Synced` + `Healthy`
+   - Run `python scripts/doc-freshness.py` and resolve stale entries
+   - **Review root `README.md`** — the root README is the public face of the repo. Verify and update: architecture diagram (all namespaces/services), repository structure (new directories), deployed services table (new services/ports), documentation index (all doc files listed), Quick Start / secrets table, and Future Plans (move completed items)
+   - Run `python scripts/doc-freshness.py` again after updates to confirm all clear
+
+4. **Create tag and GitHub Release:**
    ```bash
    gh release create "v<MAJOR>.<MINOR>.<PATCH>" \
      --repo holdennguyen/homelab \
@@ -284,7 +292,7 @@ When all issues in a milestone are closed:
      --generate-notes --latest
    ```
 
-4. **Close milestone and create the next one:**
+5. **Close milestone and create the next one:**
    ```bash
    gh api repos/holdennguyen/homelab/milestones/<number> \
      --method PATCH -f state="closed"
@@ -292,7 +300,7 @@ When all issues in a milestone are closed:
      --method POST -f title="v<next-version>" -f description="<goal>"
    ```
 
-5. **Report** the release URL to the user
+6. **Report** the release URL to the user
 
 ### Milestone reassessment (after incidents)
 

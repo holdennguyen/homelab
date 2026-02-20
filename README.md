@@ -1,6 +1,6 @@
 # Homelab
 
-A GitOps-managed Kubernetes homelab running on OrbStack (Mac mini M4). Deploys self-hosted infrastructure services -- Authentik SSO, Gitea, PostgreSQL, Grafana + Prometheus, Infisical, and OpenClaw AI gateway -- orchestrated by Argo CD, with AI agent skill definitions for multi-agent development workflows. All services are accessible from any device on the Tailscale network (iPhone, iPad, Mac).
+A GitOps-managed Kubernetes homelab running on OrbStack (Mac mini M4). Deploys self-hosted infrastructure services -- Authentik SSO, Gitea, PostgreSQL, Grafana + Prometheus, Infisical, Trivy Operator, and OpenClaw AI gateway -- orchestrated by Argo CD, with security hardening (network policies, Pod Security Standards, non-root execution, vulnerability scanning) and AI agent skill definitions for multi-agent development workflows. All services are accessible from any device on the Tailscale network (iPhone, iPad, Mac).
 
 ## Architecture
 
@@ -20,6 +20,8 @@ flowchart TD
     subgraph orb["OrbStack Kubernetes Cluster"]
         subgraph argocdNs["argocd namespace"]
             ArgoCD["Argo CD\nHelm chart via Terraform\nNodePort :30080"]
+            NsPolicies["Namespace Security\nPod Security Standards"]
+            NetPolicies["Network Policies\nDefault-deny ingress/egress"]
         end
 
         subgraph infisicalNs["infisical namespace"]
@@ -45,6 +47,8 @@ flowchart TD
         subgraph monNs["monitoring namespace"]
             GrafanaPod["Grafana\nNodePort :30090"]
             PromPod["Prometheus"]
+            TrivyOp["Trivy Operator\nClientServer mode"]
+            TrivySrv["Trivy Server\nStatefulSet + PVC"]
         end
 
         subgraph openclawNs["openclaw namespace"]
@@ -63,6 +67,10 @@ flowchart TD
     ArgoCD -- "App of Apps" --> authentikNs
     ArgoCD -- "App of Apps" --> monNs
     ArgoCD -- "App of Apps" --> openclawNs
+    ArgoCD -- "manages" --> NsPolicies
+    ArgoCD -- "manages" --> NetPolicies
+    TrivyOp -->|watches pods| monNs
+    TrivyOp -->|queries| TrivySrv
     ESO --> CSS
     CSS -- "ExternalSecret" --> GiteaPod
     CSS -- "ExternalSecret" --> PostgresPod
@@ -103,8 +111,11 @@ homelab/
 │       ├── infisical/             # (Helm chart managed by Terraform-created Application)
 │       ├── gitea/                 # Gitea kustomize manifests + ExternalSecret
 │       ├── monitoring/            # Grafana ExternalSecret
+│       ├── namespace-security/    # Pod Security Standard labels per namespace
+│       ├── networking-policies/   # Default-deny NetworkPolicy per namespace
 │       ├── openclaw/              # OpenClaw AI gateway kustomize manifests
-│       └── postgresql/            # PostgreSQL kustomize manifests + ExternalSecret
+│       ├── postgresql/            # PostgreSQL kustomize manifests + ExternalSecret
+│       └── trivy-operator/        # Container image vulnerability scanning
 ├── docs/                          # MkDocs documentation site
 ├── agents/                        # OpenClaw agent definitions
 │   ├── root_rules.md              # Shared rules for all agents
@@ -146,9 +157,12 @@ sequenceDiagram
 | Infisical | Helm chart via ArgoCD | `infisical` | `https://holdens-mac-mini.story-larch.ts.net:8445` |
 | External Secrets Operator | Helm chart via ArgoCD | `external-secrets` | internal only |
 | Grafana + Prometheus | Helm chart via ArgoCD | `monitoring` | `https://holdens-mac-mini.story-larch.ts.net:8444` |
+| Trivy Operator | Helm chart via ArgoCD | `monitoring` | internal only (CRs: `kubectl get vulnerabilityreports -A`) |
 | Gitea | Kustomize via ArgoCD | `gitea-system` | `https://holdens-mac-mini.story-larch.ts.net:8446` |
 | PostgreSQL | Kustomize via ArgoCD | `gitea-system` | ClusterIP `postgresql:5432` (internal only) |
 | OpenClaw | Kustomize via ArgoCD | `openclaw` | `https://holdens-mac-mini.story-larch.ts.net:8447` |
+| Namespace Security | Kustomize via ArgoCD | `argocd` | cluster-wide Pod Security Standard labels |
+| Network Policies | Kustomize via ArgoCD | `argocd` | default-deny ingress/egress per namespace |
 
 ## Quick Start
 
@@ -267,6 +281,7 @@ kubectl get pods -A | grep -v Running | grep -v Completed
 | [k8s/apps/monitoring/README.md](k8s/apps/monitoring/README.md) | Grafana + Prometheus monitoring stack, ExternalSecret, SSO integration |
 | [k8s/apps/openclaw/README.md](k8s/apps/openclaw/README.md) | OpenClaw AI gateway deployment, configuration, image builds |
 | [k8s/apps/postgresql/README.md](k8s/apps/postgresql/README.md) | Database configuration, pg_hba.conf, PGDATA layout, password management |
+| [k8s/apps/trivy-operator/README.md](k8s/apps/trivy-operator/README.md) | Container image vulnerability scanning, ClientServer mode, Helm values |
 
 ## Documentation Freshness Tracking
 
@@ -288,5 +303,6 @@ When adding a new service or documentation file, add an entry to `.doc-manifest.
 
 1. **CI/CD Pipelines** -- Gitea Actions or Tekton for build and test automation
 2. **Agent Expansion** -- Develop and integrate more AI agents for homelab automation
-3. **Security Hardening** -- Network policies, RBAC, TLS everywhere, image scanning
-4. **Logging** -- Loki for centralized log aggregation
+3. **Logging** -- Loki for centralized log aggregation
+
+> **Completed in v1.1.0:** Security hardening — network policies (default-deny per namespace), Pod Security Standards enforcement, RBAC scope-down (OpenClaw cluster-admin removed), non-root execution for all services, and container image vulnerability scanning (Trivy Operator).

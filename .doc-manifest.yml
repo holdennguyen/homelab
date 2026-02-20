@@ -15,6 +15,14 @@
 #   - When adding a new service, add its README entry here
 
 documents:
+  # ── Root README (high-level overview) ──
+  # Narrow sources: only structural files that indicate a new service or doc was added.
+  # Full review of the root README is enforced at release time (see homelab.mdc release checklist).
+  - doc: README.md
+    sources:
+      - k8s/apps/argocd/kustomization.yaml
+      - mkdocs.yml
+
   # ── Service READMEs (single source of truth per service) ──
   - doc: k8s/apps/argocd/README.md
     sources:
