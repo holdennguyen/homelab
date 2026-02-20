@@ -53,6 +53,17 @@ Grafana is configured with SSO-only access — the local login form is disabled 
 
 > **Note:** The monitoring stack is deployed via the **Helm chart source** defined in `k8s/apps/argocd/applications/monitoring-app.yaml`. This directory only contains the ExternalSecret that provides credentials to the Helm release. The `monitoring-config` ArgoCD Application syncs this directory, while the `monitoring` Application syncs the upstream Helm chart.
 
+## Security
+
+The monitoring stack components are configured to run as non-root users:
+
+- **Grafana**: runs as UID 472 (fsGroup 472).
+- **Prometheus**: runs as UID 65534 (nobody) with fsGroup 65534.
+- **Alertmanager**: runs as UID 1000 and GID 2000 with fsGroup 2000.
+- **node-exporter** and **kube-state-metrics** run as non-root by default in the upstream chart.
+
+These settings comply with the cluster's restricted Pod Security Standard. The `monitoring` namespace is included in the pod security enforcement.
+
 ## What's Included
 
 The kube-prometheus-stack Helm chart deploys:
