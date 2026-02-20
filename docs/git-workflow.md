@@ -465,8 +465,13 @@ Owned by `homelab-admin` or the user — sub-agents never create tags or release
 1. Verify all issues in the milestone are closed
 2. Check for `status:reverted` PRs (merge + revert = net zero, exclude from changelog)
 3. Determine the version from the highest-impact non-reverted PR
-4. Create a git tag and GitHub Release: `gh release create "v<version>" --target main --generate-notes --latest`
-5. Close the milestone and create the next one
+4. **Pre-release checklist:**
+    - All ArgoCD applications are `Synced` + `Healthy`
+    - Run `python scripts/doc-freshness.py` and resolve stale entries
+    - **Review root `README.md`** — architecture diagram, repository structure, deployed services table, documentation index, Quick Start, and Future Plans must reflect the current state
+    - Run doc freshness again after any updates
+5. Create a git tag and GitHub Release: `gh release create "v<version>" --target main --generate-notes --latest`
+6. Close the milestone and create the next one
 
 ### Milestone reassessment
 

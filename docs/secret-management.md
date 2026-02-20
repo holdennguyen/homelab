@@ -8,6 +8,7 @@ This document covers how secrets are managed in the homelab: where they are stor
 2. **Infisical is the single source of truth** — all application credentials live in one place with an audit trail.
 3. **Terraform owns bootstrap secrets** — a small set of credentials that Infisical itself needs to start (ENCRYPTION_KEY, AUTH_SECRET, postgres/redis passwords) are injected by Terraform from a local `terraform.tfvars` file that is gitignored.
 4. **ESO bridges Infisical to Kubernetes** — the External Secrets Operator watches `ExternalSecret` resources and creates real `Secret` objects in the cluster, polling Infisical every hour.
+5. **Least privilege** — both ESO and Infisical run with non-root security contexts and read-only root filesystems where supported by their upstream charts. See each service's `README.md` for security details.
 
 ## Secret Layers
 

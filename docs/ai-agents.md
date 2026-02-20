@@ -292,7 +292,7 @@ Key gateway-level settings in `openclaw.json`:
 | `tools.sessions.visibility` | `"all"` | Orchestrator can view sub-agent session history |
 | `tools.agentToAgent.enabled` | `true` | Enables cross-agent communication |
 
-The container image (`Dockerfile.openclaw`) includes ops tools (kubectl, helm, terraform, argocd, jq, git, gh) and the pod runs with a `cluster-admin` ServiceAccount, so agents can execute cluster operations directly.
+The container image (`Dockerfile.openclaw`) includes ops tools (kubectl, helm, terraform, argocd, jq, git, gh). The pod's ServiceAccount has a namespace-scoped Role in `openclaw` with read-only access to pods, logs, secrets, configmaps, services, PVCs, and exec into pods — it does NOT have cluster-wide access (the previous `cluster-admin` binding was removed in v1.1.0).
 
 ### Per-Agent Skill Assignment
 

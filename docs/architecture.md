@@ -206,7 +206,7 @@ flowchart TD
     subgraph monNs["monitoring namespace"]
         GrafanaPod["Grafana\nNodePort :30090"]
         PromPod["Prometheus\n15d retention"]
-        TrivyPod["Trivy Operator\n(vuln scanning)"]
+        TrivyPod["Trivy Operator\n(ClientServer mode)"]
         GrafanaPod --> PromPod
     end
 

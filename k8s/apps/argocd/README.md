@@ -58,7 +58,7 @@ flowchart TD
 | `applications/authentik-app.yaml` | Authentik SSO Helm chart |
 | `applications/authentik-config-app.yaml` | Authentik ExternalSecret (authentik namespace) |
 | `applications/openclaw-app.yaml` | OpenClaw AI gateway deployment |
-| `applications/trivy-operator-app.yaml` | Trivy vulnerability scanner Helm chart (monitoring namespace) |
+| `applications/trivy-operator-app.yaml` | Trivy vulnerability scanner Helm chart (monitoring namespace, ClientServer mode) |
 | `applications/namespace-security-app.yaml` | Pod Security Standard labels for namespaces |
 | `applications/networking-policies-app.yaml` | Default-deny NetworkPolicies across all namespaces |
 

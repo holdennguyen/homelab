@@ -4,6 +4,7 @@ terraform/terraform.tfvars
 terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
 terraform/*.tfplan
+terraform/tfplan
 terraform/.argocd-root-app.yaml
 terraform/.infisical-app.yaml
 

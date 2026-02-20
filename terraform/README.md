@@ -1,6 +1,6 @@
 # Terraform — Bootstrap Layer
 
-This directory contains the Terraform configuration that bootstraps the homelab cluster. It runs **once** to install ArgoCD and create all initial Kubernetes Secrets. After that, ArgoCD takes over GitOps management.
+This directory contains the Terraform configuration that bootstraps the homelab cluster. It runs **once** to install ArgoCD and create all initial Kubernetes Secrets. After that, ArgoCD takes over GitOps management — including security enforcement (non-root execution, Pod Security Standards, network policies), which is managed per-service in `k8s/apps/` rather than at the Terraform bootstrap layer.
 
 ## What Terraform Manages
 

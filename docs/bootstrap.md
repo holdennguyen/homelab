@@ -23,7 +23,7 @@ kubectl cluster-info              # should show the API server URL
 
 ## Architecture Summary
 
-The bootstrap runs in strict order. Each step depends on the previous:
+The bootstrap runs in strict order. Each step depends on the previous. Security enforcement (non-root execution, Pod Security Standards, network policies) is applied automatically by ArgoCD after the bootstrap completes — no additional manual steps are required.
 
 ```mermaid
 flowchart TD
