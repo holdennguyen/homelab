@@ -6,5 +6,9 @@ resources:
   - external-secret.yaml
   - configmap.yaml
   - rbac.yaml
+  - openclaw-self-role.yaml
+  - openclaw-self-rolebinding.yaml
+  - openclaw-read-only-clusterrole.yaml
+  - openclaw-read-only-clusterrolebinding.yaml
   - deployment.yaml
   - service.yaml

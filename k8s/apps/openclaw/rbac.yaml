@@ -6,19 +6,3 @@ metadata:
   labels:
     app.kubernetes.io/name: openclaw
     app.kubernetes.io/instance: openclaw
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: openclaw-cluster-admin
-  labels:
-    app.kubernetes.io/name: openclaw
-    app.kubernetes.io/instance: openclaw
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: cluster-admin
-subjects:
-  - kind: ServiceAccount
-    name: openclaw
-    namespace: openclaw
