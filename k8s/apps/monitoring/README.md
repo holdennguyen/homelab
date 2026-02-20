@@ -62,7 +62,7 @@ The monitoring stack components are configured to run as non-root users:
 - **Alertmanager**: runs as UID 1000 and GID 2000 with fsGroup 2000.
 - **node-exporter** and **kube-state-metrics** run as non-root by default in the upstream chart.
 
-These settings comply with the cluster's restricted Pod Security Standard. The `monitoring` namespace is included in the pod security enforcement.
+The `monitoring` namespace enforces the `baseline` Pod Security Standard (with `restricted` audit/warn) because node-exporter requires host namespaces and hostPort.
 
 ## What's Included
 
