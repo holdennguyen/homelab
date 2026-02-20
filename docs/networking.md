@@ -341,5 +341,6 @@ The following table summarizes the NetworkPolicy resources applied to each workl
 | infisical | Any source on ports 8080 (Tailscale Serve); Port 8080 from `external-secrets` namespace | Intra-namespace only; DNS (53) allowed |  |
 | monitoring | Any source on ports 3000 (Tailscale Serve) | Intra-namespace; DNS (53); K8s API (6443) |  |
 | openclaw | Any source on ports 18789 (Tailscale Serve) | Intra-namespace; DNS (53); K8s API (6443),Git (22,443) |  |
+| security | None (only intra-namespace) | Intra-namespace; DNS (53); K8s API (6443); HTTPS (443) |  |
 
 All other namespaces (e.g., `kube-system`) are left without NetworkPolicy restrictions to preserve cluster core functionality.
