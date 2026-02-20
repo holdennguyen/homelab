@@ -37,8 +37,6 @@
     <dict>
         <key>PATH</key>
         <string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
-        <key>HOME</key>
-        <string>/Users/$(whoami)</string>
     </dict>
 
     <!-- Keep the job around after exit -->
