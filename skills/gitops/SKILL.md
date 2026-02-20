@@ -144,7 +144,7 @@ Example: `devops-sre/feat/42-redis-caching`
 
 ### Step-by-step process
 
-1. **Create a GitHub issue** — every change starts with a labeled issue assigned to the current milestone:
+1. **Create a GitHub issue** (or receive an existing one) — every change starts with a labeled issue assigned to the current milestone:
    ```bash
    gh issue create \
      --title "<type>: <description>" \
@@ -162,7 +162,30 @@ Example: `devops-sre/feat/42-redis-caching`
    ```
    Capture the issue number from the output. If no open milestone exists, ask the orchestrator (or user) to create one before proceeding.
 
-2. **Create a branch** from latest main:
+2. **Plan the implementation and comment it on the issue** — before writing any code, post your plan as a comment:
+   ```bash
+   gh issue comment <issue-number> --repo holdennguyen/homelab --body "$(cat <<'EOF'
+   ## Implementation Plan
+
+   **Approach:** <high-level summary of what you'll do>
+
+   **Files to change:**
+   - `<path>` — <what and why>
+
+   **Risks / open questions:**
+   - <anything that could go wrong or needs clarification>
+
+   **Docs to update:**
+   - <list from the documentation matrix>
+
+   ---
+   Agent: <your-agent-id> | OpenClaw Homelab
+   EOF
+   )"
+   ```
+   The plan must cover: which files/services change, the approach and key decisions, risks or dependencies, and which docs need updating. For non-trivial changes or issues filed by someone else, wait for feedback before proceeding. For straightforward changes you filed yourself, proceed immediately after posting the plan.
+
+3. **Create a branch** from latest main:
    ```bash
    git checkout main && git pull origin main
    git checkout -b <your-agent-id>/<type>/<issue-number>-<short-description>
@@ -177,19 +200,19 @@ Example: `devops-sre/feat/42-redis-caching`
    | `docs/` | Documentation-only changes |
    | `refactor/` | Restructuring without behavior change |
 
-3. **Make changes** to the appropriate files:
+4. **Make changes** to the appropriate files, referencing the plan from step 2:
    - Kubernetes manifests: `k8s/apps/<service>/`
    - ArgoCD applications: `k8s/apps/argocd/applications/`
    - Terraform (Layer 0): `terraform/`
    - Documentation: `k8s/apps/<service>/README.md` (single source of truth)
 
-4. **Commit** referencing the issue with agent tag:
+5. **Commit** referencing the issue with agent tag:
    ```bash
    git add <files>
    git commit -m "<type>: <description> (#<issue-number>) [<your-agent-id>]"
    ```
 
-5. **Push and create a labeled PR** assigned to the same milestone as the issue:
+6. **Push and create a labeled PR** assigned to the same milestone as the issue. Reference the implementation plan from the issue:
    ```bash
    git push -u origin HEAD
    gh pr create \
@@ -202,6 +225,7 @@ Example: `devops-sre/feat/42-redis-caching`
 
    ## Summary
    - <bullet points: what changed and why>
+   - Implementation plan: #<issue-number> (comment)
 
    ## Test plan
    - [ ] ArgoCD syncs successfully
@@ -214,7 +238,7 @@ Example: `devops-sre/feat/42-redis-caching`
    )"
    ```
 
-6. **Report** the PR URL to the user or orchestrator agent.
+7. **Report** the PR URL to the user or orchestrator agent.
 
 ### After merge
 

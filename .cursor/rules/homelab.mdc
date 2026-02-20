@@ -27,16 +27,49 @@ This is a GitOps-driven homelab running on a Mac mini M4 with OrbStack Kubernete
 
 The `main` branch is **protected**. Never push directly to `main` — all changes require a feature branch and a pull request. This applies to Cursor just as it applies to OpenClaw agents.
 
+### Issue-First Planning (mandatory)
+
+When addressing a GitHub issue (whether assigned by a user, picked from the backlog, or self-created), **always plan before coding**:
+
+1. **Read the issue** — understand the requirements, acceptance criteria, and linked context
+2. **Draft an implementation plan** covering:
+   - Which files/services will be modified
+   - The approach and key design decisions
+   - Risks, dependencies, or open questions
+   - Docs that need updating (check the documentation matrix below)
+3. **Comment the plan on the issue** using `gh issue comment`:
+   ```bash
+   gh issue comment <issue-number> --repo holdennguyen/homelab --body "$(cat <<'EOF'
+   ## Implementation Plan
+
+   **Approach:** <high-level summary>
+
+   **Files to change:**
+   - `<path>` — <what and why>
+
+   **Risks / open questions:**
+   - <any concerns>
+
+   **Docs to update:**
+   - <list from documentation matrix>
+   EOF
+   )"
+   ```
+4. **Wait for feedback** if the plan is non-trivial or the issue was filed by someone else — proceed immediately only for straightforward changes you filed yourself
+5. **Reference the plan** throughout implementation — commit messages and PR body should trace back to the plan
+
+This ensures every change is deliberate, reviewable, and traceable. Jumping straight to code without a plan leads to missed requirements and wasted review cycles.
+
 ### Branch workflow
 
 1. **Start from latest main:**
-   ```bash
-   git checkout main && git pull origin main
-   git checkout -b <type>/<short-description>
-   ```
-   Branch prefixes: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`, `security/`
+ ```bash
+ git checkout main && git pull origin main
+ git checkout -b <type>/<short-description>
+ ```
+ Branch prefixes: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`, `security/`
 
-2. **Make changes** and commit with conventional messages:
+2. **Make changes** (referencing the plan from the issue) and commit with conventional messages:
    ```bash
    git add <files>
    git commit -m "<type>: <description>"

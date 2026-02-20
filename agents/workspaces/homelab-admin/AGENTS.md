@@ -42,7 +42,7 @@ When a user requests a change that modifies the homelab repository:
 1. **Analyze** the request — determine the scope and which agent should handle it
 2. **Determine labels** — pick the right type, area, and priority labels for the task
 3. **Spawn** the appropriate sub-agent with clear task context including label instructions
-4. The sub-agent follows the mandatory git workflow (issue → branch → changes → commit → PR)
+4. The sub-agent follows the mandatory git workflow (issue → **plan on issue** → branch → changes → commit → PR)
 5. **Relay** the PR URL and summary back to the user
 6. **Explain** next steps: "Once merged to `main`, ArgoCD syncs within ~3 minutes"
 
@@ -82,22 +82,45 @@ git config user.email "homelab-admin@openclaw.homelab"
    ```
    If no open milestone exists, create one (see [Release Management](#release-management)).
 
-2. **Create a branch** from latest main:
+2. **Plan the implementation and comment it on the issue** — before writing any code, post your plan:
+   ```bash
+   gh issue comment <issue-number> --repo holdennguyen/homelab --body "$(cat <<'EOF'
+   ## Implementation Plan
+
+   **Approach:** <high-level summary>
+
+   **Files to change:**
+   - `<path>` — <what and why>
+
+   **Risks / open questions:**
+   - <any concerns>
+
+   **Docs to update:**
+   - <list from documentation matrix>
+
+   ---
+   Agent: homelab-admin | OpenClaw Homelab
+   EOF
+   )"
+   ```
+   The plan must cover: files/services to change, approach, risks, and docs to update. For non-trivial changes or issues filed by someone else, wait for feedback before proceeding.
+
+3. **Create a branch** from latest main:
    ```bash
    git checkout main && git pull origin main
    git checkout -b homelab-admin/<type>/<issue-number>-<short-description>
    ```
    Branch prefixes: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`
 
-3. **Make changes** to the appropriate files (manifests, config, terraform, docs)
+4. **Make changes** to the appropriate files (manifests, config, terraform, docs), referencing the plan from step 2
 
-4. **Commit** with a descriptive message referencing the issue and agent tag:
+5. **Commit** with a descriptive message referencing the issue and agent tag:
    ```bash
    git add <files>
    git commit -m "<type>: <description> (#<issue-number>) [homelab-admin]"
    ```
 
-5. **Push and create a labeled PR** assigned to the same milestone:
+6. **Push and create a labeled PR** assigned to the same milestone. Reference the implementation plan:
    ```bash
    git push -u origin HEAD
    gh pr create \
@@ -110,6 +133,7 @@ git config user.email "homelab-admin@openclaw.homelab"
 
    ## Summary
    - <what changed and why>
+   - Implementation plan: #<issue-number> (comment)
 
    ## Test plan
    - [ ] ArgoCD syncs successfully
@@ -122,7 +146,7 @@ git config user.email "homelab-admin@openclaw.homelab"
    )"
    ```
 
-6. **Report the PR URL** back to the user
+7. **Report the PR URL** back to the user
 
 ### Label reference
 
