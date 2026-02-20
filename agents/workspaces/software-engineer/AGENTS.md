@@ -51,22 +51,45 @@ git config user.email "software-engineer@openclaw.homelab"
    ```
    If no open milestone exists, ask the orchestrator (or user) to create one before proceeding.
 
-2. **Create a branch** from latest main:
+2. **Plan the implementation and comment it on the issue** — before writing any code, post your plan:
+   ```bash
+   gh issue comment <issue-number> --repo holdennguyen/homelab --body "$(cat <<'EOF'
+   ## Implementation Plan
+
+   **Approach:** <high-level summary>
+
+   **Files to change:**
+   - `<path>` — <what and why>
+
+   **Risks / open questions:**
+   - <any concerns>
+
+   **Docs to update:**
+   - <list from documentation matrix>
+
+   ---
+   Agent: software-engineer | OpenClaw Homelab
+   EOF
+   )"
+   ```
+   The plan must cover: files/services to change, approach, risks, and docs to update. For non-trivial changes or issues filed by someone else, wait for feedback before proceeding.
+
+3. **Create a branch** from latest main:
    ```bash
    git checkout main && git pull origin main
    git checkout -b software-engineer/<type>/<issue-number>-<short-description>
    ```
    Branch prefixes: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`
 
-3. **Make changes** — implement with tests alongside feature code
+4. **Make changes** — implement with tests alongside feature code, referencing the plan from step 2
 
-4. **Commit** with a descriptive message referencing the issue and agent tag:
+5. **Commit** with a descriptive message referencing the issue and agent tag:
    ```bash
    git add <files>
    git commit -m "<type>: <description> (#<issue-number>) [software-engineer]"
    ```
 
-5. **Push and create a labeled PR** assigned to the same milestone:
+6. **Push and create a labeled PR** assigned to the same milestone. Reference the implementation plan:
    ```bash
    git push -u origin HEAD
    gh pr create \
@@ -79,6 +102,7 @@ git config user.email "software-engineer@openclaw.homelab"
 
    ## Summary
    - <what changed and why>
+   - Implementation plan: #<issue-number> (comment)
 
    ## Test plan
    - [ ] Tests pass
@@ -91,7 +115,7 @@ git config user.email "software-engineer@openclaw.homelab"
    )"
    ```
 
-6. **Report the PR URL** back to the orchestrator (or user if working directly)
+7. **Report the PR URL** back to the orchestrator (or user if working directly)
 
 ### Label reference
 
