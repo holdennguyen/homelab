@@ -316,6 +316,40 @@ flowchart TD
     end
 ```
 
+## Network Policies
+
+**Implemented: 2026-02-20**
+
+All workload namespaces now enforce default-deny ingress and egress, with explicit allow rules for required traffic. This implements a zero-trust network posture within the cluster.
+
+### Namespaces Covered
+
+- argocd
+- authentik
+- external-secrets
+- gitea-system
+- infisical
+- monitoring
+- openclaw
+- kube-system
+
+### Rules Summary
+
+| Namespace | Ingress | Egress | Intra |
+|-----------|---------|--------|-------|
+| **argocd** | 8080,8083 from anywhere | 53 to kube-system, 6443 to kube-system, 22/443 to any | Allowed |
+| **authentik** | 80,443 from anywhere | 53 to kube-system | Allowed |
+| **external-secrets** | — | 53 to kube-system, 6443 to kube-system, 8080 to infisical | Allowed |
+| **gitea-system** | 3000,22 from anywhere | 53 to kube-system | Allowed |
+| **infisical** | 8080 from external-secrets only | 53 to kube-system | Allowed |
+| **monitoring** | 3000 (Grafana) from anywhere | 53 to kube-system, 6443 to kube-system | Allowed |
+| **openclaw** | — | 53 to kube-system, 6443 to kube-system, 22/443 to any | Allowed |
+| **kube-system** | 53 from all namespaces | 53 to any (upstream DNS) | Allowed |
+
+### Implementation
+
+NetworkPolicies are managed as Kustomize resources in each namespace's directory and applied via ArgoCD (except `kube-system` which uses a dedicated Application). See the per-namespace READMEs for the exact selectors and ports.
+
 ## Troubleshooting
 
 | Symptom | Cause | Fix |

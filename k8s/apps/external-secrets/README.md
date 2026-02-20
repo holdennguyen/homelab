@@ -229,3 +229,16 @@ kubectl logs -n external-secrets -l app.kubernetes.io/name=external-secrets --ta
 | 404 Project not found | Wrong `projectSlug` | Verify slug in Infisical UI → Project Settings (must be exactly `homelab`) |
 | `ExternalSecret` stuck as `SecretSyncedError` | Stale error cache after store becomes valid | `kubectl annotate externalsecret <name> -n <ns> force-sync=$(date +%s) --overwrite` |
 | CRD `no kind "ClusterSecretStore"` on apply | ESO Helm chart not yet synced | Wait for `external-secrets` ArgoCD app to reach `Synced + Healthy` first |
+
+## Network Policies
+
+The `external-secrets` namespace enforces default-deny ingress and egress with the following allowed traffic:
+
+- **Egress**:
+  - DNS (UDP/TCP 53) to `kube-system` DNS pods.
+  - Kubernetes API (TCP 6443) to `kube-system`.
+  - Infisical API (TCP 8080) to the `infisical` namespace.
+- **Intra-namespace**: unrestricted.
+
+See [`docs/networking.md`](../../../docs/networking.md) for the complete traffic matrix.
+

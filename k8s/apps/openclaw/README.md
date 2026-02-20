@@ -641,3 +641,18 @@ kubectl exec -n openclaw deploy/openclaw -- node dist/index.js config get
 | OpenRouter 401/403 | Invalid or missing `OPENROUTER_API_KEY` | Add/update the key in Infisical `homelab / prod / OPENROUTER_API_KEY`; force ESO re-sync; restart pod |
 | OpenRouter rate limit (429) | Account credit exhausted | Top up credits at [openrouter.ai/credits](https://openrouter.ai/credits); or switch to a cheaper model in `agents.defaults.model.primary` |
 | Tailscale URL not responding | `tailscale serve` not configured | Run `tailscale serve --bg --https 8447 http://localhost:30789` |
+
+## Network Policies
+
+The `openclaw` namespace enforces default-deny ingress and egress with the following allowed traffic:
+
+- **Egress**:
+  - DNS (UDP/TCP 53) to `kube-system` DNS pods.
+  - Kubernetes API (TCP 6443) to `kube-system`.
+  - Git/HTTPS (TCP 22, 443) to any destination (for GitHub operations).
+- **Intra-namespace**: unrestricted.
+
+No external ingress is allowed; the gateway is exposed via Tailscale Serve which connects to the NodePort from localhost.
+
+See [`docs/networking.md`](../../../docs/networking.md) for the complete traffic matrix.
+

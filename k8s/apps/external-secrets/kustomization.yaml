@@ -4,3 +4,9 @@ kind: Kustomization
 # Only the ClusterSecretStore is managed here by ArgoCD.
 resources:
   - cluster-secret-store.yaml
+  # Network policies
+  - 00-default-deny-all.yaml
+  - 01-allow-dns-egress.yaml
+  - 02-allow-intra-namespace.yaml
+  - 03-allow-egress-api.yaml
+  - 04-allow-egress-to-infisical.yaml

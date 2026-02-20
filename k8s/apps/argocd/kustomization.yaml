@@ -20,3 +20,12 @@ resources:
   - applications/authentik-app.yaml
   - applications/authentik-config-app.yaml
   - applications/openclaw-app.yaml
+  - applications/kube-system-config-app.yaml
+  - applications/infisical-config-app.yaml
+  # Network policies for argocd namespace
+  - 00-default-deny-all.yaml
+  - 01-allow-dns-egress.yaml
+  - 02-allow-intra-namespace.yaml
+  - 03-allow-ingress-external.yaml
+  - 04-allow-egress-api.yaml
+  - 05-allow-egress-git.yaml

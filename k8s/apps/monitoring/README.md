@@ -158,3 +158,16 @@ kubectl get application monitoring monitoring-config -n argocd
 | PVC pending | No storage provisioner | Verify `local-path` provisioner is running in `kube-system` |
 | Grafana unreachable via Tailscale | Serve not configured | `tailscale serve --bg --https 8444 http://localhost:30090` |
 | Grafana 404 on `/userinfo/emails` | Authentik provider missing scope mappings | Assign `openid`, `email`, `profile` scope mappings to the Grafana provider |
+
+## Network Policies
+
+The `monitoring` namespace enforces default-deny ingress and egress with the following allowed traffic:
+
+- **Ingress**: port 3000 (Grafana HTTP) from any source (Tailscale).
+- **Egress**:
+  - DNS (UDP/TCP 53) to `kube-system` DNS pods.
+  - Kubernetes API (TCP 6443) to `kube-system`.
+- **Intra-namespace**: unrestricted (Prometheus ↔ Grafana, Alertmanager, node-exporter, kube-state-metrics).
+
+See [`docs/networking.md`](../../../docs/networking.md) for the complete traffic matrix.
+

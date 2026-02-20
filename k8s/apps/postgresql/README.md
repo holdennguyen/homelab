@@ -196,3 +196,17 @@ kubectl exec -n gitea-system deploy/postgresql -- psql -U gitea -d gitea -c '\dt
 kubectl exec -n gitea-system deploy/postgresql -- psql -U gitea -d gitea \
   -c "SELECT pg_size_pretty(pg_database_size('gitea'));"
 ```
+
+## Network Policies
+
+The `gitea-system` namespace (which hosts both Gitea and PostgreSQL) enforces default-deny ingress and egress with the following allowed traffic:
+
+- **Ingress**:
+  - Port 3000 (Gitea HTTP) and 22 (SSH) from any source (Tailscale) to Gitea pods.
+  - Port 5432 (PostgreSQL) from Gitea pods only (intra-namespace).
+- **Egress**: DNS (UDP/TCP 53) to `kube-system` DNS pods.
+- **Intra-namespace**: unrestricted (allows Gitea ↔ PostgreSQL communication).
+
+See [`docs/networking.md`](../../../docs/networking.md) for the complete traffic matrix.
+
+```

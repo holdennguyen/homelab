@@ -158,3 +158,16 @@ kubectl get application authentik authentik-config -n argocd
 | 403 `insufficient_scope` on userinfo | Provider missing scope mappings | Assign `openid`, `email`, `profile` scope mappings to the provider in Authentik |
 | ArgoCD `malformed jwt: unexpected algorithm HS256` | Provider using HS256 instead of RS256 | Update the provider's signing key to an RS256 keypair in Authentik |
 | ArgoCD shows no applications after SSO login | RBAC policy.default is empty | Set `configs.rbac.policy.default: role:admin` in Terraform |
+
+## Network Policies
+
+The `authentik` namespace enforces default-deny ingress and egress with the following allowed traffic:
+
+- **Ingress**: ports 80 and 443 from any source (Tailscale).
+- **Egress**:
+  - DNS (UDP/TCP 53) to `kube-system` DNS pods.
+  - Intra-namespace communication (to PostgreSQL and Redis on their respective ports).
+- **Intra-namespace**: unrestricted.
+
+See [`docs/networking.md`](../../../docs/networking.md) for the complete traffic matrix.
+
