@@ -21,14 +21,25 @@ spec:
         excludeNamespaces: "openclaw"
         operator:
           scanJobsConcurrentLimit: 3
+          builtInTrivyServer: true
         trivy:
+          mode: ClientServer
+          serverURL: "http://trivy-service.monitoring:4975"
           resources:
             requests:
               cpu: 100m
               memory: 100M
             limits:
               cpu: 500m
-              memory: 1Gi
+              memory: 512Mi
+          server:
+            resources:
+              requests:
+                cpu: 100m
+                memory: 256Mi
+              limits:
+                cpu: 500m
+                memory: 512Mi
         resources:
           requests:
             cpu: 100m

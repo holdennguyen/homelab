@@ -11,30 +11,35 @@ Trivy Operator is a Kubernetes operator that continuously scans container images
 
 ## Architecture
 
-Trivy Operator watches Kubernetes pods, extracts their container images, and scans them using the Trivy vulnerability database. It creates a `VulnerabilityReport` custom resource for each pod, summarizing found CVEs along with fix availability.
+The operator runs in **ClientServer mode**: a dedicated `trivy-server` StatefulSet maintains the vulnerability database on a persistent volume, and scan jobs query it over HTTP instead of each managing their own cache. This eliminates cache lock contention when scanning pods with multiple containers.
 
 ```mermaid
 flowchart TD
     subgraph cluster["Kubernetes Cluster"]
         OP[Trivy Operator<br/>Deployment]
+        TS[Trivy Server<br/>StatefulSet + PVC]
+        SJ[Scan Jobs]
         Pod1[Pod with Image]
         Pod2[Pod with Image]
         VR[VulnerabilityReport<br/>Custom Resource]
     end
     OP -->|watches| Pod1
     OP -->|watches| Pod2
-    OP -->|creates| VR
+    OP -->|creates| SJ
+    SJ -->|queries| TS
+    SJ -->|produces| VR
 ```
 
 ## Configuration
 
 The operator is deployed with tuned settings to balance scanning coverage with resource stability on a single-node homelab:
 
+- Runs in **ClientServer mode** with a built-in trivy-server (eliminates cache lock contention)
 - Scans images of running pods on creation and at regular intervals
 - Does not block pod scheduling (report-only)
 - Stores reports as Kubernetes custom resources
 - Excludes the `openclaw` namespace (locally-built image not available from any registry)
-- Limits concurrent scan jobs to 3 to avoid Trivy cache lock contention
+- Limits concurrent scan jobs to 3
 
 ### Helm Values
 
@@ -42,10 +47,13 @@ Overrides are set in the Application CR's `spec.source.helm.valuesObject`:
 
 | Key | Value | Purpose |
 |-----|-------|---------|
-| `resources.limits.memory` | `512Mi` | Operator deployment — prevents OOM on large clusters |
-| `resources.requests.memory` | `256Mi` | Operator deployment baseline |
-| `operator.scanJobsConcurrentLimit` | `3` | Prevents cache lock contention between parallel scan jobs |
-| `trivy.resources.limits.memory` | `1Gi` | Scan job containers — large images need more memory |
+| `trivy.mode` | `ClientServer` | Centralized DB via trivy-server, no per-job cache |
+| `operator.builtInTrivyServer` | `true` | Deploy trivy-server StatefulSet in-cluster |
+| `trivy.serverURL` | `http://trivy-service.monitoring:4975` | Scan jobs query this endpoint |
+| `resources.limits.memory` | `512Mi` | Operator deployment — prevents OOM |
+| `operator.scanJobsConcurrentLimit` | `3` | Limit parallel scan jobs |
+| `trivy.resources.limits.memory` | `512Mi` | Scan job container memory |
+| `trivy.server.resources.limits.memory` | `512Mi` | Trivy server memory |
 | `excludeNamespaces` | `openclaw` | Skip namespaces with local-only images |
 
 Additional options:
@@ -60,9 +68,9 @@ No secrets are required; the operator uses read-only access to the Kubernetes AP
 
 ## Networking
 
-- The operator needs egress to container registries to download image layers for scanning.
-- It may also need egress to the internet for vulnerability database updates (via `aquasecurity/trivy-db`).
-- Ensure that egress to `ghcr.io`, `docker.io`, and other registries is allowed on HTTPS (443). This should be covered by the default internet egress from the `monitoring` namespace (if network policies are in place).
+- The trivy-server needs egress to download the vulnerability database (`mirror.gcr.io/aquasec/trivy-db`).
+- Scan jobs need egress to container registries to pull image layers for scanning.
+- Ensure that egress to `ghcr.io`, `docker.io`, `mirror.gcr.io`, and other registries is allowed on HTTPS (443).
 
 ## Operational Commands
 
@@ -84,6 +92,6 @@ kubectl delete vulnerabilityreport --all -n <namespace>
 | No VulnerabilityReport CRs appear | Operator not running or RBAC issues | Check pod logs: `kubectl logs -n monitoring -l app.kubernetes.io/name=trivy-operator` |
 | Reports show `FAILED` | Image scan failed (private registry, large image, timeout) | Verify image pull secret exists; consider increasing resources/timeouts |
 | Operator OOMKilled (exit 137) | Too many workloads to reconcile | Increase `resources.limits.memory` in Helm values |
-| "cache may be in use by another process" | Concurrent scan jobs contending on Trivy cache | Reduce `operator.scanJobsConcurrentLimit` (default 10) |
+| "cache may be in use by another process" | Multiple scan containers contending on shared cache | Use ClientServer mode (`trivy.mode: ClientServer`) |
 | Scan job OOMKilled | Large container image exceeds scan job memory | Increase `trivy.resources.limits.memory` |
 | "unable to find the specified image" | Local-only image not in any registry | Add namespace to `excludeNamespaces` |
