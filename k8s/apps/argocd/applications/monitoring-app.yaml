@@ -68,6 +68,11 @@ spec:
         # Prometheus
         prometheus:
           prometheusSpec:
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 1000
+              runAsNonRoot: true
+              fsGroup: 1000
             retention: 15d
             resources:
               requests:
@@ -87,6 +92,11 @@ spec:
         # Alertmanager
         alertmanager:
           alertmanagerSpec:
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 1000
+              runAsNonRoot: true
+              fsGroup: 1000
             resources:
               requests:
                 cpu: 50m

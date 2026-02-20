@@ -92,6 +92,21 @@ Contains a `values.yaml` blob injected via `helm.valuesObject` in the Terraform-
 
 Both are generated with `openssl rand -hex 12` and stored in `terraform/terraform.tfvars`.
 
+## Non-Root Execution
+
+The Infisical container runs as a non-root user (UID 1000) enforced by the pod's `securityContext`. This is set via the Helm `securityContext` values in the Terraform-managed Application:
+
+```yaml
+infisical:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    fsGroup: 1000
+```
+
+This reduces the risk of privilege escalation from a container escape.
+
 ## Project and Environment Structure
 
 ```mermaid

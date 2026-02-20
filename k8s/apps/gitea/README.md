@@ -223,6 +223,19 @@ The `gitea-data` PVC (10Gi, ReadWriteOnce) is mounted at `/data` and holds:
 | CPU | 100m | 500m |
 | Memory | 256Mi | 512Mi |
 
+## Non-Root Execution
+
+The Gitea container runs as a non-root user (`git` UID 1000) enforced by the pod's `securityContext`. This mitigates the impact of a container escape by limiting the attacker's privileges inside the host.
+
+```yaml
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+```
+
+The init container still runs as root to set up the configuration volume with correct ownership, then the main container drops to non-root.
+
 ## Integration with PostgreSQL
 
 Gitea depends on PostgreSQL for all persistent application data (users, repositories metadata, issues, pull requests, etc.). Git repository data (bare repos, LFS objects) is stored on the PVC.

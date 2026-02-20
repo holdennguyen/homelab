@@ -18,6 +18,10 @@ spec:
         app.kubernetes.io/name: postgresql
         app.kubernetes.io/instance: gitea-db
     spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
       containers:
         - name: postgresql
           image: postgres:15

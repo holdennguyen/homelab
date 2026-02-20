@@ -76,6 +76,21 @@ If `external-secrets-config` syncs before the Helm chart installs the CRDs, it f
 
 Note: The `infisical-machine-identity` Kubernetes Secret referenced by the `ClusterSecretStore` is **not** in this directory — it is created by `terraform/bootstrap-secrets.tf` to avoid storing credentials in git.
 
+## Non-Root Execution
+
+The External Secrets Operator runs its controller as a non-root user (UID 1000) via the pod's `securityContext`. This is configured in the Helm values.
+
+```yaml
+controller:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+    fsGroup: 1000
+```
+
+This reduces the attack surface and mitigates the impact of a potential container escape.
+
 ## ClusterSecretStore Configuration
 
 ```yaml

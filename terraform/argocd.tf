@@ -135,6 +135,12 @@ locals {
                 requests = { cpu = "100m", memory = "512Mi" }
                 limits   = { memory = "1500Mi" }
               }
+              securityContext = {
+                runAsUser    = 1000
+                runAsGroup   = 1000
+                runAsNonRoot = true
+                fsGroup      = 1000
+              }
             }
             ingress = { enabled = false }
             postgresql = {

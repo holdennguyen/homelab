@@ -95,6 +95,25 @@ Key settings:
 
 **Gitea** — configured via `gitea admin auth add-oauth` in the PostSync init job (`admin-init-job.yaml`). Client secret from `gitea-secret` ExternalSecret.
 
+## Non-Root Execution
+
+The Authentik server and worker containers run as non-root users (UID 1000) enforced by the pod's `securityContext`. This is set via the Helm values in the ArgoCD Application.
+
+```yaml
+server:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+worker:
+  securityContext:
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+```
+
+This hardens the deployment by limiting the blast radius of a container escape.
+
 ## Networking
 
 | Layer | Value |

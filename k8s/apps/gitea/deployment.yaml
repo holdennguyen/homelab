@@ -18,6 +18,10 @@ spec:
         app.kubernetes.io/name: gitea
         app.kubernetes.io/instance: gitea
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       initContainers:
         - name: init-config
           image: busybox:1.36

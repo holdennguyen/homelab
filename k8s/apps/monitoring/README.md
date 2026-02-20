@@ -103,6 +103,17 @@ Edit the `helm.valuesObject` in `k8s/apps/argocd/applications/monitoring-app.yam
 
 Update `targetRevision` in the Application CR to the desired chart version, then push to `main`.
 
+## Non-Root Execution
+
+All monitoring components are configured to run as non-root users:
+
+- **Grafana** runs as UID 472 (non-root) via its built-in `securityContext`.
+- **Prometheus** runs as UID 1000 with `runAsNonRoot: true`.
+- **Alertmanager** runs as UID 1000 with `runAsNonRoot: true`.
+- **Node Exporter** is not forced to non-root as it requires elevated privileges to collect system metrics.
+
+These settings are defined in the Helm values of the `monitoring-app.yaml` Application and help reduce the attack surface.
+
 ## Networking
 
 | Layer | Value |

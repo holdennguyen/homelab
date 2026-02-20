@@ -160,6 +160,19 @@ kubectl rollout restart deployment gitea -n gitea-system
 | CPU | 100m | 500m |
 | Memory | 256Mi | 512Mi |
 
+## Non-Root Execution
+
+The PostgreSQL container runs as the non-root `postgres` user (UID 999), enforced by the pod's `securityContext`.
+
+```yaml
+securityContext:
+  runAsUser: 999
+  runAsGroup: 999
+  fsGroup: 999
+```
+
+This reduces the risk of privilege escalation from a container escape.
+
 ## Integration with Gitea
 
 Gitea connects to PostgreSQL using the Kubernetes Service DNS name:

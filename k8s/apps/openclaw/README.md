@@ -284,6 +284,19 @@ kubectl get pods -n openclaw -w
 kubectl get externalsecret -n openclaw
 ```
 
+## Non-Root Execution
+
+The OpenClaw container runs as a non-root user (`node` UID 1000) enforced by the pod's `securityContext`. This is enabled by the Dockerfile `USER node` and the Kubernetes `securityContext` provides additional defense-in-depth.
+
+```yaml
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+```
+
+This ensures that even if a container escape occurs, the attacker's privileges within the host are limited to a non-root user.
+
 ## Networking
 
 ```mermaid
