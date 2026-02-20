@@ -90,6 +90,24 @@ resource "helm_release" "argocd" {
     value = "role:admin"
   }
 
+  # Enforce non-root execution for all ArgoCD pods
+  set {
+    name  = "securityContext.runAsUser"
+    value = "999"
+  }
+  set {
+    name  = "securityContext.runAsGroup"
+    value = "999"
+  }
+  set {
+    name  = "securityContext.runAsNonRoot"
+    value = "true"
+  }
+  set {
+    name  = "securityContext.fsGroup"
+    value = "999"
+  }
+
   depends_on = [kubernetes_namespace.argocd]
 }
 

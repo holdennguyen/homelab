@@ -306,3 +306,31 @@ homelab/
 ├── openclaw/                       # OpenClaw source (git submodule)
 └── scripts/                        # Helper scripts (image builds, etc.)
 ```
+
+## Security
+
+This section outlines the security controls implemented in the homelab.
+
+### Pod Security Standards
+
+All application namespaces that can meet the restricted profile are labeled with:
+
+- `pod-security.kubernetes.io/enforce: restricted`
+- `pod-security.kubernetes.io/audit: restricted`
+
+This ensures that all pods run as non-root users and adhere to the Kubernetes restricted policy. Namespaces that currently cannot comply (due to technical constraints) are excluded:
+
+- `gitea-system`: Gitea uses s6-overlay which requires root at startup.
+- `openclaw`: Uses hostPath volumes which are disallowed by the restricted policy.
+
+### Non-Root Execution
+
+ArgoCD and other workloads are configured with `securityContext` specifying non-root UIDs (e.g., UID 999 for ArgoCD). Individual service READMEs document their specific non-root configurations.
+
+### Network Policies
+
+A default-deny network posture is enforced across all application namespaces. See [Networking documentation](./networking.md#security-default-deny-network-policies) for details.
+
+### Container Image Scanning
+
+Container image vulnerability scanning is performed using Trivy (see separate PR).
