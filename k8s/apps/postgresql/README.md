@@ -160,6 +160,21 @@ kubectl rollout restart deployment gitea -n gitea-system
 | CPU | 100m | 500m |
 | Memory | 256Mi | 512Mi |
 
+## Security
+
+The PostgreSQL pod runs as a non-root user (UID 999) with an explicit `securityContext`:
+
+- `runAsUser: 999`
+- `runAsGroup: 999`
+- `runAsNonRoot: true`
+- `fsGroup: 999`
+
+This ensures that the container process does not have root privileges on the host and that file permissions on the PersistentVolume are correctly set.
+
+The official `postgres:15` Docker image defaults to running as UID 999, but we explicitly set these values to comply with cluster-wide Pod Security Standards (restricted profile).
+
+The deployment uses `strategy: Recreate` because PostgreSQL's PersistentVolumeClaim is RWO (ReadWriteOnce). A RollingUpdate would try to mount the volume on both old and new pods simultaneously, causing WAL corruption and data loss.
+
 ## Integration with Gitea
 
 Gitea connects to PostgreSQL using the Kubernetes Service DNS name:

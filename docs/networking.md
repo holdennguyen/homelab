@@ -327,3 +327,32 @@ flowchart TD
 | ArgoCD returns 502 | ArgoCD pod restarting or not ready | `kubectl get pods -n argocd` |
 | Gitea clone URLs show wrong domain | `ROOT_URL` mismatch | Update `ROOT_URL` in `k8s/apps/gitea/configmap.yaml`, push, restart Gitea pod |
 | Works from iPhone but not Mac mini | MagicDNS resolves on mobile but not macOS | Add `/etc/hosts` entry or verify macOS Tailscale has MagicDNS enabled |
+
+## Security: Default-Deny Network Policies
+
+To enforce the principle of least privilege, a comprehensive set of NetworkPolicy resources has been deployed across all application namespaces. These policies implement a *default-deny* security posture: all ingress and egress traffic is blocked unless explicitly allowed.
+
+### Policies in Place
+
+Each namespace has three foundational policies:
+
+- **default-deny-all**: Blocks all ingress and egress traffic.
+- **allow-same-namespace**: Allows unrestricted communication between pods within the same namespace (required for intra-application communication).
+- **allow-dns**: Allows egress to the cluster's DNS service (CoreDNS) for name resolution on UDP/TCP port 53.
+
+Additionally, namespace-specific rules enable required connectivity:
+
+- **Tailscale Ingress**: Services exposed via Tailscale have ingress restricted to the Tailscale CIDR (`100.64.0.0/10`) on the NodePort service ports.
+- **API Server Access**: Namespaces that need to communicate with the Kubernetes API (e.g., `argocd`, `openclaw`, `monitoring`, `external-secrets`) have an egress rule permitting traffic to the API server on port 6443.
+- **Internet Egress**: The `argocd` and `openclaw` namespaces are allowed to egress to the internet on ports 443 (HTTPS) and 22 (SSH) to facilitate Git operations and external API calls.
+- **External Secrets**: The `external-secrets` namespace can egress to the Infisical API (`infisical` namespace, port 8080); conversely, `infisical` has an ingress rule allowing traffic from `external-secrets` on that port.
+
+The complete set of policies is stored in `k8s/apps/networking-policies/`.
+
+### Tailscale CIDR
+
+All Tailscale devices are assigned IPs in the range `100.64.0.0/10`. Ingress rules for services use this CIDR to ensure only tailnet devices can access them.
+
+### Future Considerations
+
+When adding new services, corresponding network policies should be created to maintain the default-deny security model.
