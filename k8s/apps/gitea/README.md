@@ -324,3 +324,14 @@ kubectl exec -n gitea-system deploy/gitea -- \
 | `address already in use` on :22 | `START_SSH_SERVER = true` in app.ini | Set to `false` (Docker OpenSSH already uses port 22) |
 | Install wizard appears | No `app.ini` on PVC or `INSTALL_LOCK` not set | Verify init container runs and ConfigMap has `INSTALL_LOCK = true` |
 | Config changes not taking effect | Pod not restarted after ConfigMap update | `kubectl rollout restart deployment gitea -n gitea-system` |
+
+## Network Policies
+
+The `gitea-system` namespace enforces a default-deny security posture. Allowed traffic is defined by the following NetworkPolicy resources:
+
+- `allow-dns-egress`: permits DNS resolution (UDP/TCP 53) to kube-dns.
+- `allow-intra-namespace`: permits unrestricted pod-to-pod communication within the namespace.
+- `allow-ingress-external`: permits ingress from any source on ports 3000,22 (Tailscale Serve).
+- `default-deny-all`: denies all other ingress and egress traffic (implicit allow rules take precedence).
+
+See `docs/networking.md` for the complete traffic matrix and implementation details.

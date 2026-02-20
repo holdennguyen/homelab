@@ -429,3 +429,15 @@ flowchart TD
 | UI shows "Invalid login" | Wrong admin password | Use the Infisical admin password you set during initial signup (not an application password) |
 | ESO can read secrets but wrong values | Secret updated in Infisical but ESO cache not refreshed | `kubectl annotate externalsecret <name> -n <ns> force-sync=$(date +%s) --overwrite` |
 | Infisical UI inaccessible from Tailscale | `tailscale serve` not configured for :8445 | `tailscale serve --bg --https 8445 http://localhost:30445` |
+
+## Network Policies
+
+The `infisical` namespace enforces default-deny ingress and egress with the following allowed traffic:
+
+- **Ingress**:
+  - Port 8080 from any source (Tailscale Serve) for the UI/API.
+  - Port 8080 from the `external-secrets` namespace (for the External Secrets Operator).
+- **Egress**: DNS (UDP/TCP 53) to `kube-system` DNS pods.
+- **Intra-namespace**: unrestricted communication between Infisical, PostgreSQL, and Redis pods.
+
+See [`docs/networking.md`](../../../docs/networking.md) for the complete traffic matrix and implementation details.

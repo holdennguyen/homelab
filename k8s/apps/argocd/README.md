@@ -249,3 +249,16 @@ kubectl logs -n argocd deploy/argocd-application-controller --tail=50
 | CRD not found during sync | Wrong sync wave order | Ensure `external-secrets` (wave 0) is healthy before `external-secrets-config` (wave 1) syncs |
 | Changes not deployed after push | Normal poll delay | Wait ~3min or force refresh via annotation |
 | `kubernetes_manifest` schema error | Not applicable | ArgoCD Application CRs are applied via `local-exec` in Terraform, not `kubernetes_manifest` |
+
+## Network Policies
+
+The `argocd` namespace enforces a default-deny security posture. Allowed traffic is defined by the following NetworkPolicy resources:
+
+- `allow-dns-egress`: permits DNS resolution (UDP/TCP 53) to kube-dns.
+- `allow-intra-namespace`: permits unrestricted pod-to-pod communication within the namespace.
+- `allow-ingress-external`: permits ingress from any source on ports 8080,8083 (Tailscale Serve).
+- `allow-egress-api`: permits egress to the Kubernetes API server (TCP 6443).
+- `allow-egress-git`: permits egress for Git over SSH/HTTPS (TCP 22, 443) to any destination.
+- `default-deny-all`: denies all other ingress and egress traffic (implicit allow rules take precedence).
+
+See `docs/networking.md` for the complete traffic matrix and implementation details.

@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: infisical-config
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: infisical-config
+    app.kubernetes.io/part-of: homelab
+    app.kubernetes.io/component: secrets
+    app.kubernetes.io/managed-by: argocd
+spec:
+  project: secrets
+  source:
+    repoURL: git@github.com:holdennguyen/homelab.git
+    targetRevision: HEAD
+    path: k8s/apps/infisical
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: infisical
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false

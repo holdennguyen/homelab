@@ -158,3 +158,15 @@ kubectl get application monitoring monitoring-config -n argocd
 | PVC pending | No storage provisioner | Verify `local-path` provisioner is running in `kube-system` |
 | Grafana unreachable via Tailscale | Serve not configured | `tailscale serve --bg --https 8444 http://localhost:30090` |
 | Grafana 404 on `/userinfo/emails` | Authentik provider missing scope mappings | Assign `openid`, `email`, `profile` scope mappings to the Grafana provider |
+
+## Network Policies
+
+The `monitoring` namespace enforces a default-deny security posture. Allowed traffic is defined by the following NetworkPolicy resources:
+
+- `allow-dns-egress`: permits DNS resolution (UDP/TCP 53) to kube-dns.
+- `allow-intra-namespace`: permits unrestricted pod-to-pod communication within the namespace.
+- `allow-ingress-external`: permits ingress from any source on ports 3000 (Tailscale Serve).
+- `allow-egress-api`: permits egress to the Kubernetes API server (TCP 6443).
+- `default-deny-all`: denies all other ingress and egress traffic (implicit allow rules take precedence).
+
+See `docs/networking.md` for the complete traffic matrix and implementation details.

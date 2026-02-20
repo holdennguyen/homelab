@@ -196,3 +196,7 @@ kubectl exec -n gitea-system deploy/postgresql -- psql -U gitea -d gitea -c '\dt
 kubectl exec -n gitea-system deploy/postgresql -- psql -U gitea -d gitea \
   -c "SELECT pg_size_pretty(pg_database_size('gitea'));"
 ```
+
+## Network Policies
+
+The PostgreSQL instance runs in the `gitea-system` namespace, which enforces default-deny ingress and egress. See the [gitea service README](./../gitea/README.md#network-policies) for the full policy details. Intra-namespace traffic is allowed, enabling Gitea to communicate with PostgreSQL.

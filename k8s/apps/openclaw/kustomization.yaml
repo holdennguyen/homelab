@@ -8,3 +8,9 @@ resources:
   - rbac.yaml
   - deployment.yaml
   - service.yaml
+  - 00-allow-dns-egress.yaml
+  - 01-allow-intra-namespace.yaml
+  - 02-allow-ingress-external.yaml
+  - 03-allow-egress-api.yaml
+  - 04-allow-egress-git.yaml
+  - 99-default-deny-all.yaml

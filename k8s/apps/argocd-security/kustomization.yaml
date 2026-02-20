@@ -1,14 +1,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - pvc.yaml
-  - external-secret.yaml
-  - admin-external-secret.yaml
-  - configmap.yaml
-  - deployment.yaml
-  - service.yaml
-  - admin-init-job.yaml
   - 00-allow-dns-egress.yaml
   - 01-allow-intra-namespace.yaml
   - 02-allow-ingress-external.yaml
+  - 03-allow-egress-api.yaml
+  - 04-allow-egress-git.yaml
   - 99-default-deny-all.yaml

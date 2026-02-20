@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd-security
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: argocd-security
+    app.kubernetes.io/part-of: homelab
+    app.kubernetes.io/component: infrastructure
+    app.kubernetes.io/managed-by: argocd
+spec:
+  project: default
+  source:
+    repoURL: git@github.com:holdennguyen/homelab.git
+    targetRevision: HEAD
+    path: k8s/apps/argocd-security
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false

@@ -327,3 +327,19 @@ flowchart TD
 | ArgoCD returns 502 | ArgoCD pod restarting or not ready | `kubectl get pods -n argocd` |
 | Gitea clone URLs show wrong domain | `ROOT_URL` mismatch | Update `ROOT_URL` in `k8s/apps/gitea/configmap.yaml`, push, restart Gitea pod |
 | Works from iPhone but not Mac mini | MagicDNS resolves on mobile but not macOS | Add `/etc/hosts` entry or verify macOS Tailscale has MagicDNS enabled |
+
+## Network Policies Implementation
+
+The following table summarizes the NetworkPolicy resources applied to each workload namespace. Only explicitly allowed traffic is permitted; all other ingress/egress is denied.
+
+| Namespace | Ingress | Egress | Notes |
+|-----------|---------|--------|-------|
+| argocd | Any source on ports 8080,8083 (Tailscale Serve) | Intra-namespace; DNS (53); K8s API (6443),Git (22,443) |  |
+| authentik | Any source on ports 9000 (Tailscale Serve) | Intra-namespace only; DNS (53) allowed |  |
+| external-secrets | None (only intra-namespace) | Intra-namespace; DNS (53); K8s API (6443),Infisical (8080) |  |
+| gitea-system | Any source on ports 3000,22 (Tailscale Serve) | Intra-namespace only; DNS (53) allowed |  |
+| infisical | Any source on ports 8080 (Tailscale Serve); Port 8080 from `external-secrets` namespace | Intra-namespace only; DNS (53) allowed |  |
+| monitoring | Any source on ports 3000 (Tailscale Serve) | Intra-namespace; DNS (53); K8s API (6443) |  |
+| openclaw | Any source on ports 18789 (Tailscale Serve) | Intra-namespace; DNS (53); K8s API (6443),Git (22,443) |  |
+
+All other namespaces (e.g., `kube-system`) are left without NetworkPolicy restrictions to preserve cluster core functionality.
