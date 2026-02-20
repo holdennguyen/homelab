@@ -11,6 +11,7 @@ spec:
     - git@github.com:holdennguyen/homelab.git
     - https://prometheus-community.github.io/helm-charts
     - https://charts.goauthentik.io
+    - https://aquasecurity.github.io/trivy-operator/
   destinations:
     - server: https://kubernetes.default.svc
       namespace: gitea-system
@@ -22,6 +23,8 @@ spec:
       namespace: openclaw
     - server: https://kubernetes.default.svc
       namespace: authentik
+    - server: https://kubernetes.default.svc
+      namespace: security
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace

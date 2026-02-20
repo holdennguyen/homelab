@@ -20,3 +20,5 @@ resources:
   - applications/authentik-app.yaml
   - applications/authentik-config-app.yaml
   - applications/openclaw-app.yaml
+  - applications/trivy-operator-app.yaml
+  - applications/security-policies-app.yaml
