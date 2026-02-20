@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <!-- OrbStack Kubernetes Nightly Startup -->
+    <!-- Starts the Kubernetes cluster at 06:30 (6:30 AM) daily -->
+    <!-- Install with: cp com.homelab.orbstart.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.homelab.orbstart.plist -->
+
+    <key>Label</key>
+    <string>com.homelab.orbstart</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/path/to/homelab/scripts/orb-start.sh</string>
+    </array>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>6</integer>
+        <key>Minute</key>
+        <integer>30</integer>
+    </dict>
+
+    <!-- Standard output and error go to log files -->
+    <key>StandardOutPath</key>
+    <string>/var/log/homelab/startup.log</string>
+    <key>StandardErrorPath</key>
+    <string>/var/log/homelab/startup.log</string>
+
+    <!-- Environment: ensure orb and kubectl are in PATH -->
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+        <key>HOME</key>
+        <string>/Users/$(whoami)</string>
+    </dict>
+
+    <!-- Keep the job around after exit -->
+    <key>KeepAlive</key>
+    <false/>
+
+    <!-- Process type: standard daemon -->
+    <key>ProcessType</key>
+    <string>Standard</string>
+
+    <!-- Nice priority: default 0 -->
+    <key>Nice</key>
+    <integer>0</integer>
+</dict>
+</plist>

@@ -94,3 +94,10 @@ documents:
       - .cursor/rules/homelab.mdc
       - .github/workflows/
       - skills/incident-response/
+
+  - doc: docs/nightly-shutdown.md
+    sources:
+      - scripts/orb-stop.sh
+      - scripts/orb-start.sh
+      - scripts/com.homelab.orbstop.plist
+      - scripts/com.homelab.orbstart.plist

@@ -278,6 +278,7 @@ kubectl get pods -A | grep -v Running | grep -v Completed
 | [k8s/apps/infisical/README.md](k8s/apps/infisical/README.md) | Infisical deployment, first-time setup, machine identity, bootstrap secrets |
 | [k8s/apps/external-secrets/README.md](k8s/apps/external-secrets/README.md) | ClusterSecretStore, ExternalSecret pattern, adding secrets for new services |
 | [k8s/apps/gitea/README.md](k8s/apps/gitea/README.md) | Config seeding via init container, env var overrides, ExternalSecret integration |
+| [docs/nightly-shutdown.md](docs/nightly-shutdown.md) | Automated nightly shutdown/startup using OrbStack CLI and macOS launchd |
 | [k8s/apps/monitoring/README.md](k8s/apps/monitoring/README.md) | Grafana + Prometheus monitoring stack, ExternalSecret, SSO integration |
 | [k8s/apps/openclaw/README.md](k8s/apps/openclaw/README.md) | OpenClaw AI gateway deployment, configuration, image builds |
 | [k8s/apps/postgresql/README.md](k8s/apps/postgresql/README.md) | Database configuration, pg_hba.conf, PGDATA layout, password management |

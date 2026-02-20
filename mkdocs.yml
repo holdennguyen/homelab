@@ -42,6 +42,7 @@ nav:
   - Networking: networking.md
   - Bootstrap: bootstrap.md
   - Secret Management: secret-management.md
+  - Nightly Shutdown: nightly-shutdown.md
   - AI Agents: ai-agents.md
   - Git Workflow: git-workflow.md
   - Apps:
