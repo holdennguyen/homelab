@@ -19,7 +19,59 @@ This is a GitOps-driven homelab running on a Mac mini M4 with OrbStack Kubernete
 - Never commit secrets, API keys, or credentials to git. Use the Infisical → ESO pipeline (see `skills/secret-management/SKILL.md`).
 - ArgoCD Application CRs must follow the project and label conventions in `k8s/apps/argocd/README.md` (projects: `secrets`, `data`, `apps`; labels: `app.kubernetes.io/{name,part-of,component,managed-by}`).
 - Prefer Kustomize over Helm for app workloads. Helm is only used for upstream charts (ESO, Infisical).
+- Before modifying Helm `valuesObject`, always verify keys with `helm show values` — charts silently ignore unknown keys. See `kubernetes.mdc` for the full rule.
+- After merging changes to `main`, verify ArgoCD sync and pod health before considering the task complete. If services degrade, follow the rollback procedures in `skills/incident-response/SKILL.md`.
 - Documentation lives in `docs/` and is served by MkDocs. See the Documentation Rule below.
+
+## Mandatory Git Workflow (Cursor)
+
+The `main` branch is **protected**. Never push directly to `main` — all changes require a feature branch and a pull request. This applies to Cursor just as it applies to OpenClaw agents.
+
+### Branch workflow
+
+1. **Start from latest main:**
+   ```bash
+   git checkout main && git pull origin main
+   git checkout -b <type>/<short-description>
+   ```
+   Branch prefixes: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`, `security/`
+
+2. **Make changes** and commit with conventional messages:
+   ```bash
+   git add <files>
+   git commit -m "<type>: <description>"
+   ```
+   Types: `feat`, `fix`, `chore`, `docs`, `refactor`, `security`
+
+3. **Keep your branch up to date** — before every push:
+   ```bash
+   git fetch origin main
+   git merge origin/main --no-edit
+   ```
+
+4. **Push and create a PR:**
+   ```bash
+   git push -u origin HEAD
+   gh pr create --title "<type>: <description>" --body "<summary>"
+   ```
+
+### Rules
+
+- **Never push to `main` directly** — branch protection will reject it
+- **Never force-push to `main`** — this is destructive and irreversible
+- One PR per logical change — don't bundle unrelated changes
+- Include documentation updates in the same PR as the implementation
+- Never commit secrets, API keys, or credentials
+- After merge, verify ArgoCD sync and pod health (for K8s changes)
+- If a merge causes service degradation, follow rollback procedures in `skills/incident-response/SKILL.md`
+
+### Pre-merge validation (for K8s/Helm changes)
+
+Before merging PRs that modify cluster resources:
+- Verify Helm value keys exist: `helm show values <chart>` (see `kubernetes.mdc`)
+- Validate YAML: `kubectl apply --dry-run=client -f <file>`
+- Check container image compatibility with `securityContext` changes
+- Review ArgoCD sync wave dependencies
 
 ## Documentation Rule (mandatory)
 

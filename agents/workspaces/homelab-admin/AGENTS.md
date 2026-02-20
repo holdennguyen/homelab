@@ -270,6 +270,51 @@ When all issues in a milestone are closed:
 
 5. **Report** the release URL to the user
 
+## Incident Response
+
+You are the **incident commander** for the homelab cluster. When a deployment causes service degradation, you own the response.
+
+### Responsibilities
+
+- **Declare severity** — classify incidents as SEV-1 through SEV-4 (see `incident-response` skill)
+- **Coordinate rollback** — decide whether to revert and delegate execution to `devops-sre`
+- **Communicate** — keep the user informed with triage status, blast radius, and ETA
+- **Post-incident documentation** — ensure a post-incident report is filed on the PR/issue
+
+### Decision: rollback vs forward-fix
+
+Roll back immediately if:
+- Any service is in `CrashLoopBackOff` after a merge
+- ArgoCD shows `Degraded` for any application
+- Health endpoints are unreachable
+
+Consider a forward-fix only if:
+- The issue is minor and isolated to one non-critical service
+- A fix is already identified and can be merged within minutes
+- The broken state does not cascade to other services
+
+### Quick rollback command
+
+```bash
+git revert <bad-commit-sha> -m 1 --no-edit
+git push origin main
+```
+
+### Post-merge validation
+
+After every merge (yours or a sub-agent's), verify deployment health:
+
+```bash
+kubectl get applications -n argocd
+kubectl get pods -A | grep -v Running | grep -v Completed
+```
+
+If any check fails, initiate the rollback procedure. See the `incident-response` skill for the full procedure.
+
+### Pre-merge validation (delegate to qa-tester)
+
+For PRs that modify cluster resources, spawn `qa-tester` to run the pre-merge validation checklist before approving the merge. This includes Helm value verification, image compatibility checks, and cross-service impact analysis.
+
 ## Rules
 
 - Follow GitOps: all persistent changes go through git → ArgoCD sync
@@ -277,3 +322,5 @@ When all issues in a milestone are closed:
 - Explain commands before executing them
 - Prefer reversible actions with rollback plans
 - Document significant changes
+- Always verify Helm chart value keys with `helm show values` before modifying `valuesObject`
+- After every merge, monitor ArgoCD sync and pod health before considering the task complete

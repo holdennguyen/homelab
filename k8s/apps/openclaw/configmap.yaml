@@ -21,7 +21,7 @@ data:
             "default": true,
             "workspace": "/data/workspaces/homelab-admin",
             "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
-            "skills": ["homelab-admin", "gitops", "secret-management"],
+            "skills": ["homelab-admin", "gitops", "secret-management", "incident-response"],
             "subagents": {
               "allowAgents": ["devops-sre", "software-engineer", "security-analyst", "qa-tester"]
             }
@@ -31,7 +31,7 @@ data:
             "name": "DevOps SRE",
             "workspace": "/data/workspaces/devops-sre",
             "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
-            "skills": ["devops-sre", "gitops", "secret-management"],
+            "skills": ["devops-sre", "gitops", "secret-management", "incident-response"],
             "subagents": {
               "allowAgents": ["software-engineer", "security-analyst", "qa-tester"]
             }
@@ -61,7 +61,7 @@ data:
             "name": "QA Tester",
             "workspace": "/data/workspaces/qa-tester",
             "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
-            "skills": ["qa-tester", "gitops"],
+            "skills": ["qa-tester", "gitops", "incident-response"],
             "subagents": {
               "allowAgents": ["devops-sre", "software-engineer"]
             }

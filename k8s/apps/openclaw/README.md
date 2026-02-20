@@ -143,6 +143,8 @@ The git workflow details are embedded in each agent's `AGENTS.md` personality an
 
 **Milestones and releases:** Every issue and PR is assigned to a GitHub Milestone representing the next planned release (`vMAJOR.MINOR.PATCH`). Version bumps follow semantic versioning — derived from type labels (`type:feat` → MINOR, `type:fix` → PATCH) with an explicit `semver:breaking` label for MAJOR bumps. The `homelab-admin` orchestrator owns the release process: tagging `main`, creating GitHub Releases with auto-generated notes, and managing the milestone lifecycle. Sub-agents never create tags or releases.
 
+**Incident response:** Agents follow a structured incident response procedure when deployments cause service degradation. The `homelab-admin` orchestrator acts as incident commander, `devops-sre` executes rollbacks and cluster recovery, and `qa-tester` runs pre-merge and post-rollback verification checklists. All agents with the `incident-response` skill are trained to verify Helm chart value keys before PRs, check container image compatibility with `securityContext` changes, and run post-merge health checks. See the `incident-response` skill for the full procedure.
+
 ### Agent Footprint
 
 Every action is traceable to the specific agent that performed it:
@@ -484,24 +486,25 @@ flowchart TD
         S5["gitops"]
         S6["secret-management"]
         S7["qa-tester"]
+        S8["incident-response"]
     end
 
-    HA --> S1 & S5 & S6
-    DS --> S2 & S5 & S6
+    HA --> S1 & S5 & S6 & S8
+    DS --> S2 & S5 & S6 & S8
     SE --> S3
     SA --> S4 & S6
-    QA --> S7 & S5
+    QA --> S7 & S5 & S8
 ```
 
 Each agent has a `skills` allowlist in the configmap that restricts which skills it can see (omit = all skills; empty array = none):
 
 | Agent | Assigned Skills |
 |---|---|
-| `homelab-admin` | `homelab-admin`, `gitops`, `secret-management` |
-| `devops-sre` | `devops-sre`, `gitops`, `secret-management` |
+| `homelab-admin` | `homelab-admin`, `gitops`, `secret-management`, `incident-response` |
+| `devops-sre` | `devops-sre`, `gitops`, `secret-management`, `incident-response` |
 | `software-engineer` | `software-engineer` |
 | `security-analyst` | `security-analyst`, `secret-management` |
-| `qa-tester` | `qa-tester`, `gitops` |
+| `qa-tester` | `qa-tester`, `gitops`, `incident-response` |
 
 ### Agents
 
@@ -538,6 +541,7 @@ Homelab-specific skills live in `skills/` at the repo root and are mounted into 
 | `security-analyst` | STRIDE threat modeling, CIS hardening, container/image security, RBAC audit, secret lifecycle, supply chain security |
 | `qa-tester` | Test strategy, per-service acceptance criteria, full cluster validation, chaos testing, defect classification |
 | `gitops` | ArgoCD App of Apps pattern, sync management, mandatory git workflow, agent footprint conventions |
+| `incident-response` | Incident triage, rollback procedures, pre-merge validation, post-incident documentation |
 | `secret-management` | Infisical → ESO → K8s pipeline operations |
 | `common/Documentation` | Standardized documentation generation |
 

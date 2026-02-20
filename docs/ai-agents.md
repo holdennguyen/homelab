@@ -243,6 +243,39 @@ The homelab repository follows [Semantic Versioning 2.0.0](https://semver.org/) 
 
 GitHub auto-generates release notes from merged PRs, using the existing type and area labels for grouping.
 
+### Incident Response & Rollback
+
+Agents follow a structured incident response procedure when deployments cause service degradation. The procedure is codified in the `incident-response` skill and enforced across agent personalities.
+
+**Roles during an incident:**
+
+| Role | Agent | Responsibilities |
+|---|---|---|
+| Incident commander | `homelab-admin` | Declare severity, decide rollback vs forward-fix, coordinate response, ensure post-incident report |
+| Rollback executor | `devops-sre` | Triage cluster state, execute git reverts, recover stuck ArgoCD syncs, verify recovery |
+| Validation | `qa-tester` | Pre-merge validation (before PRs), post-rollback verification (after reverts) |
+
+**Pre-merge validation (prevents incidents):**
+
+All agents that modify cluster resources must verify their changes before submitting PRs:
+
+- **Helm value verification** — always confirm key paths exist via `helm show values` before modifying `valuesObject`. Charts silently ignore unknown keys.
+- **SecurityContext compatibility** — verify container images support non-root execution. Some images (e.g., Gitea with s6-overlay) require root at startup.
+- **Cross-service impact** — ensure changes don't break sync wave dependencies or shared resources.
+
+**Rollback procedure:**
+
+The standard rollback is a git revert pushed to `main`. ArgoCD auto-syncs the revert within ~3 minutes.
+
+```bash
+git revert <bad-commit-sha> -m 1 --no-edit
+git push origin main
+```
+
+For multi-commit rollbacks, restore files to a known-good commit. For stuck ArgoCD syncs, cancel operations and force hard refresh. Full procedures are documented in the `incident-response` skill.
+
+**Post-incident documentation** is mandatory for SEV-1 through SEV-3 incidents. Reports include timeline, root cause, blast radius, resolution, lessons learned, and action items.
+
 ### Agent Configuration
 
 Agent config lives in two places:
@@ -267,11 +300,11 @@ Each agent has a `skills` allowlist in the configmap that restricts which skills
 
 | Agent | Assigned Skills |
 |---|---|
-| `homelab-admin` | `homelab-admin`, `gitops`, `secret-management` |
-| `devops-sre` | `devops-sre`, `gitops`, `secret-management` |
+| `homelab-admin` | `homelab-admin`, `gitops`, `secret-management`, `incident-response` |
+| `devops-sre` | `devops-sre`, `gitops`, `secret-management`, `incident-response` |
 | `software-engineer` | `software-engineer` |
 | `security-analyst` | `security-analyst`, `secret-management` |
-| `qa-tester` | `qa-tester`, `gitops` |
+| `qa-tester` | `qa-tester`, `gitops`, `incident-response` |
 
 Cross-cutting skills (e.g. `secret-management`) are shared across agents that need them.
 
@@ -310,6 +343,7 @@ Skills provide domain-specific knowledge and commands to agents. They live in `s
 | `security-analyst` | Security audits, RBAC review, vulnerability assessment, STRIDE threat modeling, CIS hardening |
 | `qa-tester` | Deployment validation, service health testing, regression checks, per-service acceptance criteria |
 | `gitops` | ArgoCD App of Apps pattern, sync management, mandatory git workflow reference |
+| `incident-response` | Incident triage, rollback procedures, pre-merge validation, post-incident documentation |
 | `secret-management` | Infisical → ESO → K8s pipeline operations |
 
 ### Skill Format

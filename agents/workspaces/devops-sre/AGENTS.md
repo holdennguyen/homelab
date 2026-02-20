@@ -183,6 +183,78 @@ Before creating a PR, ask yourself:
 3. Did I resolve an incident? → Document the root cause, timeline, and prevention steps in the issue and update the service's Troubleshooting table.
 4. Can a reader of the docs still understand the current state of the system after my change? → If not, the docs are incomplete.
 
+## Incident Response & Rollback
+
+You are the primary executor of rollbacks and cluster recovery. When the orchestrator declares an incident, you triage and fix.
+
+### Triage sequence
+
+```bash
+kubectl get applications -n argocd
+kubectl get pods -A | grep -v Running | grep -v Completed
+kubectl get events -A --sort-by='.lastTimestamp' --field-selector type!=Normal | tail -30
+kubectl describe pod <crashing-pod> -n <namespace>
+kubectl logs -n <namespace> deploy/<name> --tail=100
+```
+
+### Rollback execution
+
+The standard rollback is a git revert pushed to `main`. ArgoCD auto-syncs within ~3 minutes.
+
+```bash
+# Revert a merge commit
+git revert <bad-commit-sha> -m 1 --no-edit
+git push origin main
+```
+
+For multi-commit rollbacks, use file-level restore:
+
+```bash
+git checkout <known-good-sha> -- path/to/affected/files
+git commit -m "revert: restore files to pre-<incident> state"
+git push origin main
+```
+
+### ArgoCD recovery
+
+If ArgoCD is stuck after a rollback:
+
+```bash
+# Cancel stuck operation
+kubectl patch application <app> -n argocd \
+  --type json -p '[{"op":"remove","path":"/operation"}]'
+
+# Force-delete crashing pods
+kubectl delete pod <pod> -n <namespace> --force --grace-period=0
+
+# Force hard refresh
+for app in $(kubectl get applications -n argocd -o jsonpath='{.items[*].metadata.name}'); do
+  kubectl patch application "$app" -n argocd \
+    --type merge -p '{"metadata":{"annotations":{"argocd.argoproj.io/refresh":"hard"}}}'
+done
+```
+
+### Post-rollback verification
+
+Run the full verification checklist from the `incident-response` skill:
+- All ArgoCD applications `Synced` + `Healthy`
+- All pods `Running` with zero recent restarts
+- All ExternalSecrets `SecretSynced`
+- Service endpoints reachable
+- No error events in the last 5 minutes
+
+### Pre-merge: Helm value verification
+
+Before submitting PRs that modify Helm `valuesObject`, always verify key paths:
+
+```bash
+helm show values <repo>/<chart> --version <version> | grep -A5 "<key>"
+helm template <release> <repo>/<chart> --version <version> \
+  --set <key>=<value> | grep -A10 "<expected-output>"
+```
+
+Never assume a Helm key exists. Charts silently ignore unknown keys.
+
 ## Rules
 
 - Always check `kubectl get events` and pod logs before proposing fixes
@@ -190,3 +262,6 @@ Before creating a PR, ask yourself:
 - All persistent changes go through the git workflow above — never use `kubectl apply` for long-lived resources
 - Document incident findings and remediation steps
 - Never expose secrets in logs or output
+- Always verify Helm chart value keys with `helm show values` before modifying `valuesObject`
+- Verify container image compatibility before applying `securityContext` changes
+- After every rollback, run the full post-rollback verification checklist

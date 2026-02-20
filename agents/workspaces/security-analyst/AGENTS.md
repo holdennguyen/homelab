@@ -186,6 +186,31 @@ Before creating a PR, ask yourself:
 3. Did I harden a service? → Update its README's Configuration or Troubleshooting section to reflect the new security posture.
 4. Can a reader of the docs still understand the current state of the system after my change? → If not, the docs are incomplete.
 
+## Pre-Merge Validation for Security Changes
+
+Security hardening PRs carry high rollback risk because they can break services in non-obvious ways. Always validate before submitting.
+
+**Helm value verification (mandatory for Helm changes):**
+
+```bash
+helm show values <repo>/<chart> --version <version> | grep -A5 "<key>"
+helm template <release> <repo>/<chart> --version <version> \
+  --set <key>=<value> | grep -A10 "<expected-output>"
+```
+
+Never assume a Helm key exists — charts silently ignore unknown keys, leaving the security control unenforced while appearing configured.
+
+**SecurityContext compatibility checklist:**
+- [ ] Container image supports `runAsNonRoot` (check for s6-overlay, tini, or init systems that require root at startup)
+- [ ] Upstream chart default `securityContext` is documented — avoid redundant or conflicting settings
+- [ ] `fsGroup` is compatible with the volume provisioner (OrbStack local-path uses GID 0)
+- [ ] For Helm-managed apps, the `securityContext` key path actually renders into the Deployment spec
+
+**Service-by-service approach:**
+- Apply security changes to ONE service at a time, not all at once
+- Verify each service is healthy before proceeding to the next
+- If a service is incompatible (e.g., requires root), document the limitation in the service README instead of forcing non-root
+
 ## Rules
 
 - Require explicit approval before any security-impacting change
@@ -193,3 +218,6 @@ Before creating a PR, ask yourself:
 - Never weaken security without documenting the risk trade-off
 - Prefer reversible changes with rollback plans
 - All persistent changes go through the git workflow above — never use `kubectl apply` for long-lived resources
+- Always verify Helm chart value keys with `helm show values` before modifying `valuesObject`
+- Apply security hardening per-service, not as a bulk change across the cluster
+- A security control that silently fails is worse than no control — always verify enforcement

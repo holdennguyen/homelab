@@ -174,6 +174,25 @@ Before creating a PR, ask yourself:
 3. Did I change a build process or add a dependency? → Update the Build/Deployment section of the service README.
 4. Can a reader of the docs still understand the current state of the system after my change? → If not, the docs are incomplete.
 
+## Pre-Merge Validation
+
+Before submitting PRs that modify Helm `valuesObject` or Kubernetes manifests, run these checks:
+
+**Helm value verification (mandatory for Helm changes):**
+
+```bash
+helm show values <repo>/<chart> --version <version> | grep -A5 "<key>"
+helm template <release> <repo>/<chart> --version <version> \
+  --set <key>=<value> | grep -A10 "<expected-output>"
+```
+
+Never assume a Helm key exists — charts silently ignore unknown keys.
+
+**SecurityContext changes:**
+- Verify the container image supports running as non-root (check for s6-overlay, tini, or similar init systems)
+- Check if the upstream chart already sets default security contexts
+- Test `fsGroup` compatibility with the volume provisioner
+
 ## Rules
 
 - Read and understand existing code before making changes
@@ -181,3 +200,5 @@ Before creating a PR, ask yourself:
 - Write tests alongside feature code
 - Verify library availability in the project before importing
 - Self-review diffs before proposing changes
+- Always verify Helm chart value keys with `helm show values` before modifying `valuesObject`
+- Verify container image compatibility before applying `securityContext` changes

@@ -244,6 +244,66 @@ If the merge has conflicts:
 - Before every `git push`
 - When you discover main has been updated while your PR is open
 
+### Pre-merge validation
+
+Before merging any PR that modifies cluster resources, run these checks. This prevents rollbacks and outages.
+
+**Manifest validation:**
+- Confirm YAML is valid: `kubectl apply --dry-run=client -f <file>`
+- Verify labels, namespaces, and resource references are correct
+- Ensure no secrets or credentials appear in the diff
+
+**Helm chart value verification (CRITICAL):**
+
+Before changing any Helm `valuesObject` in an ArgoCD Application CR, ALWAYS verify the key exists:
+
+```bash
+helm show values <repo>/<chart> --version <version> | grep -A5 "<key>"
+helm template <release> <repo>/<chart> --version <version> \
+  --set <key>=<value> | grep -A10 "<expected-output>"
+```
+
+Charts silently ignore unknown keys — the value appears set but has no effect. Never assume a key path is valid without verification.
+
+**Service compatibility:**
+- Container image supports the proposed configuration (e.g., some images require starting as root and drop privileges internally)
+- Volume permissions match `fsGroup`/`runAsUser` settings
+- Init systems (s6-overlay, tini) are compatible with securityContext changes
+
+### Post-merge verification
+
+After every merge to `main`, verify the deployment succeeded:
+
+```bash
+# ArgoCD sync status (wait ~3 minutes)
+kubectl get applications -n argocd
+
+# Pod health
+kubectl get pods -A | grep -v Running | grep -v Completed
+
+# Service endpoints (adapt to affected services)
+curl -sf http://localhost:<nodeport>/health
+```
+
+If any check fails, follow the rollback procedures in the `incident-response` skill.
+
+### Rollback
+
+When a merge to `main` causes service degradation, follow the `incident-response` skill for:
+- Git revert procedures (preferred for GitOps)
+- ArgoCD recovery (stuck syncs, force refresh)
+- Post-rollback verification checklist
+- Post-incident documentation requirements
+
+Quick reference for the most common rollback:
+
+```bash
+# Revert a merge commit
+git revert <bad-commit-sha> -m 1 --no-edit
+git push origin main
+# ArgoCD auto-syncs the revert within ~3 minutes
+```
+
 ### What NOT to do
 
 - Never push directly to `main`
@@ -254,6 +314,8 @@ If the merge has conflicts:
 - Never commit without the `[<agent-id>]` suffix in the message
 - Never create an issue or PR body without the agent signature footer
 - Never use a branch name without the `<agent-id>/` prefix
+- Never assume a Helm value key exists — always verify with `helm show values` or `helm template`
+- Never apply `securityContext` changes without verifying image compatibility
 
 ## App of Apps pattern
 
