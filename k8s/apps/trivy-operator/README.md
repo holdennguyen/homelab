@@ -28,21 +28,29 @@ flowchart TD
 
 ## Configuration
 
-The operator is deployed with default settings, which:
+The operator is deployed with tuned settings to balance scanning coverage with resource stability on a single-node homelab:
 
-- Scan images of running pods
-- Scan on pod creation and at regular intervals
-- Do not block pod scheduling (report-only)
-- Store reports as Kubernetes custom resources
+- Scans images of running pods on creation and at regular intervals
+- Does not block pod scheduling (report-only)
+- Stores reports as Kubernetes custom resources
+- Excludes the `openclaw` namespace (locally-built image not available from any registry)
+- Limits concurrent scan jobs to 3 to avoid Trivy cache lock contention
 
 ### Helm Values
 
-Overrides can be made in the Application CR's `spec.source.helm.valuesObject`.
+Overrides are set in the Application CR's `spec.source.helm.valuesObject`:
 
-Key options:
-- `resources`: CPU/memory requests/limits for the operator deployment
-- `trivy.ignoreUnfixed`: whether to ignore vulnerabilities without a fix
+| Key | Value | Purpose |
+|-----|-------|---------|
+| `resources.limits.memory` | `512Mi` | Operator deployment — prevents OOM on large clusters |
+| `resources.requests.memory` | `256Mi` | Operator deployment baseline |
+| `operator.scanJobsConcurrentLimit` | `3` | Prevents cache lock contention between parallel scan jobs |
+| `trivy.resources.limits.memory` | `1Gi` | Scan job containers — large images need more memory |
+| `excludeNamespaces` | `openclaw` | Skip namespaces with local-only images |
+
+Additional options:
 - `trivy.severity`: filter by severity (e.g., `HIGH`, `CRITICAL`)
+- `trivy.ignoreUnfixed`: whether to ignore vulnerabilities without a fix
 
 Refer to the [Trivy Operator documentation](https://github.com/aquasecurity/trivy-operator) for advanced configuration.
 
@@ -75,4 +83,7 @@ kubectl delete vulnerabilityreport --all -n <namespace>
 |---------|-------|-----|
 | No VulnerabilityReport CRs appear | Operator not running or RBAC issues | Check pod logs: `kubectl logs -n monitoring -l app.kubernetes.io/name=trivy-operator` |
 | Reports show `FAILED` | Image scan failed (private registry, large image, timeout) | Verify image pull secret exists; consider increasing resources/timeouts |
-| High CPU/Memory usage | Scanning many large images | Adjust operator resources; consider increasing limits |
+| Operator OOMKilled (exit 137) | Too many workloads to reconcile | Increase `resources.limits.memory` in Helm values |
+| "cache may be in use by another process" | Concurrent scan jobs contending on Trivy cache | Reduce `operator.scanJobsConcurrentLimit` (default 10) |
+| Scan job OOMKilled | Large container image exceeds scan job memory | Increase `trivy.resources.limits.memory` |
+| "unable to find the specified image" | Local-only image not in any registry | Add namespace to `excludeNamespaces` |
