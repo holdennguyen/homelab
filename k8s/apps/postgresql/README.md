@@ -173,6 +173,8 @@ This ensures that the container process does not have root privileges on the hos
 
 The official `postgres:15` Docker image defaults to running as UID 999, but we explicitly set these values to comply with cluster-wide Pod Security Standards (restricted profile).
 
+The deployment uses `strategy: Recreate` because PostgreSQL's PersistentVolumeClaim is RWO (ReadWriteOnce). A RollingUpdate would try to mount the volume on both old and new pods simultaneously, causing WAL corruption and data loss.
+
 ## Integration with Gitea
 
 Gitea connects to PostgreSQL using the Kubernetes Service DNS name:
