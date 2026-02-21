@@ -56,6 +56,10 @@ flowchart LR
 | Tailscale HTTPS | 8448 |
 | URL | `https://holdens-mac-mini.story-larch.ts.net:8448` |
 
+## Configuration
+
+OpenTelemetry is disabled by default via environment variables in the deployment to avoid unnecessary crash loops when no OTel collector is present.
+
 ## Updating
 
 To upgrade the dashboard image, update the tag in `deployment.yaml`:

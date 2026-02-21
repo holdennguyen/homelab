@@ -225,6 +225,9 @@ tailscale serve --bg --https 8445 http://localhost:30445
 
 # OpenClaw — custom HTTPS port 8447
 tailscale serve --bg --https 8447 http://localhost:30789
+
+# Trivy Dashboard — custom HTTPS port 8448
+tailscale serve --bg --https 8448 http://localhost:30448
 ```
 
 Verify:
@@ -250,6 +253,9 @@ https://holdens-mac-mini.story-larch.ts.net:8445 (tailnet only)
 
 https://holdens-mac-mini.story-larch.ts.net:8447 (tailnet only)
 |-- / proxy http://localhost:30789
+
+https://holdens-mac-mini.story-larch.ts.net:8448 (tailnet only)
+|-- / proxy http://localhost:30448
 ```
 
 ## Step 7: Verify Everything is Healthy
@@ -277,6 +283,7 @@ Access URLs after bootstrap:
 | Grafana | `https://holdens-mac-mini.story-larch.ts.net:8444` | SSO via Authentik |
 | Infisical | `https://holdens-mac-mini.story-larch.ts.net:8445` | Local admin |
 | OpenClaw | `https://holdens-mac-mini.story-larch.ts.net:8447` | Local |
+| Trivy Dashboard | `https://holdens-mac-mini.story-larch.ts.net:8448` | Bookmark via Authentik |
 
 ## Re-bootstrap from Scratch
 

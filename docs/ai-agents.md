@@ -341,7 +341,7 @@ Skills provide domain-specific knowledge and commands to agents. They live in `s
 | `devops-sre` | Infrastructure debugging, Terraform, incident response, SLOs, deployment strategies |
 | `software-engineer` | Code development, review, testing, K8s manifest conventions, dependency management |
 | `security-analyst` | Security audits, RBAC review, vulnerability assessment, STRIDE threat modeling, CIS hardening |
-| `qa-tester` | Deployment validation, service health testing, regression checks, per-service acceptance criteria |
+| `qa-tester` | Deployment validation, service health testing, regression checks, per-service acceptance criteria (ArgoCD, ESO, Infisical, OpenClaw, Monitoring, Authentik) |
 | `gitops` | ArgoCD App of Apps pattern, sync management, mandatory git workflow reference |
 | `incident-response` | Incident triage, rollback procedures, pre-merge validation, post-incident documentation |
 | `secret-management` | Infisical → ESO → K8s pipeline operations |

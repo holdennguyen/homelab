@@ -119,7 +119,6 @@ tailscale serve --bg http://localhost:30500
 |---|---|---|
 | Grafana | `auth.generic_oauth` | `https://holdens-mac-mini.story-larch.ts.net:8444` |
 | ArgoCD | `oidc.config` | `https://holdens-mac-mini.story-larch.ts.net:8443` |
-| Gitea | OAuth2 source | `https://holdens-mac-mini.story-larch.ts.net:8446` |
 | Infisical | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8445` |
 | Trivy Dashboard | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8448` |
 | Homelab Docs | Bookmark | `https://holdennguyen.github.io/homelab` |

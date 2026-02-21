@@ -52,6 +52,10 @@ documents:
     sources:
       - k8s/apps/trivy-operator/
 
+  - doc: k8s/apps/trivy-dashboard/README.md
+    sources:
+      - k8s/apps/trivy-dashboard/
+
   - doc: terraform/README.md
     sources:
       - terraform/

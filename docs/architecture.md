@@ -65,7 +65,7 @@ Applications are organized into three **AppProjects** that scope which repos, na
 |---|---|---|
 | `secrets` | Secret management infrastructure | `infisical`, `external-secrets`, `external-secrets-config` |
 | `data` | Databases and data stores | (reserved for future use) |
-| `apps` | User-facing applications | `monitoring`, `authentik`, `openclaw`, `trivy-operator`, `trivy-operator-vulnerability-scanner`, `namespace-security`, `networking-policies` |
+| `apps` | User-facing applications | `monitoring`, `authentik`, `openclaw`, `trivy-operator`, `trivy-operator-vulnerability-scanner`, `trivy-dashboard`, `namespace-security`, `networking-policies` |
 | `default` | Bootstrap only | `argocd-apps` (root) |
 
 ```mermaid
@@ -96,6 +96,7 @@ flowchart LR
             AuthApp["authentik"]
             OCApp["openclaw"]
             TrivyApp["trivy-operator"]
+            TrivyDashApp["trivy-dashboard"]
             NSApp["namespace-security"]
             NPApp["networking-policies"]
         end
@@ -207,6 +208,10 @@ flowchart TD
         OpenClawPod["OpenClaw Gateway\nNodePort :30789"]
     end
 
+    subgraph trivyDashNs["trivy-dashboard namespace"]
+        TrivyDashPod["Trivy Dashboard\nNodePort :30448"]
+    end
+
     AuthentikPod -. "OIDC" .-> GrafanaPod
     AuthentikPod -. "OIDC" .-> ArgoServer
     ESOPod --> CSS
@@ -228,6 +233,7 @@ Services are exposed through **Tailscale Serve**, which provides automatic TLS c
 | Grafana | `:30090` | `https://holdens-mac-mini.story-larch.ts.net:8444` | 8444 | SSO via Authentik |
 | Infisical | `:30445` | `https://holdens-mac-mini.story-larch.ts.net:8445` | 8445 | Local admin |
 | OpenClaw | `:30789` | `https://holdens-mac-mini.story-larch.ts.net:8447` | 8447 | Local |
+| Trivy Dashboard | `:30448` | `https://holdens-mac-mini.story-larch.ts.net:8448` | 8448 | Bookmark via Authentik |
 
 For the full networking reference, see [docs/networking.md](./networking.md).
 
@@ -272,6 +278,7 @@ homelab/
 │       ├── monitoring/             # Grafana ExternalSecret
 │       ├── openclaw/               # OpenClaw AI gateway manifests
 │       ├── trivy-operator/         # Trivy vulnerability scanner (README only; deployed via Helm)
+│       ├── trivy-dashboard/       # Trivy Operator Dashboard web UI
 │       ├── namespace-security/     # Pod Security Standard labels for namespaces
 │       └── networking-policies/    # Default-deny NetworkPolicies for all namespaces
 ├── docs/                           # MkDocs documentation site

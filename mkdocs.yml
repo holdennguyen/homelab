@@ -54,3 +54,4 @@ nav:
       - Monitoring: monitoring.md
       - OpenClaw: openclaw.md
       - Trivy Operator: trivy-operator.md
+      - Trivy Dashboard: trivy-dashboard.md

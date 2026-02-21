@@ -47,6 +47,10 @@ flowchart TD
         subgraph openclawNs["openclaw namespace"]
             OpenClawPod["OpenClaw Gateway\nNodePort :30789"]
         end
+
+        subgraph trivyDashNs["trivy-dashboard namespace"]
+            TrivyDash["Trivy Dashboard\nNodePort :30448"]
+        end
     end
 
     TF -- "Helm release" --> ArgoCD
@@ -59,6 +63,7 @@ flowchart TD
     ArgoCD -- "App of Apps" --> authentikNs
     ArgoCD -- "App of Apps" --> monNs
     ArgoCD -- "App of Apps" --> openclawNs
+    ArgoCD -- "App of Apps" --> trivyDashNs
     ArgoCD -- "manages" --> NsPolicies
     ArgoCD -- "manages" --> NetPolicies
     TrivyOp -->|watches pods| monNs
@@ -72,6 +77,7 @@ flowchart TD
     TServe -- ":8444 -> :30090" --> GrafanaPod
     TServe -- ":8445 -> :30445" --> InfisicalSvc
     TServe -- ":8447 -> :30789" --> OpenClawPod
+    TServe -- ":8448 -> :30448" --> TrivyDash
 ```
 
 ## Repository Structure
@@ -102,11 +108,12 @@ homelab/
 │       ├── namespace-security/    # Pod Security Standard labels per namespace
 │       ├── networking-policies/   # Default-deny NetworkPolicy per namespace
 │       ├── openclaw/              # OpenClaw AI gateway kustomize manifests
-│       └── trivy-operator/        # Container image vulnerability scanning
+│       ├── trivy-operator/        # Container image vulnerability scanning
+│       └── trivy-dashboard/       # Trivy Operator Dashboard web UI
 ├── docs/                          # MkDocs documentation site
 ├── agents/                        # OpenClaw agent definitions
 │   └── workspaces/                # Per-agent AGENTS.md personality files (5 agents)
-├── skills/                        # OpenClaw homelab-specific skills (9 domains)
+├── skills/                        # OpenClaw homelab-specific skills (8 domains)
 ├── openclaw/                      # OpenClaw source (git submodule)
 └── scripts/                       # Helper scripts (image builds, etc.)
 ```
@@ -143,6 +150,7 @@ sequenceDiagram
 | External Secrets Operator | Helm chart via ArgoCD | `external-secrets` | internal only |
 | Grafana + Prometheus | Helm chart via ArgoCD | `monitoring` | `https://holdens-mac-mini.story-larch.ts.net:8444` |
 | Trivy Operator | Helm chart via ArgoCD | `monitoring` | internal only (CRs: `kubectl get vulnerabilityreports -A`) |
+| Trivy Dashboard | Kustomize via ArgoCD | `trivy-dashboard` | `https://holdens-mac-mini.story-larch.ts.net:8448` |
 | OpenClaw | Kustomize via ArgoCD | `openclaw` | `https://holdens-mac-mini.story-larch.ts.net:8447` |
 | Namespace Security | Kustomize via ArgoCD | `argocd` | cluster-wide Pod Security Standard labels |
 | Network Policies | Kustomize via ArgoCD | `argocd` | default-deny ingress/egress per namespace |
@@ -193,6 +201,7 @@ Once ArgoCD deploys Infisical (check: `kubectl get pods -n infisical`), open the
 | `OPENCLAW_GATEWAY_TOKEN` | Random hex string (`openssl rand -hex 32`) |
 | `OPENROUTER_API_KEY` | OpenRouter API key from [openrouter.ai/keys](https://openrouter.ai/keys) |
 | `GEMINI_API_KEY` | Google Gemini API key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
+| `GITHUB_TOKEN` | GitHub personal access token for OpenClaw agent git operations |
 
 Then create a Machine Identity in Infisical (`Settings → Machine Identities → Universal Auth`), grant it **Member** access to the `homelab` project, update `terraform/terraform.tfvars` with the new `clientId` / `clientSecret`, and re-run `terraform apply` to update the credential. See [docs/bootstrap.md](docs/bootstrap.md) for the full step-by-step.
 
@@ -206,6 +215,7 @@ tailscale serve --bg --https 8443 http://localhost:30080          # ArgoCD
 tailscale serve --bg --https 8444 http://localhost:30090          # Grafana
 tailscale serve --bg --https 8445 http://localhost:30445          # Infisical
 tailscale serve --bg --https 8447 http://localhost:30789          # OpenClaw
+tailscale serve --bg --https 8448 http://localhost:30448          # Trivy Dashboard
 
 tailscale serve status
 ```
@@ -217,6 +227,7 @@ Access URLs (any Tailscale device):
 - Grafana: `https://holdens-mac-mini.story-larch.ts.net:8444`
 - Infisical: `https://holdens-mac-mini.story-larch.ts.net:8445`
 - OpenClaw: `https://holdens-mac-mini.story-larch.ts.net:8447`
+- Trivy Dashboard: `https://holdens-mac-mini.story-larch.ts.net:8448`
 
 ### Verify Deployment
 
@@ -254,6 +265,7 @@ kubectl get pods -A | grep -v Running | grep -v Completed
 | [k8s/apps/monitoring/README.md](k8s/apps/monitoring/README.md) | Grafana + Prometheus monitoring stack, ExternalSecret, SSO integration |
 | [k8s/apps/openclaw/README.md](k8s/apps/openclaw/README.md) | OpenClaw AI gateway deployment, configuration, image builds |
 | [k8s/apps/trivy-operator/README.md](k8s/apps/trivy-operator/README.md) | Container image vulnerability scanning, ClientServer mode, Helm values |
+| [k8s/apps/trivy-dashboard/README.md](k8s/apps/trivy-dashboard/README.md) | Trivy Operator Dashboard web UI, vulnerability report viewer |
 
 ## Documentation Freshness Tracking
 
@@ -279,3 +291,5 @@ When adding a new service or documentation file, add an entry to `.doc-manifest.
 4. **Logging** -- Loki for centralized log aggregation
 
 > **Completed in v1.1.0:** Security hardening — network policies (default-deny per namespace), Pod Security Standards enforcement, RBAC scope-down (OpenClaw cluster-admin removed), non-root execution for all services, and container image vulnerability scanning (Trivy Operator).
+
+> **Completed in v1.2.0:** Infrastructure optimization & observability — automated nightly shutdown/startup, monitoring dashboards and alerting rules as code, Gitea/PostgreSQL decommissioned (GitHub adopted), Authentik app portal with bookmarks, Trivy Dashboard, agent skills optimization.

@@ -45,7 +45,7 @@ flowchart TD
 | `argocd.tf` | ArgoCD Helm release, Infisical Application CR, root App of Apps |
 | `bootstrap-secrets.tf` | Namespaces and the three bootstrap K8s Secrets |
 | `variables.tf` | All variable declarations with descriptions and types |
-| `outputs.tf` | Post-apply instructions and access URLs |
+| `outputs.tf` | Post-apply instructions, Tailscale Serve commands, and access URLs |
 | `terraform.tfvars` | **Gitignored.** Actual sensitive values — copy from `terraform.tfvars.example` |
 | `terraform.tfvars.example` | Template showing all required variables with placeholder values |
 | `.terraform.lock.hcl` | Provider version lock file — committed to git |

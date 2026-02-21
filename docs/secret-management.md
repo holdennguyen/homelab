@@ -97,7 +97,8 @@ flowchart LR
                         s14["GRAFANA_OAUTH_CLIENT_SECRET"]
                         s16["OPENCLAW_GATEWAY_TOKEN"]
                         s17["OPENROUTER_API_KEY"]
-                        s18["GITHUB_TOKEN"]
+                        s18["GEMINI_API_KEY"]
+                        s19["GITHUB_TOKEN"]
                     end
                 end
             end
@@ -117,7 +118,7 @@ The ClusterSecretStore in `k8s/apps/external-secrets/cluster-secret-store.yaml` 
 - `environmentSlug: prod`
 - `secretsPath: /`
 
-This means any `ExternalSecret` using this store references secrets by their key name directly (e.g., `key: POSTGRES_PASSWORD`).
+This means any `ExternalSecret` using this store references secrets by their key name directly (e.g., `key: AUTHENTIK_SECRET_KEY`).
 
 ## How ExternalSecrets Work
 
@@ -136,8 +137,8 @@ sequenceDiagram
     CSS->>Infisical: POST /api/v1/auth/universal-auth/login
     Infisical-->>CSS: accessToken (JWT)
     ESO->>Infisical: GET /api/v3/secrets/raw?workspaceSlug=homelab&environment=prod
-    Infisical-->>ESO: { POSTGRES_PASSWORD: "abc123", ... }
-    ESO->>K8s: Create/Update Secret "postgresql-secret"
+    Infisical-->>ESO: { AUTHENTIK_SECRET_KEY: "abc123", ... }
+    ESO->>K8s: Create/Update Secret "authentik-secret"
     Note over ESO: Repeats every refreshInterval (1h)
 ```
 
@@ -264,7 +265,7 @@ flowchart TD
     D -- "InvalidProviderConfig\n403 Forbidden" --> F["Machine identity not added\nto homelab project in Infisical UI\n→ Project → Access Control → Add Identity"]
     D -- "InvalidProviderConfig\n404 Project not found" --> G["Project slug wrong\nCheck Infisical project settings\nEnsure slug = 'homelab'"]
     D -- "Valid / Ready: True" --> H["Store is fine, force ExternalSecret refresh:\nkubectl annotate externalsecret <name> -n <ns> force-sync=$(date +%s) --overwrite"]
-    B -- "secret key not found" --> I["Key name doesn't exist in Infisical\n→ Add it in Infisical UI\n→ homelab / prod / POSTGRES_PASSWORD etc."]
+    B -- "secret key not found" --> I["Key name doesn't exist in Infisical\n→ Add it in Infisical UI\n→ homelab / prod / AUTHENTIK_SECRET_KEY etc."]
 ```
 
 | Symptom | Cause | Fix |
