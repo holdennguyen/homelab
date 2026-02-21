@@ -31,7 +31,7 @@ Assess and harden the security posture of the homelab cluster, applications, and
 - Secrets managed through Infisical → ESO pipeline (never in git)
 - Network access restricted to Tailscale tailnet (private)
 - Bootstrap credentials managed by Terraform (gitignored tfvars)
-- ArgoCD SSH deploy key for GitHub repo access
+- ArgoCD clones repo via unauthenticated HTTPS (public repo, no credentials stored)
 - All external access is HTTPS via Tailscale Serve with Let's Encrypt certificates
 - OrbStack does not support NetworkPolicy enforcement (CNI limitation)
 
@@ -174,7 +174,7 @@ kubectl get pods -A -o jsonpath='{range .items[*]}{.metadata.namespace}/{.metada
 | Control | Status | Notes |
 |---|---|---|
 | GitHub branch protection | Enforced | PRs require review, no direct push to main |
-| SSH deploy key (read-only) | Active | ArgoCD uses SSH key for repo clone |
+| HTTPS repo access (no credentials) | Active | ArgoCD clones public repo via unauthenticated HTTPS |
 | Signed commits | Not enforced | Consider enabling GPG signing for agent commits |
 | Dependabot / Renovate | Not configured | Consider for Helm chart version updates |
 | Image scanning | Manual | Consider adding Trivy or Grype to CI |

@@ -54,7 +54,6 @@ Terraform bootstraps the cluster exactly once. After `terraform apply`, no more 
 | `infisical-secrets` K8s Secret | `infisical` namespace | Contains `ENCRYPTION_KEY` + `AUTH_SECRET` — Infisical needs these before it can run, so they can't come from Infisical |
 | `infisical-helm-secrets` K8s Secret | `argocd` namespace | Postgres + Redis passwords for the Infisical Helm chart. ArgoCD `Application` CRs don't support `valuesFrom` referencing K8s Secrets, so Terraform injects them via `helm.valuesObject` |
 | `infisical-machine-identity` K8s Secret | `external-secrets` namespace | ESO uses this to authenticate to Infisical. Terraform owns it so the credential can be rotated with `terraform apply` |
-| `repo-homelab` K8s Secret | `argocd` namespace | SSH deploy key for ArgoCD to clone the private GitHub repo |
 | ArgoCD root Application (`argocd-apps`) | `argocd` namespace | Triggers the App of Apps — the root of all GitOps |
 | ArgoCD Infisical Application (`infisical`) | `argocd` namespace | Created by Terraform because its Helm values embed sensitive credentials |
 
@@ -274,7 +273,7 @@ homelab/
 ├── terraform/                      # Layer 0 — bootstrap (run once)
 │   ├── README.md                   # Terraform variables and day-2 ops reference
 │   ├── providers.tf                # kubernetes + helm + local + null providers
-│   ├── argocd.tf                   # ArgoCD Helm release, Infisical App, root App, SSH credential
+│   ├── argocd.tf                   # ArgoCD Helm release, Infisical App, root App
 │   ├── bootstrap-secrets.tf        # K8s Secrets created from tfvars
 │   ├── variables.tf                # All variable declarations
 │   ├── outputs.tf                  # Post-apply instructions

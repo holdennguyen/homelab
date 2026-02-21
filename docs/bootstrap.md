@@ -12,7 +12,6 @@ This guide walks a new maintainer through setting up the homelab from a complete
 | `tailscale` | latest | [tailscale.com/download](https://tailscale.com/download) |
 | OrbStack | latest | [orbstack.dev](https://orbstack.dev) |
 | `openssl` | any | pre-installed on macOS |
-| `ssh-keygen` | any | pre-installed on macOS |
 
 Verify your cluster context:
 
@@ -334,7 +333,7 @@ terraform apply
 
 | Issue | Symptom | Fix |
 |---|---|---|
-| ArgoCD fails to pull repo | `App shows OutOfSync, authentication required` | Verify `argocd_repo_ssh_private_key` in tfvars is the correct private key authorized on GitHub |
+| ArgoCD fails to pull repo | `App shows OutOfSync` | Verify the HTTPS URL is reachable: `git ls-remote https://github.com/holdennguyen/homelab.git` |
 | Infisical CrashLoopBackOff | Pod restarts, DB migration errors in logs | PostgreSQL not ready yet — Kubernetes retries automatically. Wait ~2 minutes |
 | ESO ClusterSecretStore 401 | `InvalidProviderConfig: status-code=401` | Machine identity credentials are wrong or placeholders — re-run `terraform apply` with real values |
 | ExternalSecrets not syncing | `SecretSyncedError: ClusterSecretStore not ready` | ClusterSecretStore is still connecting — force refresh with annotate command |

@@ -189,7 +189,7 @@ flowchart LR
 | Control | Status | Details |
 |---|---|---|
 | Branch protection on `main` | Enforced | PRs require review; no direct push; linear history required |
-| ArgoCD SSH deploy key | Active | Read-only access to `holdennguyen/homelab` |
+| ArgoCD repo access (HTTPS) | Active | Unauthenticated HTTPS clone of public repo — no credentials stored |
 | ArgoCD self-heal | Enabled | Manual `kubectl` changes are reverted within ~3 minutes |
 | Helm chart version pinning | Enforced | All Application CRs pin `targetRevision` |
 | Container image scanning | Active | Trivy Operator (ClientServer mode) scans all running images |

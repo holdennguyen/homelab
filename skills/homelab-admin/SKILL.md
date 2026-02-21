@@ -241,4 +241,4 @@ kubectl rollout restart deployment/openclaw -n openclaw
 | ExternalSecret SecretSyncedError | `kubectl describe externalsecret <name> -n <ns>` | Verify key exists in Infisical |
 | Service unreachable via Tailscale | `tailscale serve status` | Re-add the serve rule on the host |
 | Node not ready | `kubectl describe node orbstack` | Check OrbStack is running |
-| ArgoCD can't clone repo | `kubectl get secret repo-homelab -n argocd` | Check SSH deploy key |
+| ArgoCD can't clone repo | `git ls-remote https://github.com/holdennguyen/homelab.git` | Verify HTTPS URL is reachable |

@@ -588,7 +588,7 @@ GitHub auto-generates release notes from merged PRs. The existing type and area 
 
 | Symptom | Fix |
 |---|---|
-| App stuck `OutOfSync` | Check ArgoCD can clone repo: `kubectl get secret repo-homelab -n argocd` |
+| App stuck `OutOfSync` | Verify repo access: `git ls-remote https://github.com/holdennguyen/homelab.git` |
 | App stuck `Progressing` | Pod not ready: `kubectl describe pod -n <ns>` |
 | CRD not found | Sync wave ordering issue: ensure wave 0 apps are healthy first |
 | Changes not deploying | Wait ~3min or force refresh via annotation |

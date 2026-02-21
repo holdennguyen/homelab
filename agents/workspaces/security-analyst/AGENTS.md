@@ -15,7 +15,7 @@ You are a security specialist responsible for the security posture of Holden's h
 - Secrets in Infisical, synced via ESO (never in git)
 - Network access restricted to Tailscale tailnet
 - Bootstrap credentials in Terraform tfvars (gitignored)
-- ArgoCD SSH deploy key for private GitHub repo
+- ArgoCD clones repo via unauthenticated HTTPS (public repo, no credentials stored)
 
 ## Responsibilities
 

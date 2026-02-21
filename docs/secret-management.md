@@ -20,7 +20,7 @@ flowchart TD
     end
 
     subgraph tfvars["terraform.tfvars (gitignored, local only)"]
-        TFVars["infisical_encryption_key\ninfisical_auth_secret\ninfisical_postgres_password\ninfisical_redis_password\ninfisical_machine_identity_client_id\ninfisical_machine_identity_client_secret\nargocd_repo_ssh_private_key\nargocd_oidc_client_secret"]
+        TFVars["infisical_encryption_key\ninfisical_auth_secret\ninfisical_postgres_password\ninfisical_redis_password\ninfisical_machine_identity_client_id\ninfisical_machine_identity_client_secret\nargocd_oidc_client_secret"]
     end
 
     subgraph tf["Terraform state"]
@@ -100,7 +100,6 @@ These secrets are the "chicken-and-egg" exceptions — they cannot come from Inf
 | `infisical-secrets` | `infisical` | `ENCRYPTION_KEY`, `AUTH_SECRET` | Infisical app encryption and session signing |
 | `infisical-helm-secrets` | `argocd` | `values.yaml` (YAML blob) | Postgres + Redis passwords passed to Infisical Helm chart via ArgoCD Application |
 | `infisical-machine-identity` | `external-secrets` | `clientId`, `clientSecret` | ESO authenticates to Infisical using this Universal Auth identity |
-| `repo-homelab` | `argocd` | `sshPrivateKey` | ArgoCD SSH key for cloning the private GitHub repo |
 | `argocd-secret` | `argocd` | `oidc.argocd.clientSecret` | ArgoCD OIDC client secret for Authentik SSO — set via Terraform `set_sensitive` Helm value. **Not** managed by ESO to avoid annotation-propagation conflicts. |
 
 ## Infisical Project Structure
@@ -299,21 +298,6 @@ ArgoCD's OIDC client secret for Authentik SSO is managed through Terraform Helm 
    cd terraform && terraform apply
    ```
    Helm updates `argocd-secret` with the new OIDC secret. ArgoCD picks it up on the next login — no pod restart required.
-
-### Rotating the ArgoCD SSH Deploy Key
-
-1. Generate a new key: `ssh-keygen -t ed25519 -f /tmp/new-argocd-key -N "" -C "argocd@homelab"`
-2. Add the new public key to GitHub: **repo → Settings → Deploy keys → Add deploy key** (read-only).
-3. Update `terraform/terraform.tfvars`:
-   ```hcl
-   argocd_repo_ssh_private_key = <<-EOT
-   -----BEGIN OPENSSH PRIVATE KEY-----
-   <paste new private key>
-   -----END OPENSSH PRIVATE KEY-----
-   EOT
-   ```
-4. Run `terraform apply`. The `repo-homelab` Secret in the `argocd` namespace is updated; ArgoCD picks it up within ~30 seconds.
-5. Remove the old public key from GitHub Deploy keys.
 
 ### Updating an Application Secret (e.g., Gitea's SECRET_KEY)
 
