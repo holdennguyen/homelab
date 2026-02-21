@@ -169,8 +169,6 @@ kubectl get pods -A | grep -v Running | grep -v Completed
 kubectl get externalsecrets -A
 
 # 4. Service endpoints reachable (adapt ports to your services)
-# Gitea
-curl -sf http://localhost:30300/api/v1/version
 # Monitoring (Grafana)
 curl -sf http://localhost:30400/api/health
 # Authentik

@@ -34,7 +34,6 @@ Define and track SLOs for every service. Even in a homelab, SLO thinking enforce
 |---|---|---|---|
 | ArgoCD | Sync success rate | 99% of syncs succeed within 5 min | `kubectl get applications -n argocd` — count `Synced`/total |
 | OpenClaw | Gateway availability | 99% uptime during active hours | Health endpoint `/health` returns 200 |
-| Gitea | HTTP availability | 99% uptime | Health endpoint returns 200 |
 | ESO | Secret sync success | 100% ExternalSecrets in `SecretSynced` | `kubectl get externalsecret -A` |
 | Infisical | API reachability | 99% uptime | Pod health + ESO sync success |
 | PostgreSQL | Pod readiness | 99.5% uptime | StatefulSet ready replicas |
@@ -49,8 +48,7 @@ Every container MUST have resource requests and limits. Follow these guidelines:
 
 | Workload type | CPU request | CPU limit | Memory request | Memory limit |
 |---|---|---|---|---|
-| Lightweight API (Gitea, OpenClaw) | 100m–250m | 1–2 cores | 256Mi–512Mi | 1–2Gi |
-| Database (PostgreSQL) | 250m–500m | 2 cores | 512Mi–1Gi | 2–4Gi |
+| Lightweight API (OpenClaw) | 100m–250m | 1–2 cores | 256Mi–512Mi | 1–2Gi |
 | Cache (Redis) | 100m | 500m | 128Mi | 512Mi |
 | Monitoring (Prometheus) | 250m | 2 cores | 512Mi | 2Gi |
 | Operators (ESO, ArgoCD) | 50m–100m | 500m–1 core | 128Mi–256Mi | 512Mi–1Gi |

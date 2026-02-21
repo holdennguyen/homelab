@@ -60,7 +60,6 @@ kubectl patch application <app-name> -n argocd \
 kubectl get applications -n argocd
 kubectl get pods -A | grep -v Running | grep -v Completed
 kubectl get externalsecrets -A
-curl -sf http://localhost:30300/api/v1/version   # Gitea
 curl -sf http://localhost:30789/health            # OpenClaw
 ```
 

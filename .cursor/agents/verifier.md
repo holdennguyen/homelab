@@ -31,7 +31,6 @@ Run these checks in order and report results:
 
 5. **Service endpoints** — key services reachable:
    ```bash
-   curl -sf http://localhost:30300/api/v1/version   # Gitea
    curl -sf http://localhost:30789/health            # OpenClaw
    ```
 

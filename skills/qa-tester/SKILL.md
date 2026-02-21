@@ -47,9 +47,7 @@ Focus testing effort based on risk:
 | ArgoCD | High | Critical | Manages all other deployments |
 | ESO + ClusterSecretStore | High | Critical | All secrets depend on it |
 | Infisical | High | Critical | Source of truth for secrets |
-| PostgreSQL | Medium | High | Data persistence, Gitea depends on it |
 | OpenClaw | Medium | High | Agent gateway, multiple components |
-| Gitea | Low | Medium | Independent service |
 | Monitoring | Low | Medium | Observability, non-blocking |
 
 ## Validation commands
@@ -101,22 +99,6 @@ kubectl top pods -A --sort-by=memory
 | Health endpoint | `kubectl exec -n openclaw deploy/openclaw -- wget -qO- http://localhost:18789/health` | 200 |
 | Config mounted | `kubectl exec -n openclaw deploy/openclaw -- cat /config/openclaw.json \| jq '.agents.list \| length'` | Agent count matches config |
 | Skills loaded | `kubectl exec -n openclaw deploy/openclaw -- ls /skills/` | All skill directories present |
-
-### Gitea
-
-| Check | Command | Pass criteria |
-|---|---|---|
-| Pod running | `kubectl get pods -n gitea-system -l app.kubernetes.io/name=gitea` | `Running`, 0 restarts |
-| HTTP health | `curl -sf http://localhost:30300/api/healthz` | 200 |
-| DB connection | `kubectl logs -n gitea-system deploy/gitea --tail=20 \| grep -i "database"` | No errors |
-
-### PostgreSQL
-
-| Check | Command | Pass criteria |
-|---|---|---|
-| Pod running | `kubectl get pods -n gitea-system -l app.kubernetes.io/name=postgresql` | `Running`, 0 restarts |
-| Accepting connections | `kubectl exec -n gitea-system deploy/postgresql -- pg_isready` | accepting connections |
-| PVC bound | `kubectl get pvc -n gitea-system` | `Bound` |
 
 ### Monitoring (Prometheus + Grafana)
 

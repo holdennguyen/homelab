@@ -106,11 +106,10 @@ flowchart LR
     end
 
     subgraph dataProj["data project"]
-        PG["postgresql"]
+        DataPlaceholder["(reserved)"]
     end
 
     subgraph appsProj["apps project"]
-        Gitea["gitea"]
         Mon["monitoring"]
         OC["openclaw"]
     end

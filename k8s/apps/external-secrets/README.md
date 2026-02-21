@@ -22,13 +22,19 @@ flowchart TD
         InfisicalAPI["Infisical API\nproject: homelab / env: prod"]
     end
 
-    subgraph giteaNs["gitea-system namespace"]
-        ES1["ExternalSecret: postgresql-secret"]
-        ES2["ExternalSecret: gitea-secret"]
-        ES3["ExternalSecret: gitea-admin-secret"]
-        K8sS1["K8s Secret: postgresql-secret"]
-        K8sS2["K8s Secret: gitea-secret"]
-        K8sS3["K8s Secret: gitea-admin-secret"]
+    subgraph authentikNs["authentik namespace"]
+        ES1["ExternalSecret: authentik-secret"]
+        K8sS1["K8s Secret: authentik-secret"]
+    end
+
+    subgraph monitoringNs["monitoring namespace"]
+        ES2["ExternalSecret: grafana-secret"]
+        K8sS2["K8s Secret: grafana-secret"]
+    end
+
+    subgraph openclawNs["openclaw namespace"]
+        ES3["ExternalSecret: openclaw-secret"]
+        K8sS3["K8s Secret: openclaw-secret"]
     end
 
     ESOApp -- "installs Helm chart\n(includes CRDs)" --> ESOOperator
@@ -129,7 +135,7 @@ flowchart LR
     end
 
     subgraph infisical["Infisical"]
-        Secret["POSTGRES_PASSWORD: abc123"]
+        Secret["MY_API_KEY: abc123"]
     end
 
     ES -- "secretStoreRef:\n  kind: ClusterSecretStore\n  name: infisical" --> CSS
@@ -184,9 +190,6 @@ env:
 
 | ExternalSecret | Namespace | K8s Secret Created | Keys | Consumed By |
 |---|---|---|---|---|
-| `postgresql-secret` | `gitea-system` | `postgresql-secret` | `POSTGRES_PASSWORD`, `POSTGRES_USER`, `POSTGRES_DB`, `GITEA_DB_PASSWORD` | PostgreSQL Deployment env vars; Gitea DB password |
-| `gitea-secret` | `gitea-system` | `gitea-secret` | `GITEA_SECRET_KEY`, `GITEA_OAUTH_CLIENT_SECRET` | Gitea Deployment `GITEA__security__SECRET_KEY`; Gitea OIDC init job |
-| `gitea-admin-secret` | `gitea-system` | `gitea-admin-secret` | `GITEA_ADMIN_USERNAME`, `GITEA_ADMIN_PASSWORD`, `GITEA_ADMIN_EMAIL` | `gitea-admin-init` PostSync Job |
 | `authentik-secret` | `authentik` | `authentik-secret` | `AUTHENTIK_SECRET_KEY`, `AUTHENTIK_BOOTSTRAP_PASSWORD`, `AUTHENTIK_BOOTSTRAP_TOKEN`, `AUTHENTIK_POSTGRESQL__PASSWORD`, `pg-password` | Authentik server + worker pods; embedded PostgreSQL |
 | `grafana-secret` | `monitoring` | `grafana-secret` | `admin-user`, `admin-password`, `oauth-client-id`, `oauth-client-secret` | Grafana admin login; Grafana OIDC via Authentik |
 | `openclaw-secret` | `openclaw` | `openclaw-secret` | `OPENCLAW_GATEWAY_TOKEN`, `OPENROUTER_API_KEY`, `GEMINI_API_KEY`, `GITHUB_TOKEN` | OpenClaw gateway env vars, agent git workflow |
@@ -213,18 +216,18 @@ kubectl describe clustersecretstore infisical
 kubectl get externalsecret -A
 
 # Check specific ExternalSecret
-kubectl describe externalsecret postgresql-secret -n gitea-system
+kubectl describe externalsecret authentik-secret -n authentik
 
 # Force immediate reconciliation (skips refreshInterval)
-kubectl annotate externalsecret postgresql-secret -n gitea-system \
+kubectl annotate externalsecret authentik-secret -n authentik \
   force-sync=$(date +%s) --overwrite
 
 # View the created K8s Secret (base64 encoded)
-kubectl get secret postgresql-secret -n gitea-system -o yaml
+kubectl get secret authentik-secret -n authentik -o yaml
 
 # Decode a specific secret value
-kubectl get secret postgresql-secret -n gitea-system \
-  -o jsonpath='{.data.POSTGRES_PASSWORD}' | base64 -d
+kubectl get secret openclaw-secret -n openclaw \
+  -o jsonpath='{.data.OPENCLAW_GATEWAY_TOKEN}' | base64 -d
 
 # Check ESO operator logs
 kubectl logs -n external-secrets -l app.kubernetes.io/name=external-secrets --tail=50

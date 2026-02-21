@@ -108,21 +108,12 @@ flowchart TD
         subgraph project["Project: homelab\nslug: homelab"]
             subgraph prod["Environment: prod"]
                 subgraph root["Path: /  (root)"]
-                    s1["POSTGRES_PASSWORD"]
-                    s2["POSTGRES_USER"]
-                    s3["POSTGRES_DB"]
-                    s4["GITEA_DB_PASSWORD"]
-                    s5["GITEA_SECRET_KEY"]
-                    s6["GITEA_ADMIN_USERNAME"]
-                    s7["GITEA_ADMIN_PASSWORD"]
-                    s8["GITEA_ADMIN_EMAIL"]
                     s9["AUTHENTIK_SECRET_KEY"]
                     s10["AUTHENTIK_BOOTSTRAP_PASSWORD"]
                     s11["AUTHENTIK_BOOTSTRAP_TOKEN"]
                     s12["AUTHENTIK_POSTGRES_PASSWORD"]
                     s13["GRAFANA_ADMIN_PASSWORD"]
                     s14["GRAFANA_OAUTH_CLIENT_SECRET"]
-                    s15["GITEA_OAUTH_CLIENT_SECRET"]
                     s16["OPENCLAW_GATEWAY_TOKEN"]
                     s17["OPENROUTER_API_KEY"]
                     s17b["GEMINI_API_KEY"]
@@ -138,24 +129,6 @@ flowchart TD
 
 ## Complete Secrets Inventory
 
-### Application Credentials
-
-| Key | Used By | Value Constraints | How to Generate |
-|---|---|---|---|
-| `POSTGRES_PASSWORD` | PostgreSQL Deployment env `POSTGRES_PASSWORD` | Any string, no special char limits | `openssl rand -hex 12` |
-| `POSTGRES_USER` | PostgreSQL Deployment env `POSTGRES_USER` | Static: `gitea` | `gitea` |
-| `POSTGRES_DB` | PostgreSQL Deployment env `POSTGRES_DB` | Static: `gitea` | `gitea` |
-| `GITEA_DB_PASSWORD` | Gitea Deployment env `GITEA__database__PASSWD` | **Must equal `POSTGRES_PASSWORD`** | same as `POSTGRES_PASSWORD` |
-| `GITEA_SECRET_KEY` | Gitea Deployment env `GITEA__security__SECRET_KEY` | Any base64 string | `openssl rand -base64 32` |
-
-### UI Credentials
-
-| Key | Used By | Value Constraints | How to Generate |
-|---|---|---|---|
-| `GITEA_ADMIN_USERNAME` | `gitea-admin-init` PostSync Job | Valid Gitea username | e.g. `holden` |
-| `GITEA_ADMIN_PASSWORD` | `gitea-admin-init` PostSync Job | Any string | `openssl rand -hex 12` |
-| `GITEA_ADMIN_EMAIL` | `gitea-admin-init` PostSync Job | Valid email | your email |
-
 ### SSO & Monitoring Credentials
 
 | Key | Used By | Value Constraints | How to Generate |
@@ -166,8 +139,6 @@ flowchart TD
 | `AUTHENTIK_POSTGRES_PASSWORD` | Authentik ExternalSecret | Authentik internal PostgreSQL | `openssl rand -hex 12` |
 | `GRAFANA_ADMIN_PASSWORD` | Grafana ExternalSecret | Break-glass admin access | `openssl rand -hex 12` |
 | `GRAFANA_OAUTH_CLIENT_SECRET` | Grafana ExternalSecret | OIDC client secret for Authentik | Generated when creating Authentik provider |
-| `GITEA_OAUTH_CLIENT_SECRET` | Gitea ExternalSecret | OIDC client secret for Authentik | Generated when creating Authentik provider |
-
 ### AI Gateway Credentials
 
 | Key | Used By | Value Constraints | How to Generate |
@@ -211,7 +182,6 @@ The slug is hardcoded in `k8s/apps/external-secrets/cluster-secret-store.yaml`. 
 ### Step 3 — Add Secrets
 
 Navigate to `homelab` project → `prod` environment → click the **+** to add secrets. Add every key in the secrets inventory table above. Pay special attention to:
-- `GITEA_DB_PASSWORD` must equal `POSTGRES_PASSWORD` exactly
 - `AUTHENTIK_SECRET_KEY` must never be changed after first install
 
 ### Step 4 — Create Machine Identity

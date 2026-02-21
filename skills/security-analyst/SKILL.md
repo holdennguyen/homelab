@@ -41,7 +41,7 @@ Apply STRIDE for every new service or significant configuration change:
 
 | Threat | Question to ask | Homelab mitigations |
 |---|---|---|
-| **Spoofing** | Can an attacker impersonate a user or service? | Tailscale identity (WireGuard), OPENCLAW_GATEWAY_TOKEN, Gitea auth |
+| **Spoofing** | Can an attacker impersonate a user or service? | Tailscale identity (WireGuard), OPENCLAW_GATEWAY_TOKEN, Authentik SSO |
 | **Tampering** | Can data in transit or at rest be modified? | WireGuard encryption (Tailscale), ArgoCD selfHeal reverts unauthorized changes |
 | **Repudiation** | Can actions be performed without accountability? | Agent footprint (git identity, labeled issues/PRs), pod audit logs |
 | **Information Disclosure** | Can secrets or data leak? | Secrets in Infisical (never git), ESO sync, Tailscale-only access |
@@ -135,8 +135,6 @@ Rule: NodePort services are accessible only on localhost. External access is exc
 | OpenClaw | `openclaw:latest` | Built locally from submodule + `Dockerfile.openclaw` | Yes (source in repo) |
 | ArgoCD | Official Helm chart images | `quay.io/argoproj/argocd` | Yes (upstream) |
 | ESO | Official Helm chart images | `ghcr.io/external-secrets/external-secrets` | Yes (upstream) |
-| Gitea | `gitea/gitea` | Docker Hub official | Yes (upstream) |
-| PostgreSQL | `postgres` | Docker Hub official | Yes (upstream) |
 | Prometheus/Grafana | kube-prometheus-stack images | Upstream Helm chart | Yes (upstream) |
 
 Flag any image that doesn't come from an official or verified source.

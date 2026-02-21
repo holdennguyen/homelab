@@ -27,8 +27,6 @@ flowchart TD
         RootApp -- "watches" --> ArgoDir
         ArgoDir -- "creates" --> ESOApp["Application: external-secrets"]
         ArgoDir -- "creates" --> ESCApp["Application: external-secrets-config"]
-        ArgoDir -- "creates" --> PGApp["Application: postgresql"]
-        ArgoDir -- "creates" --> GiteaApp["Application: gitea"]
         ArgoDir -- "creates" --> MonApp["Application: monitoring"]
         ArgoDir -- "creates" --> AuthApp["Application: authentik"]
         ArgoDir -- "creates" --> OCApp["Application: openclaw"]
@@ -51,8 +49,6 @@ flowchart TD
 | `projects/apps.yaml` | AppProject for user-facing applications |
 | `applications/external-secrets-app.yaml` | ESO Helm chart (sync-wave 0 — installs CRDs first) |
 | `applications/external-secrets-config-app.yaml` | ClusterSecretStore (sync-wave 1 — after ESO CRDs) |
-| `applications/postgresql-app.yaml` | PostgreSQL deployment in `gitea-system` namespace |
-| `applications/gitea-app.yaml` | Gitea deployment in `gitea-system` namespace |
 | `applications/monitoring-app.yaml` | kube-prometheus-stack Helm chart (Grafana + Prometheus) |
 | `applications/monitoring-config-app.yaml` | Grafana ExternalSecret (monitoring namespace) |
 | `applications/authentik-app.yaml` | Authentik SSO Helm chart |
@@ -86,7 +82,6 @@ flowchart LR
     end
 
     subgraph appsProj["apps project"]
-        A4["gitea"]
         A5["monitoring"]
         A6["authentik"]
         A7["openclaw"]
@@ -110,7 +105,7 @@ Sync waves control the order in which resources are applied. AppProjects must ex
 | 0 | `external-secrets` | Installs the ESO Helm chart + CRDs (`ExternalSecret`, `ClusterSecretStore`, etc.) |
 | 1 | `external-secrets-config` | Applies the `ClusterSecretStore` — requires CRDs from wave 0 to be present |
 | 2 | `trivy-operator` | Vulnerability scanner — after core apps are synced |
-| (default) | `postgresql`, `gitea`, `monitoring`, `authentik`, `openclaw`, `namespace-security`, `networking-policies` | No ordering requirements between them |
+| (default) | `monitoring`, `authentik`, `openclaw`, `namespace-security`, `networking-policies` | No ordering requirements between them |
 
 ## ArgoCD Configuration
 
@@ -241,7 +236,7 @@ kubectl get applications -n argocd
 kubectl get pods -n argocd
 
 # Force an immediate sync on a specific application
-kubectl patch application gitea -n argocd \
+kubectl patch application openclaw -n argocd \
   --type merge -p '{"metadata":{"annotations":{"argocd.argoproj.io/refresh":"hard"}}}'
 
 # View ArgoCD server logs

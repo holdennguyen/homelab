@@ -336,7 +336,6 @@ python scripts/doc-freshness.py --markdown     # Markdown table for PR comments
 ```
   Document                             Status    Doc         Source      Behind
   ───────────────────────────────────  ────────  ──────────  ──────────  ──────────
-  ✓ k8s/apps/gitea/README.md            ok        3cce3e9c    05e88155    —
   ✗ docs/networking.md                   STALE     331be14f    f591ad60    25 commits
 ```
 
@@ -374,7 +373,6 @@ kubectl get pods -A | grep -v Running | grep -v Completed
 kubectl get externalsecrets -A
 
 # 4. Service endpoints reachable
-curl -sf http://localhost:30300/api/v1/version   # Gitea
 curl -sf http://localhost:30400/api/health        # Grafana
 curl -sf http://localhost:30600/api/v3/root/config/  # Authentik
 curl -sf http://localhost:30789/health            # OpenClaw
