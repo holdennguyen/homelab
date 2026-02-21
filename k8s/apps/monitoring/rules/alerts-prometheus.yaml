@@ -23,7 +23,7 @@ spec:
             description: "Target {{ $labels.job }} (instance {{ $labels.instance }}) has been down for more than 3 minutes"
             runbook_url: https://github.com/holdennguyen/homelab/tree/main/docs/runbooks#prometheus-target-missing
         - alert: PrometheusTooManyChunks
-          expr: prometheus_tsdb_head_chunks > 4
+          expr: prometheus_tsdb_head_chunks > 500000
           for: 5m
           labels:
             severity: warning

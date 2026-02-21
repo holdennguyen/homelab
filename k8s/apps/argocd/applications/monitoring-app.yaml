@@ -94,7 +94,7 @@ spec:
 
         # Alertmanager
         alertmanager:
-          config: |
+          config:
             global:
               resolve_timeout: 5m
             route:
@@ -104,43 +104,44 @@ spec:
               group_interval: 5m
               repeat_interval: 4h
               routes:
-                - match:
-                    severity: critical
+                - matchers:
+                    - severity = critical
                   receiver: openclaw
                   group_wait: 0s
                   group_interval: 1m
                   repeat_interval: 5m
-                - match:
-                    severity: warning
+                - matchers:
+                    - severity = warning
                   receiver: openclaw
                   group_wait: 30s
                   group_interval: 5m
                   repeat_interval: 4h
                   mute_time_intervals: ['nightly-shutdown']
-                - match:
-                    severity: info
+                - matchers:
+                    - severity = info
                   receiver: silence
             receivers:
               - name: openclaw
-                slack_configs:
-                  - api_url: "http://openclaw.openclaw:18789/hooks/alertmanager"
-                    channel: "#alerts"
+                webhook_configs:
+                  - url: "http://openclaw.openclaw:18789/hooks/alertmanager"
                     send_resolved: true
                     http_config:
                       bearer_token_file: /etc/alertmanager/token/token
               - name: silence
             inhibit_rules:
-              - source_match:
-                  severity: critical
-                  component: node
-                target_match:
-                  severity: warning
-                  component: pod
-                equal: [namespace, alertname]
+              - source_matchers:
+                  - severity = critical
+                  - component = node
+                target_matchers:
+                  - severity = warning
+                  - component = pod
+                equal: ['namespace', 'alertname']
             mute_time_intervals:
               - name: nightly-shutdown
-                start_time: '23:30'
-                end_time: '06:30'
+                time_intervals:
+                  - times:
+                      - start_time: '23:30'
+                        end_time: '06:30'
           alertmanagerSpec:
             securityContext:
               runAsUser: 1000

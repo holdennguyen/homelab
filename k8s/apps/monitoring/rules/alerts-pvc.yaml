@@ -15,7 +15,7 @@ spec:
         - alert: PVCUsageTooHigh
           expr: |
             (
-              kubelet_volume_stats_used_bytes_bytes / kubelet_volume_stats_capacity_bytes
+              kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes
             ) * 100 > 80
           for: 5m
           labels:
