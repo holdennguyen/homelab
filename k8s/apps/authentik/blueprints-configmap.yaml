@@ -10,9 +10,10 @@ data:
       - model: authentik_core.application
         id: app-infisical
         state: present
+        identifiers:
+          slug: infisical
         attrs:
           name: Infisical
-          slug: infisical
           group: Infrastructure
           meta_launch_url: https://holdens-mac-mini.story-larch.ts.net:8445
           meta_icon: https://raw.githubusercontent.com/Infisical/infisical/main/docs/static/img/logo-dark.png
@@ -21,9 +22,10 @@ data:
       - model: authentik_core.application
         id: app-mkdocs
         state: present
+        identifiers:
+          slug: mkdocs
         attrs:
           name: Homelab Docs
-          slug: mkdocs
           group: Documentation
           meta_launch_url: https://holdennguyen.github.io/homelab
           meta_icon: https://squidfunk.github.io/mkdocs-material/assets/logo.png
@@ -32,9 +34,10 @@ data:
       - model: authentik_core.application
         id: app-trivy
         state: present
+        identifiers:
+          slug: trivy
         attrs:
           name: Trivy Operator
-          slug: trivy
           group: Security
           meta_launch_url: ""
           meta_icon: https://raw.githubusercontent.com/aquasecurity/trivy/main/docs/docs/imgs/logo.png

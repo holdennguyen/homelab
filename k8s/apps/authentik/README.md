@@ -135,9 +135,10 @@ For services without native OIDC support, you can add them to the Authentik port
       - model: authentik_core.application
         id: app-my-service
         state: present
+        identifiers:
+          slug: my-service
         attrs:
           name: My Service
-          slug: my-service
           group: Development # Or whatever logical group makes sense
           meta_launch_url: https://url-to-service
           meta_icon: https://url-to-icon.png
