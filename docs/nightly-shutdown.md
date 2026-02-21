@@ -30,7 +30,7 @@ Two wrapper scripts are provided in `scripts/` to add safety checks, logging, an
 Stops the OrbStack Kubernetes cluster after checking state and logging.
 
 - Checks if the cluster is running before attempting to stop
-- Logs to `/var/log/homelab/shutdown.log`
+- Logs to `~/Library/Logs/homelab/shutdown.log`
 - Verifies cluster has stopped after the command
 - Idempotent: safe to run even if already stopped
 
@@ -44,7 +44,7 @@ Starts the OrbStack Kubernetes cluster and waits for full health:
 - Waits for critical system pods (kube-system, cert-manager, etc.) to be Running
 - Triggers an ArgoCD hard refresh to re-sync all applications
 - Waits up to 10 minutes for ArgoCD to report all apps Synced and Healthy
-- Logs to `/var/log/homelab/startup.log`
+- Logs to `~/Library/Logs/homelab/startup.log`
 - Includes summary of cluster state at the end
 
 Both scripts use timestamped logging for observability.
@@ -86,14 +86,12 @@ Runs daily at **06:30** (6:30 AM).
 On the Mac mini host:
 
 ```bash
-# 1. Copy the plist files to LaunchAgents (user-level, runs when user is logged in)
+# 1. Create the log directory
+mkdir -p ~/Library/Logs/homelab
+
+# 2. Copy the plist files to LaunchAgents (user-level, runs when user is logged in)
 cp scripts/com.homelab.orbstop.plist ~/Library/LaunchAgents/
 cp scripts/com.homelab.orbstart.plist ~/Library/LaunchAgents/
-
-# 2. IMPORTANT: Edit the scripts paths in the plists
-# In both plists, change /path/to/homelab/scripts/orb-*.sh
-# to the actual absolute path where you placed the scripts.
-# Example: /Users/holden/homelab/scripts/orb-stop.sh
 
 # 3. Load the jobs into launchd
 launchctl load ~/Library/LaunchAgents/com.homelab.orbstop.plist
@@ -167,18 +165,17 @@ This means manual testing (running the scripts at any time) is safe.
 
 ### Logging
 
-All logs are written to `/var/log/homelab/`:
+All logs are written to `~/Library/Logs/homelab/`:
 
-- **Shutdown log**: `/var/log/homelab/shutdown.log`
-- **Startup log**: `/var/log/homelab/startup.log`
+- **Shutdown log**: `~/Library/Logs/homelab/shutdown.log`
+- **Startup log**: `~/Library/Logs/homelab/startup.log`
 
-Logs include timestamps, log levels, and detailed progress information.
+Launchd captures stdout/stderr from the scripts and writes them to these files. The scripts output timestamped, leveled log lines to stdout.
 
-**Log Rotation**: These logs are not automatically rotated. Monitor their size and manually truncate or set up a separate logrotate mechanism if needed:
+**Log Rotation**: These logs are not automatically rotated. Monitor their size and manually truncate if needed:
 
 ```bash
-# Truncate a log file
-> /var/log/homelab/shutdown.log
+> ~/Library/Logs/homelab/shutdown.log
 ```
 
 ### Observability
@@ -187,16 +184,16 @@ Check recent activity:
 
 ```bash
 # View shutdown logs
-tail -f /var/log/homelab/shutdown.log
+tail -f ~/Library/Logs/homelab/shutdown.log
 
 # View startup logs
-tail -f /var/log/homelab/startup.log
+tail -f ~/Library/Logs/homelab/startup.log
 
 # Check if jobs are loaded
 launchctl list | grep homelab
 
 # Check last run timestamps
-ls -la /var/log/homelab/
+ls -la ~/Library/Logs/homelab/
 ```
 
 ## Testing Procedure
@@ -208,12 +205,12 @@ Run each script manually to verify they work:
 ```bash
 # Stop test
 ./scripts/orb-stop.sh
-# Check logs: cat /var/log/homelab/shutdown.log
+# Check logs: cat ~/Library/Logs/homelab/shutdown.log
 # Verify cluster stopped: orb status k8s (should error)
 
 # Start test
 ./scripts/orb-start.sh
-# Check logs: cat /var/log/homelab/startup.log
+# Check logs: cat ~/Library/Logs/homelab/startup.log
 # Verify cluster health:
 #   kubectl get nodes (all Ready)
 #   kubectl get pods --all-namespaces (check system pods Running)
@@ -232,11 +229,11 @@ launchctl load ~/Library/LaunchAgents/com.homelab.orbstop.plist
 launchctl start com.homelab.orbstop
 
 # Monitor the log
-tail -f /var/log/homelab/shutdown.log
+tail -f ~/Library/Logs/homelab/shutdown.log
 
 # After it completes, test startup
 launchctl start com.homelab.orbstart
-tail -f /var/log/homelab/startup.log
+tail -f ~/Library/Logs/homelab/startup.log
 ```
 
 ### 3. Full Cycle Validation
@@ -282,20 +279,16 @@ Document any issues found.
 ### ArgoCD not syncing
 
 - Check ArgoCD status: `kubectl get applications -n argocd`
-- Manually trigger refresh: `kubectl patch application <app> -n argocd --type merge -p '{"metadata":{"annotations":{"argocd.argoproj.io/refresh":"hard"}}}''``
+- Manually trigger refresh: `kubectl patch application <app> -n argocd --type merge -p '{"metadata":{"annotations":{"argocd.argoproj.io/refresh":"hard"}}}'`
 - Check ArgoCD logs: `kubectl logs -n argocd deploy/argocd-server`
 - Verify repo connectivity and credentials
 
-### Permissions issues with `/var/log/homelab/`
+### Log directory missing
 
-The scripts attempt to create the log directory. If they fail (e.g., first run before manual directory creation with proper ownership), they will continue but logs may not be written.
-
-Ensure the directory exists with correct ownership:
+Logs are written to `~/Library/Logs/homelab/`. Create it before first use:
 
 ```bash
-sudo mkdir -p /var/log/homelab
-sudo chown $(whoami):staff /var/log/homelab
-chmod 755 /var/log/homelab
+mkdir -p ~/Library/Logs/homelab
 ```
 
 ## Rollback
@@ -309,7 +302,7 @@ To revert this automation:
    ```
 2. Delete the plist files from `~/Library/LaunchAgents/`
 3. (Optional) Delete the scripts from `scripts/` if they are no longer needed
-4. (Optional) Delete the logs: `rm -rf /var/log/homelab`
+4. (Optional) Delete the logs: `rm -rf ~/Library/Logs/homelab`
 
 The OrbStack cluster will remain running continuously after rollback. To stop it manually, use `orb stop k8s`.
 

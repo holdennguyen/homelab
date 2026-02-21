@@ -12,7 +12,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>/path/to/homelab/scripts/orb-start.sh</string>
+        <string>/Users/holden.nguyen/homelab/scripts/orb-start.sh</string>
     </array>
 
     <key>RunAtLoad</key>
@@ -28,9 +28,9 @@
 
     <!-- Standard output and error go to log files -->
     <key>StandardOutPath</key>
-    <string>/var/log/homelab/startup.log</string>
+    <string>/Users/holden.nguyen/Library/Logs/homelab/startup.log</string>
     <key>StandardErrorPath</key>
-    <string>/var/log/homelab/startup.log</string>
+    <string>/Users/holden.nguyen/Library/Logs/homelab/startup.log</string>
 
     <!-- Environment: ensure orb and kubectl are in PATH -->
     <key>EnvironmentVariables</key>
