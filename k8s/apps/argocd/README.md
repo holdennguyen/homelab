@@ -33,6 +33,7 @@ flowchart TD
         ArgoDir -- "creates" --> AuthApp["Application: authentik"]
         ArgoDir -- "creates" --> OCApp["Application: openclaw"]
         ArgoDir -- "creates" --> TrivyApp["Application: trivy-operator"]
+        ArgoDir -- "creates" --> TrivyScannerApp["Application: trivy-operator-vulnerability-scanner"]
         ArgoDir -- "creates" --> NSApp["Application: namespace-security"]
         ArgoDir -- "creates" --> NPApp["Application: networking-policies"]
     end
@@ -58,6 +59,7 @@ flowchart TD
 | `applications/authentik-config-app.yaml` | Authentik ExternalSecret (authentik namespace) |
 | `applications/openclaw-app.yaml` | OpenClaw AI gateway deployment |
 | `applications/trivy-operator-app.yaml` | Trivy vulnerability scanner Helm chart (monitoring namespace, ClientServer mode) |
+| `applications/trivy-operator-vulnerability-scanner-app.yaml` | Trivy VulnerabilityScanner CR for scheduled daily scans |
 | `applications/namespace-security-app.yaml` | Pod Security Standard labels for namespaces |
 | `applications/networking-policies-app.yaml` | Default-deny NetworkPolicies across all namespaces |
 

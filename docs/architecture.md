@@ -74,7 +74,7 @@ Applications are organized into three **AppProjects** that scope which repos, na
 |---|---|---|
 | `secrets` | Secret management infrastructure | `infisical`, `external-secrets`, `external-secrets-config` |
 | `data` | Databases and data stores | `postgresql` |
-| `apps` | User-facing applications | `gitea`, `monitoring`, `authentik`, `openclaw`, `trivy-operator`, `namespace-security`, `networking-policies` |
+| `apps` | User-facing applications | `gitea`, `monitoring`, `authentik`, `openclaw`, `trivy-operator`, `trivy-operator-vulnerability-scanner`, `namespace-security`, `networking-policies` |
 | `default` | Bootstrap only | `argocd-apps` (root) |
 
 ```mermaid
@@ -212,8 +212,8 @@ flowchart TD
 
     subgraph monNs["monitoring namespace"]
         GrafanaPod["Grafana\nNodePort :30090"]
-        PromPod["Prometheus\n15d retention"]
-        TrivyPod["Trivy Operator\n(ClientServer mode)"]
+        PromPod["Prometheus\n60s scrape interval"]
+        TrivyPod["Trivy Operator\n(ClientServer mode)\nDaily scheduled scans"]
         GrafanaPod --> PromPod
     end
 
