@@ -7,13 +7,6 @@ data:
   bookmarks.yaml: |
     version: 1
     entries:
-      - model: authentik_tenants.tenant
-        id: tenant-default
-        state: present
-        identifiers:
-          domain: authentik-default
-        attrs:
-          branding_title: Homelab Portal
       - model: authentik_core.application
         id: app-infisical
         state: present
