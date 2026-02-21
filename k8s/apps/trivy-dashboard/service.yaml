@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: trivy-dashboard
+  namespace: trivy-dashboard
+  labels:
+    app.kubernetes.io/name: trivy-dashboard
+    app.kubernetes.io/part-of: trivy-operator
+    app.kubernetes.io/component: web
+spec:
+  type: NodePort
+  ports:
+    - port: 8900
+      targetPort: http
+      nodePort: 30448
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: trivy-dashboard

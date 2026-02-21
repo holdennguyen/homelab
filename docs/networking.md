@@ -29,6 +29,7 @@ flowchart TD
             TLS443["HTTPS :443\nAuthentik (SSO portal)"]
             TLS8443["HTTPS :8443\nArgoCD"]
             TLS8444["HTTPS :8444\nGrafana"]
+            TLS8448
         end
 
         subgraph orbstack["OrbStack Kubernetes"]
@@ -44,12 +45,16 @@ flowchart TD
             subgraph infisicalNs["infisical namespace"]
                 InfisicalSvc["infisical\nNodePort 30445"]
             end
+            subgraph trivyDashNs["trivy-dashboard namespace"]
+                TrivyDashSvc["trivy-dashboard\nNodePort 30448"]
+            end
         end
 
         TLS443 -- "http://localhost:30500" --> AuthentikSvc
         TLS8443 -- "http://localhost:30080" --> ArgoCDSvc
         TLS8444 -- "http://localhost:30090" --> GrafanaSvc
-        TLS8445["HTTPS :8445"] -- "http://localhost:30445" --> InfisicalSvc
+            TLS8445["HTTPS :8445"] -- "http://localhost:30445" --> InfisicalSvc
+            TLS8448["HTTPS :8448"] -- "http://localhost:30448" --> TrivyDashSvc
     end
 
     iPhone -- "https://holdens-mac-mini\n.story-larch.ts.net" --> TLS443
@@ -100,6 +105,7 @@ sequenceDiagram
 | ArgoCD HTTP | 8080 | 30080 | `http://localhost:30080` |
 | Grafana | 3000 | 30090 | `http://localhost:30090` |
 | Infisical | 8080 | 30445 | `http://localhost:30445` |
+| Trivy Dashboard | 8900 | 30448 | `http://localhost:30448` |
 | OpenClaw | 18789 | 30789 | `http://localhost:30789` |
 
 ## Layer 2: Tailscale Serve
@@ -120,6 +126,9 @@ tailscale serve --bg --https 8444 http://localhost:30090
 
 # Infisical — custom HTTPS port (8445)
 tailscale serve --bg --https 8445 http://localhost:30445
+
+# Trivy Dashboard — custom HTTPS port (8448)
+tailscale serve --bg --https 8448 http://localhost:30448
 
 # OpenClaw — custom HTTPS port (8447)
 tailscale serve --bg --https 8447 http://localhost:30789
@@ -174,6 +183,9 @@ https://holdens-mac-mini.story-larch.ts.net:8445 (tailnet only)
 
 https://holdens-mac-mini.story-larch.ts.net:8447 (tailnet only)
 |-- / proxy http://localhost:30789
+
+https://holdens-mac-mini.story-larch.ts.net:8448 (tailnet only)
+|-- / proxy http://localhost:30448
 ```
 
 ### Manage Serve
@@ -187,6 +199,9 @@ tailscale serve --https=8443 off
 
 # Stop Grafana proxy
 tailscale serve --https=8444 off
+
+# Stop Trivy Dashboard proxy
+tailscale serve --https=8448 off
 
 # Stop OpenClaw proxy
 tailscale serve --https=8447 off
@@ -216,6 +231,7 @@ Tailscale's MagicDNS automatically resolves `<hostname>.story-larch.ts.net` to t
 | Grafana | `https://holdens-mac-mini.story-larch.ts.net:8444` | 8444 | SSO via Authentik |
 | Infisical | `https://holdens-mac-mini.story-larch.ts.net:8445` | 8445 | Local admin |
 | Gitea | `https://holdens-mac-mini.story-larch.ts.net:8446` | 8446 | SSO via Authentik |
+| Trivy Dashboard | `https://holdens-mac-mini.story-larch.ts.net:8448` | 8448 | SSO portal bookmark |
 | OpenClaw | `https://holdens-mac-mini.story-larch.ts.net:8447` | 8447 | Local |
 
 ### Tailscale Serve vs Funnel
@@ -249,7 +265,7 @@ flowchart TD
 
     subgraph tailnet["Tailscale Tailnet (story-larch)"]
         subgraph mac["Mac mini M4\n100.77.144.4"]
-            TS["tailscale serve\n:443, :8443, :8444, :8445, :8447"]
+            TS["tailscale serve\n:443, :8443, :8444, :8445, :8447, :8448"]
 
             subgraph orb["OrbStack Kubernetes"]
                 subgraph authentik["authentik ns"]
@@ -265,6 +281,9 @@ flowchart TD
                 subgraph infisical_ns["infisical ns"]
                     InfisicalSvc2["infisical\nNodePort 30445"]
                 end
+                subgraph trivydash_ns["trivy-dashboard ns"]
+                    TrivyDashSvc2["trivy-dashboard\nNodePort 30448"]
+                end
                 subgraph openclaw_ns["openclaw ns"]
                     OpenClawSvc["openclaw\nNodePort 30789"]
                 end
@@ -274,6 +293,7 @@ flowchart TD
             TS -- "localhost:30080" --> ArgoSvc
             TS -- "localhost:30090" --> GrafanaSvc2
             TS -- "localhost:30445" --> InfisicalSvc2
+            TS -- "localhost:30448" --> TrivyDashSvc2
             TS -- "localhost:30789" --> OpenClawSvc
             ArgoCtrl -- "poll" --> GitHub
             LetsEncrypt -. "auto cert" .-> TS

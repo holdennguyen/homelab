@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: trivy-dashboard
+  labels:
+    app.kubernetes.io/name: trivy-dashboard
+    app.kubernetes.io/part-of: trivy-operator
+    app.kubernetes.io/component: web
+rules:
+  - apiGroups: ["aquasecurity.github.io"]
+    resources:
+      - clustercompliancereports
+      - clusterinfraassessmentreports
+      - clusterrbacassessmentreports
+      - clustersbomreports
+      - clustervulnerabilityreports
+      - configauditreports
+      - exposedsecretreports
+      - infraassessmentreports
+      - rbacassessmentreports
+      - sbomreports
+      - vulnerabilityreports
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch"]

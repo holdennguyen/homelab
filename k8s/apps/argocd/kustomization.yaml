@@ -21,3 +21,4 @@ resources:
   - applications/networking-policies-app.yaml
   - applications/namespace-security-app.yaml
   - applications/trivy-operator-app.yaml
+  - applications/trivy-dashboard-app.yaml

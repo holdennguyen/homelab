@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trivy-dashboard
+  namespace: trivy-dashboard
+  labels:
+    app.kubernetes.io/name: trivy-dashboard
+    app.kubernetes.io/part-of: trivy-operator
+    app.kubernetes.io/component: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: trivy-dashboard
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: trivy-dashboard
+        app.kubernetes.io/part-of: trivy-operator
+        app.kubernetes.io/component: web
+    spec:
+      serviceAccountName: trivy-dashboard
+      containers:
+        - name: trivy-dashboard
+          image: ghcr.io/raoulx24/trivy-operator-dashboard:1.8.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MAINAPPPORT
+              value: "8900"
+            - name: KUBERNETES__USEDEFAULTCONTEXT
+              value: "true"
+            - name: KUBERNETES__NAMESPACELIST
+              value: ""
+            - name: KUBERNETES__TRIVYUSECLUSTERCOMPLIANCEREPORT
+              value: "true"
+            - name: KUBERNETES__TRIVYUSECLUSTERINFRAASSESSMENTREPORT
+              value: "true"
+            - name: KUBERNETES__TRIVYUSECLUSTERRBACASSESSMENTREPORT
+              value: "true"
+            - name: KUBERNETES__TRIVYUSECLUSTERSBOMREPORT
+              value: "true"
+            - name: KUBERNETES__TRIVYUSECLUSTERVULNERABILITYREPORT
+              value: "true"
+            - name: KUBERNETES__TRIVYUSECONFIGAUDITREPORT
+              value: "true"
+            - name: KUBERNETES__TRIVYUSEINFRAASSESSMENTREPORT
+              value: "true"
+            - name: KUBERNETES__TRIVYUSEEXPOSEDSECRETREPORT
+              value: "true"
+            - name: KUBERNETES__TRIVYUSERBACASSESSMENTREPORT
+              value: "true"
+            - name: KUBERNETES__TRIVYUSESBOMREPORT
+              value: "true"
+            - name: KUBERNETES__TRIVYUSEVULNERABILITYREPORT
+              value: "true"
+            - name: FILEREPOSITORY__BASEPATH
+              value: ""
+            - name: GITHUB__SERVERCHECKFORUPDATES
+              value: "true"
+            - name: GITHUB__CHECKFORUPDATESINTERVALINMINUTES
+              value: "360"
+            - name: OPENTELEMETRY__ENABLED
+              value: "false"
+            - name: SERILOG__MINIMUMLEVEL__DEFAULT
+              value: Information
+          ports:
+            - name: http
+              containerPort: 8900
+              protocol: TCP
+          startupProbe:
+            httpGet:
+              path: /healthz/ready
+              port: http
+            periodSeconds: 10
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: http
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: http
+            periodSeconds: 30
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp-volume
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 384Mi
+      volumes:
+        - name: tmp-volume
+          emptyDir:
+            sizeLimit: 1024Mi

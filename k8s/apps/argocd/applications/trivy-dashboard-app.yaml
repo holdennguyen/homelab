@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: trivy-dashboard
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: trivy-dashboard
+    app.kubernetes.io/part-of: homelab
+    app.kubernetes.io/component: dashboard
+    app.kubernetes.io/managed-by: argocd
+spec:
+  project: apps
+  source:
+    repoURL: https://github.com/holdennguyen/homelab.git
+    targetRevision: HEAD
+    path: k8s/apps/trivy-dashboard
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: trivy-dashboard
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

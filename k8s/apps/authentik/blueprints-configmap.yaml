@@ -37,9 +37,9 @@ data:
         identifiers:
           slug: trivy
         attrs:
-          name: Trivy Operator
+          name: Trivy Dashboard
           group: Security
-          meta_launch_url: ""
+          meta_launch_url: https://holdens-mac-mini.story-larch.ts.net:8448
           meta_icon: https://raw.githubusercontent.com/aquasecurity/trivy/main/docs/docs/imgs/logo.png
-          meta_description: Cluster Vulnerability Scanning
+          meta_description: Trivy Operator Security Dashboard
           meta_publisher: Homelab
