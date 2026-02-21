@@ -16,7 +16,7 @@ data:
           name: Infisical
           group: Infrastructure
           meta_launch_url: https://holdens-mac-mini.story-larch.ts.net:8445
-          meta_icon: https://raw.githubusercontent.com/Infisical/infisical/main/docs/static/img/logo-dark.png
+          meta_icon: https://avatars.githubusercontent.com/u/107880645?s=48&v=4
           meta_description: Secret Management Platform
           meta_publisher: Homelab
       - model: authentik_core.application
@@ -28,7 +28,7 @@ data:
           name: Homelab Docs
           group: Documentation
           meta_launch_url: https://holdennguyen.github.io/homelab
-          meta_icon: https://squidfunk.github.io/mkdocs-material/assets/logo.png
+          meta_icon: https://avatars.githubusercontent.com/u/9692741?s=48&v=4
           meta_description: Homelab Documentation
           meta_publisher: Homelab
       - model: authentik_core.application
@@ -40,6 +40,6 @@ data:
           name: Trivy Dashboard
           group: Security
           meta_launch_url: https://holdens-mac-mini.story-larch.ts.net:8448
-          meta_icon: https://raw.githubusercontent.com/aquasecurity/trivy/main/docs/docs/imgs/logo.png
+          meta_icon: https://avatars.githubusercontent.com/u/12783832?s=48&v=4
           meta_description: Trivy Operator Security Dashboard
           meta_publisher: Homelab
