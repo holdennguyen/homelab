@@ -35,11 +35,14 @@ flowchart TD
 The operator is deployed with tuned settings to balance scanning coverage with resource stability on a single-node homelab:
 
 - Runs in **ClientServer mode** with a built-in trivy-server (eliminates cache lock contention)
-- Scans images of running pods on creation and at regular intervals
+- **On-change vulnerability scanning is disabled** to reduce resource usage; a scheduled daily scan is performed via a `VulnerabilityScanner` custom resource.
+- Scans images of running pods on a schedule and generates reports.
 - Does not block pod scheduling (report-only)
 - Stores reports as Kubernetes custom resources
 - Excludes the `openclaw` namespace (locally-built image not available from any registry)
 - Limits concurrent scan jobs to 3
+- Config audit (compliance) scans run daily at midnight UTC via the built-in compliance scheduler
+- Scanner reports are retained for 72 hours; completed scan jobs are cleaned up after 30 minutes
 
 ### Helm Values
 
@@ -50,11 +53,20 @@ Overrides are set in the Application CR's `spec.source.helm.valuesObject`:
 | `trivy.mode` | `ClientServer` | Centralized DB via trivy-server, no per-job cache |
 | `operator.builtInTrivyServer` | `true` | Deploy trivy-server StatefulSet in-cluster |
 | `trivy.serverURL` | `http://trivy-service.monitoring:4975` | Scan jobs query this endpoint |
-| `resources.limits.memory` | `512Mi` | Operator deployment — prevents OOM |
+| `operator.vulnerabilityScannerEnabled` | `false` | Disable on-change vulnerability scans |
 | `operator.scanJobsConcurrentLimit` | `3` | Limit parallel scan jobs |
+| `operator.scanJobTTL` | `30m` | Cleanup completed scan jobs after 30 minutes |
+| `operator.scanJobsRetryDelay` | `2m` | Delay between retry attempts |
+| `operator.scannerReportTTL` | `72h` | Keep vulnerability reports for 3 days |
+| `compliance.cron` | `0 0 * * *` | Daily config audit scans at midnight |
+| `resources.limits.memory` | `512Mi` | Operator deployment — prevents OOM |
 | `trivy.resources.limits.memory` | `512Mi` | Scan job container memory |
 | `trivy.server.resources.limits.memory` | `512Mi` | Trivy server memory |
 | `excludeNamespaces` | `openclaw` | Skip namespaces with local-only images |
+
+### Scheduled Vulnerability Scans
+
+A separate `VulnerabilityScanner` custom resource (installed via `k8s/apps/trivy-operator/vulnerability-scanner.yaml`) defines a daily scan schedule. This is managed by the trivy-operator's `VulnerabilityScanner` controller and runs in addition to (or instead of) on-change scans. With `operator.vulnerabilityScannerEnabled: false`, only the scheduled scans are performed.
 
 Additional options:
 - `trivy.severity`: filter by severity (e.g., `HIGH`, `CRITICAL`)
