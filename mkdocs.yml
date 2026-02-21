@@ -39,6 +39,7 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Architecture: architecture.md
+  - Security: security.md
   - Networking: networking.md
   - Bootstrap: bootstrap.md
   - Secret Management: secret-management.md

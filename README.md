@@ -262,6 +262,7 @@ kubectl get pods -A | grep -v Running | grep -v Completed
 | Document | What it covers |
 |---|---|
 | [docs/architecture.md](docs/architecture.md) | 3-layer design, technology choices, full service map, repository layout |
+| [docs/security.md](docs/security.md) | Security posture, RBAC, network policies, Pod Security Standards, LLM agent permissions, hardening roadmap |
 | [docs/bootstrap.md](docs/bootstrap.md) | Step-by-step setup from scratch: prerequisites, secrets generation, Terraform, Infisical, Tailscale |
 | [docs/secret-management.md](docs/secret-management.md) | How secrets flow from Infisical → ESO → Kubernetes; adding secrets; rotating credentials |
 | [docs/networking.md](docs/networking.md) | Tailscale Serve + NodePort architecture, request path, TLS, full port map, troubleshooting |

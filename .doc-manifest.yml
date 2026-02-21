@@ -83,6 +83,15 @@ documents:
     sources:
       - k8s/apps/networking-policies/
 
+  - doc: docs/security.md
+    sources:
+      - k8s/apps/openclaw/rbac.yaml
+      - k8s/apps/openclaw/deployment.yaml
+      - k8s/apps/openclaw/configmap.yaml
+      - k8s/apps/openclaw/external-secret.yaml
+      - k8s/apps/namespace-security/
+      - k8s/apps/networking-policies/
+
   - doc: docs/ai-agents.md
     sources:
       - agents/

@@ -316,28 +316,6 @@ homelab/
 
 ## Security
 
-This section outlines the security controls implemented in the homelab.
+The homelab implements defense-in-depth across network isolation (Tailscale-only, default-deny NetworkPolicies), workload hardening (Pod Security Standards, non-root containers, least-privilege RBAC), and secret hygiene (Infisical pipeline, never in git). A dedicated section covers LLM/AI agent (OpenClaw) permissions including RBAC scope, secret access, and agent workflow guardrails.
 
-### Pod Security Standards
-
-Namespaces are labeled with Kubernetes Pod Security Standards at two tiers:
-
-**Enforce `restricted`** (fully compliant):
-
-- `argocd`
-- `external-secrets`
-
-**Enforce `baseline`, audit/warn `restricted`** (non-compliant workloads logged but not blocked):
-
-- `monitoring` — node-exporter requires host namespaces and hostPort
-- `authentik` — server/worker containers run as root, missing seccompProfile
-- `infisical` — standalone + ingress-nginx run as root, missing seccompProfile
-
-**Excluded** (cannot meet even baseline due to technical constraints):
-
-- `gitea-system` — Gitea uses s6-overlay which requires root at startup
-- `openclaw` — uses hostPath volumes disallowed by the restricted policy
-
-### Network Policies
-
-A default-deny network posture is enforced across all application namespaces. See [Networking documentation](./networking.md#security-default-deny-network-policies) for details.
+For the full security report — including per-namespace PSS compliance, RBAC inventory, container security audit, supply chain controls, OpenClaw agent permissions detail, vulnerability scanning, and the hardening roadmap — see [docs/security.md](./security.md).
