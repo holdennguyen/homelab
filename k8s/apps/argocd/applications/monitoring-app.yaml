@@ -94,6 +94,53 @@ spec:
 
         # Alertmanager
         alertmanager:
+          config: |
+            global:
+              resolve_timeout: 5m
+            route:
+              receiver: openclaw
+              group_by: ['namespace', 'alertname']
+              group_wait: 30s
+              group_interval: 5m
+              repeat_interval: 4h
+              routes:
+                - match:
+                    severity: critical
+                  receiver: openclaw
+                  group_wait: 0s
+                  group_interval: 1m
+                  repeat_interval: 5m
+                - match:
+                    severity: warning
+                  receiver: openclaw
+                  group_wait: 30s
+                  group_interval: 5m
+                  repeat_interval: 4h
+                  mute_time_intervals: ['nightly-shutdown']
+                - match:
+                    severity: info
+                  receiver: silence
+            receivers:
+              - name: openclaw
+                slack_configs:
+                  - api_url: "http://openclaw.openclaw:18789/hooks/alertmanager"
+                    channel: "#alerts"
+                    send_resolved: true
+                    http_config:
+                      bearer_token_file: /etc/alertmanager/token/token
+              - name: silence
+            inhibit_rules:
+              - source_match:
+                  severity: critical
+                  component: node
+                target_match:
+                  severity: warning
+                  component: pod
+                equal: [namespace, alertname]
+            mute_time_intervals:
+              - name: nightly-shutdown
+                start_time: '23:30'
+                end_time: '06:30'
           alertmanagerSpec:
             securityContext:
               runAsUser: 1000
@@ -114,6 +161,14 @@ spec:
                   resources:
                     requests:
                       storage: 2Gi
+            volumes:
+              - name: openclaw-hook-token
+                secret:
+                  secretName: alertmanager-openclaw-token
+            volumeMounts:
+              - name: openclaw-hook-token
+                mountPath: /etc/alertmanager/token
+                readOnly: true
 
         # Node exporter
         nodeExporter:

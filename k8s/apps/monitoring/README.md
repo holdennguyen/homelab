@@ -64,6 +64,54 @@ The monitoring stack components are configured to run as non-root users:
 
 The `monitoring` namespace enforces the `baseline` Pod Security Standard (with `restricted` audit/warn) because node-exporter requires host namespaces and hostPort.
 
+## Alertmanager Notification Integration
+
+Alerts are forwarded to OpenClaw via a webhook receiver, which then posts them to the configured notification channel (Matrix). This integration provides a unified alerting experience within the homelab's AI agent ecosystem.
+
+### Alertmanager Configuration
+
+The Alertmanager configuration is embedded in `k8s/apps/argocd/applications/monitoring-app.yaml` via the Helm values.
+
+Key features:
+
+- **Routing rules**:
+  - `critical` alerts are sent immediately (no group wait)
+  - `warning` alerts are batched (group_wait 30s, group_interval 5m)
+  - `info` alerts are suppressed (routed to a `silence` receiver)
+- **Grouping**: By `namespace` and `alertname` to reduce noise.
+- **Inhibition**: Critical node alerts inhibit pod-level warnings (e.g., `NodeHigh*` inhibits `PodCrashLooping`).
+- **Mute window**: 23:30–06:30 nightly, applying to warning alerts (critical alerts remain unmuted).
+
+The configuration defines two receivers:
+
+- `openclaw` (webhook) – sends to `http://openclaw.openclaw:18789/hooks/alertmanager` with bearer token authentication.
+- `silence` – an empty receiver that discards alerts.
+
+The bearer token for the webhook is mounted from the secret `alertmanager-openclaw-token/token` (created by an ExternalSecret) and referenced as a file at `/etc/alertmanager/token/token`.
+
+### Secret Management
+
+The hook token `OPENCLAW_HOOKS_TOKEN` is stored in Infisical (`homelab/prod/`). An `ExternalSecret` in the `monitoring` namespace creates the `alertmanager-openclaw-token` secret containing this token. The same token is also injected into the OpenClaw configuration for verification.
+
+To set up or rotate the token:
+
+1. Generate a secure random token: `openssl rand -hex 32`
+2. Add it to Infisical under key `OPENCLAW_HOOKS_TOKEN` in the `homelab/prod/` project.
+3. The `ExternalSecret` syncs automatically within the hour; force if needed:
+   ```bash
+   kubectl annotate externalsecret alertmanager-openclaw-token -n monitoring \
+     force-sync=$(date +%s) --overwrite
+   ```
+4. Restart Alertmanager to pick up changes (ArgoCD will handle rollout after the secret update).
+
+### Verification
+
+After deployment:
+
+- Check Alertmanager UI: `kubectl port-forward -n monitoring svc/monitoring-kube-prometheus-alertmanager 9093:9093` and open http://localhost:9093.
+- Trigger a test alert (e.g., delete a pod) and verify it appears in the OpenClaw Matrix room quickly (critical within 1 minute).
+- Confirm that during the mute window, non-critical alerts are silenced.
+
 ## What's Included
 
 The kube-prometheus-stack Helm chart deploys:

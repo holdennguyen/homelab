@@ -229,6 +229,81 @@ kubectl annotate externalsecret openclaw-secret -n openclaw \
   force-sync=$(date +%s) --overwrite
 ```
 
+### Alert Integration
+
+OpenClaw consumes alerts from Prometheus Alertmanager via its built-in HTTP hooks endpoint and forwards them to a notification channel (currently Matrix). This allows alerts to be visible to both agents and users in the same chat interface, enabling automated responses and manual acknowledgment.
+
+#### Hooks Configuration
+
+The OpenClaw configuration (`k8s/apps/openclaw/configmap.yaml`) enables hooks:
+
+- **Path**: `/hooks` (the endpoint is `http://<gateway>:<port>/hooks`)
+- **Authentication**: Bearer token stored in Infisical as `OPENCLAW_HOOKS_TOKEN` and injected into the pod as an environment variable.
+- **Mapping**: Requests to `/hooks/alertmanager` are routed to the `homelab-admin` agent with the message sent to the `matrix` channel.
+
+The hook mapping is defined as:
+
+```json
+"hooks": {
+  "enabled": true,
+  "token": "${OPENCLAW_HOOKS_TOKEN}",
+  "path": "/hooks",
+  "mappings": [
+    {
+      "id": "alertmanager",
+      "match": { "path": "alertmanager" },
+      "action": "agent",
+      "channel": "matrix",
+      "to": "#alerts:matrix.example.com",
+      "messageTemplate": "{{ payload }}"
+    }
+  ]
+}
+```
+
+#### Channel Configuration (Matrix)
+
+The Matrix channel is configured under `channels.matrix`:
+
+- `enabled`: true
+- `homeserver`: URL of your Matrix homeserver
+- `userId`: The bot's Matrix user ID (e.g., `@bot:example.com`)
+- `accessToken`: The bot's access token (stored in Infisical as `MATRIX_ACCESS_TOKEN`)
+- `rooms`: Map of room aliases/IDs where the bot should operate. The key (`alerts`) must match the `to` field in the hook mapping.
+
+Example:
+
+```json
+"channels": {
+  "matrix": {
+    "enabled": true,
+    "homeserver": "https://matrix.example.com",
+    "userId": "@bot:matrix.example.com",
+    "accessToken": "${MATRIX_ACCESS_TOKEN}",
+    "rooms": {
+      "alerts": { "enabled": true, "allow": true }
+    }
+  }
+}
+```
+
+The bot must be invited to the room before it can post messages.
+
+#### Secrets
+
+Both the hooks token and the Matrix access token are stored in Infisical (`homelab/prod/`):
+
+- `OPENCLAW_HOOKS_TOKEN` – shared secret for Alertmanager webhook calls.
+- `MATRIX_ACCESS_TOKEN` – the bot's access token.
+
+An `ExternalSecret` (`k8s/apps/openclaw/external-secret.yaml`) syncs these into the `openclaw-secret` Kubernetes secret, and the OpenClaw deployment injects them as environment variables used for config substitution.
+
+To rotate tokens, update the values in Infisical and restart the OpenClaw pod.
+
+#### Alertmanager Configuration
+
+Alertmanager is configured (in `k8s/apps/argocd/applications/monitoring-app.yaml`) to forward alerts to the OpenClaw webhook endpoint. See the [monitoring README](../monitoring/README.md) for details on the routing rules, mute window, and inhibition.
+
 ### Adding More Providers or Channels
 
 To add a new API key (e.g., `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or `TELEGRAM_BOT_TOKEN`):

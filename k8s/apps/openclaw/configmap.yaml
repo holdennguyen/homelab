@@ -93,5 +93,34 @@ data:
         "sessions": {
           "visibility": "all"
         }
+      },
+      "hooks": {
+        "enabled": true,
+        "token": "${OPENCLAW_HOOKS_TOKEN}",
+        "path": "/hooks",
+        "mappings": [
+          {
+            "id": "alertmanager",
+            "match": { "path": "alertmanager" },
+            "action": "agent",
+            "channel": "matrix",
+            "to": "#alerts:matrix.example.com",
+            "messageTemplate": "{{ payload }}"
+          }
+        ]
+      },
+      "channels": {
+        "matrix": {
+          "enabled": true,
+          "homeserver": "https://matrix.example.com",
+          "userId": "@bot:matrix.example.com",
+          "accessToken": "${MATRIX_ACCESS_TOKEN}",
+          "rooms": {
+            "#alerts:matrix.example.com": {
+              "enabled": true,
+              "allow": true
+            }
+          }
+        }
       }
     }
