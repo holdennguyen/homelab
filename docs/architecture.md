@@ -20,8 +20,6 @@ flowchart TD
         C --> E["Application: infisical"]
         C --> F["Application: external-secrets"]
         C --> G["Application: external-secrets-config"]
-        C --> H["Application: postgresql"]
-        C --> I["Application: gitea"]
         C --> J["Application: monitoring"]
         C --> K["Application: authentik"]
         D --> E
@@ -31,14 +29,7 @@ flowchart TD
         E --> InfisicalSvc["Infisical service\nrunning in cluster"]
         F --> ESOOperator["ESO operator"]
         G --> CSS["ClusterSecretStore\nconnected to Infisical"]
-        CSS --> ES1["ExternalSecret → postgresql-secret"]
-        CSS --> ES2["ExternalSecret → gitea-secret"]
-        ES1 --> K8sSecret1["K8s Secret: postgresql-secret"]
-        ES2 --> K8sSecret2["K8s Secret: gitea-secret"]
     end
-
-    K8sSecret1 --> H
-    K8sSecret2 --> I
 ```
 
 ## Layer 0: Terraform
@@ -73,8 +64,8 @@ Applications are organized into three **AppProjects** that scope which repos, na
 | Project | Purpose | Applications |
 |---|---|---|
 | `secrets` | Secret management infrastructure | `infisical`, `external-secrets`, `external-secrets-config` |
-| `data` | Databases and data stores | `postgresql` |
-| `apps` | User-facing applications | `gitea`, `monitoring`, `authentik`, `openclaw`, `trivy-operator`, `trivy-operator-vulnerability-scanner`, `namespace-security`, `networking-policies` |
+| `data` | Databases and data stores | (reserved for future use) |
+| `apps` | User-facing applications | `monitoring`, `authentik`, `openclaw`, `trivy-operator`, `trivy-operator-vulnerability-scanner`, `namespace-security`, `networking-policies` |
 | `default` | Bootstrap only | `argocd-apps` (root) |
 
 ```mermaid
@@ -83,8 +74,6 @@ flowchart LR
         direction TB
         RootDir["k8s/apps/argocd/\nkustomization.yaml"]
         ESDir["k8s/apps/external-secrets/"]
-        PGDir["k8s/apps/postgresql/"]
-        GiteaDir["k8s/apps/gitea/"]
         MonDir["k8s/apps/argocd/applications/\nmonitoring-app.yaml (Helm)"]
         OCDir["k8s/apps/openclaw/"]
     end
@@ -99,11 +88,10 @@ flowchart LR
         end
 
         subgraph dataProj["data project"]
-            PGApp["postgresql"]
+            DataPlaceholder["(reserved)"]
         end
 
         subgraph appsProj["apps project"]
-            GiteaApp["gitea"]
             MonApp["monitoring"]
             AuthApp["authentik"]
             OCApp["openclaw"]
@@ -120,8 +108,6 @@ flowchart LR
 
     ESOApp -- "syncs Helm chart" --> ESOChart["charts.external-secrets.io"]
     ESCApp -- "syncs" --> ESDir
-    PGApp -- "syncs" --> PGDir
-    GiteaApp -- "syncs" --> GiteaDir
     MonApp -- "syncs Helm chart" --> MonChart["prometheus-community\nHelm repo"]
     OCApp -- "syncs" --> OCDir
     InfisicalApp -- "syncs Helm chart" --> InfisicalChart["cloudsmith Helm repo"]
@@ -159,16 +145,16 @@ flowchart TD
         ES["ExternalSecret\npostgresql-secret"]
     end
 
-    subgraph gitea_ns["gitea-system namespace"]
-        K8sSecret["K8s Secret\npostgresql-secret"]
-        PgPod["PostgreSQL Pod\nenv: POSTGRES_PASSWORD"]
+    subgraph target_ns["target namespace"]
+        K8sSecret["K8s Secret\n(created by ESO)"]
+        TargetPod["Application Pod\nenv from secret"]
     end
 
     dev --> InfisicalAPI
     CSS -- "Universal Auth\nclientId + clientSecret" --> InfisicalAPI
     InfisicalAPI -- "GET /api/v3/secrets/raw\n?workspaceSlug=homelab\n&environment=prod" --> ES
     ES -- "creates/updates" --> K8sSecret
-    K8sSecret -- "envFrom / secretKeyRef" --> PgPod
+    K8sSecret -- "envFrom / secretKeyRef" --> TargetPod
 ```
 
 For the full secret management reference, see [docs/secret-management.md](./secret-management.md).
@@ -204,12 +190,6 @@ flowchart TD
         ArgoRepo["repo-server"]
     end
 
-    subgraph giteaNs["gitea-system namespace"]
-        GiteaPod["Gitea\nNodePort :30300"]
-        PGPod["PostgreSQL\nClusterIP :5432"]
-        GiteaPod -- "postgresql:5432" --> PGPod
-    end
-
     subgraph monNs["monitoring namespace"]
         GrafanaPod["Grafana\nNodePort :30090"]
         PromPod["Prometheus\n60s scrape interval"]
@@ -229,12 +209,8 @@ flowchart TD
 
     AuthentikPod -. "OIDC" .-> GrafanaPod
     AuthentikPod -. "OIDC" .-> ArgoServer
-    AuthentikPod -. "OIDC" .-> GiteaPod
-
     ESOPod --> CSS
     CSS -- "Universal Auth" --> InfisicalPod
-    CSS -- "ExternalSecret" --> GiteaPod
-    CSS -- "ExternalSecret" --> PGPod
     CSS -- "ExternalSecret" --> OpenClawPod
     OpenClawPod -- "primary" --> OpenRouterAPI["OpenRouter\nstepfun/step-3.5-flash:free"]
     OpenClawPod -. "fallback" .-> GeminiAPI["Google Gemini\ngemini-2.5-pro"]
@@ -251,7 +227,6 @@ Services are exposed through **Tailscale Serve**, which provides automatic TLS c
 | ArgoCD | `:30080` (HTTP) | `https://holdens-mac-mini.story-larch.ts.net:8443` | 8443 | SSO via Authentik |
 | Grafana | `:30090` | `https://holdens-mac-mini.story-larch.ts.net:8444` | 8444 | SSO via Authentik |
 | Infisical | `:30445` | `https://holdens-mac-mini.story-larch.ts.net:8445` | 8445 | Local admin |
-| Gitea | `:30300` | `https://holdens-mac-mini.story-larch.ts.net:8446` | 8446 | SSO via Authentik |
 | OpenClaw | `:30789` | `https://holdens-mac-mini.story-larch.ts.net:8447` | 8447 | Local |
 
 For the full networking reference, see [docs/networking.md](./networking.md).
@@ -294,10 +269,8 @@ homelab/
 │       ├── authentik/              # Authentik SSO ExternalSecret
 │       ├── external-secrets/       # ClusterSecretStore
 │       ├── infisical/              # (Helm chart managed by Terraform-created Application)
-│       ├── gitea/                  # Gitea kustomize manifests + ExternalSecret
 │       ├── monitoring/             # Grafana ExternalSecret
 │       ├── openclaw/               # OpenClaw AI gateway manifests
-│       ├── postgresql/             # PostgreSQL kustomize manifests + ExternalSecret
 │       ├── trivy-operator/         # Trivy vulnerability scanner (README only; deployed via Helm)
 │       ├── namespace-security/     # Pod Security Standard labels for namespaces
 │       └── networking-policies/    # Default-deny NetworkPolicies for all namespaces
@@ -308,8 +281,6 @@ homelab/
 │   ├── secret-management.md       # Infisical + ESO reference
 │   ├── argocd.md                   # ArgoCD (includes k8s/apps/argocd/README.md)
 │   ├── authentik.md                # Authentik SSO and OIDC integration
-│   ├── gitea.md                    # Gitea (includes k8s/apps/gitea/README.md)
-│   ├── postgresql.md               # PostgreSQL (includes k8s/apps/postgresql/README.md)
 │   ├── external-secrets.md         # ESO (includes k8s/apps/external-secrets/README.md)
 │   ├── infisical.md                # Infisical (includes k8s/apps/infisical/README.md)
 │   ├── monitoring.md               # Grafana + Prometheus monitoring stack

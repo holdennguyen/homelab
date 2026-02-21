@@ -44,17 +44,12 @@ flowchart TD
             subgraph infisicalNs["infisical namespace"]
                 InfisicalSvc["infisical\nNodePort 30445"]
             end
-            subgraph giteaNs["gitea-system namespace"]
-                GiteaSvc["gitea\nNodePort 30300/30022"]
-                PgSvc["postgresql\nClusterIP 5432"]
-            end
         end
 
         TLS443 -- "http://localhost:30500" --> AuthentikSvc
         TLS8443 -- "http://localhost:30080" --> ArgoCDSvc
         TLS8444 -- "http://localhost:30090" --> GrafanaSvc
         TLS8445["HTTPS :8445"] -- "http://localhost:30445" --> InfisicalSvc
-        TLS8446["HTTPS :8446"] -- "http://localhost:30300" --> GiteaSvc
     end
 
     iPhone -- "https://holdens-mac-mini\n.story-larch.ts.net" --> TLS443
@@ -105,10 +100,7 @@ sequenceDiagram
 | ArgoCD HTTP | 8080 | 30080 | `http://localhost:30080` |
 | Grafana | 3000 | 30090 | `http://localhost:30090` |
 | Infisical | 8080 | 30445 | `http://localhost:30445` |
-| Gitea HTTP | 3000 | 30300 | `http://localhost:30300` |
-| Gitea SSH | 22 | 30022 | `ssh://localhost:30022` |
 | OpenClaw | 18789 | 30789 | `http://localhost:30789` |
-| PostgreSQL (Gitea) | 5432 | — | ClusterIP only (no external access) |
 
 ## Layer 2: Tailscale Serve
 
@@ -128,9 +120,6 @@ tailscale serve --bg --https 8444 http://localhost:30090
 
 # Infisical — custom HTTPS port (8445)
 tailscale serve --bg --https 8445 http://localhost:30445
-
-# Gitea — custom HTTPS port (8446)
-tailscale serve --bg --https 8446 http://localhost:30300
 
 # OpenClaw — custom HTTPS port (8447)
 tailscale serve --bg --https 8447 http://localhost:30789
@@ -155,7 +144,6 @@ flowchart LR
         Authentik["Authentik :9000\nplain HTTP"]
         ArgoCD["ArgoCD :8080\nplain HTTP (insecure mode)"]
         Grafana["Grafana :3000\nplain HTTP"]
-        Gitea["Gitea :3000\nplain HTTP"]
     end
 
     Browser -- "TLS 1.3\nvalid cert" --> Cert
@@ -163,7 +151,6 @@ flowchart LR
     Proxy -- "plain HTTP" --> Authentik
     Proxy -- "plain HTTP" --> ArgoCD
     Proxy -- "plain HTTP" --> Grafana
-    Proxy -- "plain HTTP" --> Gitea
 ```
 
 Tailscale automatically provisions and renews Let's Encrypt certificates for the `*.ts.net` domain. No manual certificate management, no cert-manager, no self-signed certs.
@@ -185,9 +172,6 @@ https://holdens-mac-mini.story-larch.ts.net:8444 (tailnet only)
 https://holdens-mac-mini.story-larch.ts.net:8445 (tailnet only)
 |-- / proxy http://localhost:30445
 
-https://holdens-mac-mini.story-larch.ts.net:8446 (tailnet only)
-|-- / proxy http://localhost:30300
-
 https://holdens-mac-mini.story-larch.ts.net:8447 (tailnet only)
 |-- / proxy http://localhost:30789
 ```
@@ -203,9 +187,6 @@ tailscale serve --https=8443 off
 
 # Stop Grafana proxy
 tailscale serve --https=8444 off
-
-# Stop Gitea proxy
-tailscale serve --https=8446 off
 
 # Stop OpenClaw proxy
 tailscale serve --https=8447 off
@@ -234,7 +215,6 @@ Tailscale's MagicDNS automatically resolves `<hostname>.story-larch.ts.net` to t
 | ArgoCD | `https://holdens-mac-mini.story-larch.ts.net:8443` | 8443 | SSO via Authentik |
 | Grafana | `https://holdens-mac-mini.story-larch.ts.net:8444` | 8444 | SSO via Authentik |
 | Infisical | `https://holdens-mac-mini.story-larch.ts.net:8445` | 8445 | Local admin |
-| Gitea | `https://holdens-mac-mini.story-larch.ts.net:8446` | 8446 | SSO via Authentik |
 | OpenClaw | `https://holdens-mac-mini.story-larch.ts.net:8447` | 8447 | Local |
 
 ### Tailscale Serve vs Funnel
@@ -268,7 +248,7 @@ flowchart TD
 
     subgraph tailnet["Tailscale Tailnet (story-larch)"]
         subgraph mac["Mac mini M4\n100.77.144.4"]
-            TS["tailscale serve\n:443, :8443, :8444, :8445, :8446, :8447"]
+            TS["tailscale serve\n:443, :8443, :8444, :8445, :8447"]
 
             subgraph orb["OrbStack Kubernetes"]
                 subgraph authentik["authentik ns"]
@@ -284,12 +264,6 @@ flowchart TD
                 subgraph infisical_ns["infisical ns"]
                     InfisicalSvc2["infisical\nNodePort 30445"]
                 end
-                subgraph gitea["gitea-system ns"]
-                    GiteaSvc2["gitea\nNodePort 30300"]
-                    GiteaPod["Gitea :3000"]
-                    PgSvc2["postgresql :5432"]
-                    PgPod["PostgreSQL"]
-                end
                 subgraph openclaw_ns["openclaw ns"]
                     OpenClawSvc["openclaw\nNodePort 30789"]
                 end
@@ -299,11 +273,7 @@ flowchart TD
             TS -- "localhost:30080" --> ArgoSvc
             TS -- "localhost:30090" --> GrafanaSvc2
             TS -- "localhost:30445" --> InfisicalSvc2
-            TS -- "localhost:30300" --> GiteaSvc2
             TS -- "localhost:30789" --> OpenClawSvc
-            GiteaSvc2 --> GiteaPod
-            GiteaPod --> PgSvc2
-            PgSvc2 --> PgPod
             ArgoCtrl -- "poll" --> GitHub
             LetsEncrypt -. "auto cert" .-> TS
         end
@@ -325,7 +295,6 @@ flowchart TD
 | `Serve is not enabled on your tailnet` | Tailscale Serve feature not activated | Visit the URL shown in the error to enable it |
 | TLS certificate error in browser | `tailscale serve` not running | `tailscale serve status`; restart with `--bg` commands |
 | ArgoCD returns 502 | ArgoCD pod restarting or not ready | `kubectl get pods -n argocd` |
-| Gitea clone URLs show wrong domain | `ROOT_URL` mismatch | Update `ROOT_URL` in `k8s/apps/gitea/configmap.yaml`, push, restart Gitea pod |
 | Works from iPhone but not Mac mini | MagicDNS resolves on mobile but not macOS | Add `/etc/hosts` entry or verify macOS Tailscale has MagicDNS enabled |
 
 ## Security: Default-Deny Network Policies

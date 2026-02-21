@@ -76,7 +76,6 @@ Every application namespace has a `default-deny-all` NetworkPolicy that blocks a
 | Namespace | Foundational Policies | Namespace-Specific Rules |
 |---|---|---|
 | `argocd` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:8080), API server egress (:6443), internet egress (:443, :22) |
-| `gitea-system` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:3000, :22) |
 | `monitoring` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:3000), API server egress (:6443), internet egress (:443) |
 | `authentik` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:9000, :9443) |
 | `openclaw` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:18789), API server egress (:6443), internet egress (:443) |
@@ -99,7 +98,6 @@ Namespaces are labeled with Kubernetes Pod Security Standards (PSS) to control w
 | `monitoring` | `baseline` | `restricted` | node-exporter requires host namespaces and hostPort |
 | `authentik` | `baseline` | `restricted` | server/worker containers run as root, missing seccompProfile |
 | `infisical` | `baseline` | `restricted` | standalone + ingress-nginx run as root, missing seccompProfile |
-| `gitea-system` | — | — | Excluded: Gitea uses s6-overlay requiring root at startup |
 | `openclaw` | — | — | Excluded: uses hostPath volumes disallowed by the restricted profile |
 
 Namespaces at `baseline` enforce + `restricted` audit/warn log violations without blocking pods, surfacing non-compliant workloads in audit logs for future remediation.
@@ -113,8 +111,6 @@ Every service runs under a dedicated ServiceAccount with least-privilege permiss
 | OpenClaw | `openclaw` (ns: `openclaw`) | Namespace Role | Read pods, logs, secrets, configmaps, services, PVCs; create pods/exec |
 | ArgoCD | `argocd-*` (ns: `argocd`) | ClusterRole | Managed by Helm chart — application controller needs cluster-wide access to sync resources |
 | ESO | `external-secrets` (ns: `external-secrets`) | ClusterRole | Managed by Helm chart — needs cluster-wide access to create secrets in any namespace |
-| Gitea | default | Namespace | No custom RBAC — uses default SA |
-| PostgreSQL | default | Namespace | No custom RBAC — uses default SA |
 | Monitoring | `kube-prometheus-stack-*` | ClusterRole | Managed by Helm chart — Prometheus needs cluster-wide metrics scraping |
 
 The previous `cluster-admin` ClusterRoleBinding on the OpenClaw ServiceAccount was removed in v1.1.0, scoping it down to a namespace-only Role.
@@ -151,12 +147,9 @@ flowchart LR
 
 | ExternalSecret | Namespace | Keys |
 |---|---|---|
-| `postgresql-secret` | `gitea-system` | `POSTGRES_PASSWORD`, `POSTGRES_USER`, `POSTGRES_DB`, `GITEA_DB_PASSWORD` |
-| `gitea-secret` | `gitea-system` | `GITEA_SECRET_KEY` |
-| `gitea-admin-secret` | `gitea-system` | `GITEA_ADMIN_USERNAME`, `GITEA_ADMIN_PASSWORD`, `GITEA_ADMIN_EMAIL` |
 | `openclaw-secret` | `openclaw` | `OPENCLAW_GATEWAY_TOKEN`, `OPENROUTER_API_KEY`, `GEMINI_API_KEY`, `GITHUB_TOKEN` |
 | `authentik-secret` | `authentik` | `AUTHENTIK_SECRET_KEY`, `AUTHENTIK_BOOTSTRAP_PASSWORD`, `AUTHENTIK_BOOTSTRAP_TOKEN`, `AUTHENTIK_POSTGRES_PASSWORD` |
-| `grafana-secret` | `monitoring` | `GRAFANA_ADMIN_PASSWORD`, `GRAFANA_OAUTH_CLIENT_SECRET`, `GITEA_OAUTH_CLIENT_SECRET` |
+| `grafana-secret` | `monitoring` | `GRAFANA_ADMIN_PASSWORD`, `GRAFANA_OAUTH_CLIENT_SECRET` |
 
 ## Container Security
 
@@ -167,8 +160,6 @@ flowchart LR
 | OpenClaw | 1000 | `true` | no | Needs writable `/data` for workspaces |
 | ArgoCD | Helm-managed | `true` | `true` | Restricted PSS compliant |
 | ESO | Helm-managed | `true` | `true` | Restricted PSS compliant |
-| Gitea | root (s6-overlay) | no | no | s6 init system requires root at startup; drops privileges internally |
-| PostgreSQL | 999 | `true` | no | Needs writable PGDATA |
 | Infisical | root | no | no | Upstream Helm default; hardening tracked in roadmap |
 | Authentik | root | no | no | Upstream Helm default; hardening tracked in roadmap |
 
@@ -179,8 +170,6 @@ flowchart LR
 | OpenClaw | `openclaw:latest` | Built locally from submodule + `Dockerfile.openclaw` | Submodule pinned to commit |
 | ArgoCD | `quay.io/argoproj/argocd` | Official upstream (Helm chart) | Chart version pinned |
 | ESO | `ghcr.io/external-secrets/external-secrets` | Official upstream (Helm chart) | Chart version pinned |
-| Gitea | `gitea/gitea` | Docker Hub official | Tag pinned in deployment |
-| PostgreSQL | `postgres` | Docker Hub official | Tag pinned in deployment |
 | Prometheus/Grafana | kube-prometheus-stack images | Official upstream (Helm chart) | Chart version pinned |
 | Trivy | `aquasecurity/trivy` | Official upstream (Helm chart) | Chart version pinned |
 
@@ -401,7 +390,6 @@ Open items to improve the security posture in future releases:
 | Add `allowPrivilegeEscalation: false` + `capabilities.drop: [ALL]` | OpenClaw | High | Low |
 | Add `seccompProfile: RuntimeDefault` | OpenClaw | High | Low |
 | Narrow OpenClaw `trustedProxies` to actual pod CIDR | OpenClaw | Medium | Low |
-| Enforce `restricted` PSS on `gitea-system` | Gitea | Medium | Medium (requires upstream image change or init container workaround) |
 | Enforce `restricted` PSS on `openclaw` | OpenClaw | Medium | Medium (requires replacing hostPath with a different volume strategy) |
 | Harden Infisical and Authentik containers to non-root | Infisical, Authentik | Medium | High (depends on upstream chart support) |
 | Enable GPG-signed commits for agent git operations | OpenClaw agents | Low | Medium |

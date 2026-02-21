@@ -49,8 +49,6 @@ nav:
   - Apps:
       - ArgoCD: argocd.md
       - Authentik: authentik.md
-      - Gitea: gitea.md
-      - PostgreSQL: postgresql.md
       - External Secrets: external-secrets.md
       - Infisical: infisical.md
       - Monitoring: monitoring.md

@@ -1,7 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: gitea-system # Using the existing gitea-system namespace
-  labels:
-    app.kubernetes.io/name: postgresql
-    app.kubernetes.io/instance: gitea-db

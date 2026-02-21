@@ -14,8 +14,6 @@ spec:
     - https://aquasecurity.github.io/helm-charts
   destinations:
     - server: https://kubernetes.default.svc
-      namespace: gitea-system
-    - server: https://kubernetes.default.svc
       namespace: monitoring
     - server: https://kubernetes.default.svc
       namespace: kube-system

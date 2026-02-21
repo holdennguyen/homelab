@@ -9,9 +9,7 @@ spec:
   description: Databases and persistent data stores
   sourceRepos:
     - https://github.com/holdennguyen/homelab.git
-  destinations:
-    - server: https://kubernetes.default.svc
-      namespace: gitea-system
+  destinations: []
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace

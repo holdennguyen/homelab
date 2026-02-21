@@ -37,11 +37,6 @@ flowchart TD
         subgraph argocdNs["argocd namespace"]
             helm_secrets["infisical-helm-secrets\npostgres + redis passwords"]
         end
-        subgraph giteaNs["gitea-system namespace"]
-            pg_secret["postgresql-secret\n(created by ESO)"]
-            gitea_secret["gitea-secret\n(created by ESO)"]
-            gitea_admin_secret["gitea-admin-secret\n(created by ESO)"]
-        end
         subgraph authentikNs["authentik namespace"]
             authentik_secret["authentik-secret\n(created by ESO)"]
         end
@@ -57,17 +52,8 @@ flowchart TD
     end
 
     subgraph infisical_store["Infisical (project: homelab / env: prod)"]
-        POSTGRES_PASSWORD["POSTGRES_PASSWORD"]
-        POSTGRES_USER["POSTGRES_USER"]
-        POSTGRES_DB["POSTGRES_DB"]
-        GITEA_DB_PASSWORD["GITEA_DB_PASSWORD"]
-        GITEA_SECRET_KEY["GITEA_SECRET_KEY"]
-        GITEA_ADMIN_USERNAME["GITEA_ADMIN_USERNAME"]
-        GITEA_ADMIN_PASSWORD["GITEA_ADMIN_PASSWORD"]
-        GITEA_ADMIN_EMAIL["GITEA_ADMIN_EMAIL"]
         AUTHENTIK_SECRETS["AUTHENTIK_SECRET_KEY\nAUTHENTIK_BOOTSTRAP_PASSWORD\nAUTHENTIK_BOOTSTRAP_TOKEN\nAUTHENTIK_POSTGRES_PASSWORD"]
         GRAFANA_SECRETS["GRAFANA_ADMIN_PASSWORD\nGRAFANA_OAUTH_CLIENT_SECRET"]
-        GITEA_OAUTH["GITEA_OAUTH_CLIENT_SECRET"]
         OPENCLAW_SECRETS["OPENCLAW_GATEWAY_TOKEN\nOPENROUTER_API_KEY\nGEMINI_API_KEY\nGITHUB_TOKEN"]
     end
 
@@ -78,16 +64,8 @@ flowchart TD
     TFVars -- "argocd_oidc_client_secret\n→ Helm value" --> argocd_secret
     CSS_yaml --> machine_id
     machine_id -- "Universal Auth" --> infisical_store
-    ES --> POSTGRES_PASSWORD
-    ES --> POSTGRES_USER
-    POSTGRES_PASSWORD --> pg_secret
-    GITEA_SECRET_KEY --> gitea_secret
-    GITEA_ADMIN_USERNAME --> gitea_admin_secret
-    GITEA_ADMIN_PASSWORD --> gitea_admin_secret
-    GITEA_ADMIN_EMAIL --> gitea_admin_secret
     AUTHENTIK_SECRETS --> authentik_secret
     GRAFANA_SECRETS --> grafana_secret
-    GITEA_OAUTH --> gitea_secret
     OPENCLAW_SECRETS --> openclaw_secret
 ```
 
@@ -111,21 +89,12 @@ flowchart LR
             subgraph project["Project: homelab\nslug: homelab"]
                 subgraph prod["Environment: prod"]
                     subgraph path["Secret Path: /"]
-                        s1["POSTGRES_PASSWORD"]
-                        s2["POSTGRES_USER"]
-                        s3["POSTGRES_DB"]
-                        s4["GITEA_DB_PASSWORD"]
-                        s5["GITEA_SECRET_KEY"]
-                        s6["GITEA_ADMIN_USERNAME"]
-                        s7["GITEA_ADMIN_PASSWORD"]
-                        s8["GITEA_ADMIN_EMAIL"]
                         s9["AUTHENTIK_SECRET_KEY"]
                         s10["AUTHENTIK_BOOTSTRAP_PASSWORD"]
                         s11["AUTHENTIK_BOOTSTRAP_TOKEN"]
                         s12["AUTHENTIK_POSTGRES_PASSWORD"]
                         s13["GRAFANA_ADMIN_PASSWORD"]
                         s14["GRAFANA_OAUTH_CLIENT_SECRET"]
-                        s15["GITEA_OAUTH_CLIENT_SECRET"]
                         s16["OPENCLAW_GATEWAY_TOKEN"]
                         s17["OPENROUTER_API_KEY"]
                         s18["GITHUB_TOKEN"]
@@ -170,37 +139,6 @@ sequenceDiagram
     Infisical-->>ESO: { POSTGRES_PASSWORD: "abc123", ... }
     ESO->>K8s: Create/Update Secret "postgresql-secret"
     Note over ESO: Repeats every refreshInterval (1h)
-```
-
-### ExternalSecret for PostgreSQL (`k8s/apps/postgresql/external-secret.yaml`)
-
-```yaml
-apiVersion: external-secrets.io/v1
-kind: ExternalSecret
-metadata:
-  name: postgresql-secret
-  namespace: gitea-system
-spec:
-  refreshInterval: 1h
-  secretStoreRef:
-    name: infisical
-    kind: ClusterSecretStore
-  target:
-    name: postgresql-secret      # name of the K8s Secret to create
-    creationPolicy: Owner        # ESO owns and garbage-collects this Secret
-  data:
-    - secretKey: POSTGRES_PASSWORD   # key in the K8s Secret
-      remoteRef:
-        key: POSTGRES_PASSWORD       # key name in Infisical
-    - secretKey: POSTGRES_USER
-      remoteRef:
-        key: POSTGRES_USER
-    - secretKey: POSTGRES_DB
-      remoteRef:
-        key: POSTGRES_DB
-    - secretKey: GITEA_DB_PASSWORD
-      remoteRef:
-        key: GITEA_DB_PASSWORD
 ```
 
 ## Adding Secrets for a New Service
@@ -299,17 +237,17 @@ ArgoCD's OIDC client secret for Authentik SSO is managed through Terraform Helm 
    ```
    Helm updates `argocd-secret` with the new OIDC secret. ArgoCD picks it up on the next login — no pod restart required.
 
-### Updating an Application Secret (e.g., Gitea's SECRET_KEY)
+### Updating an Application Secret
 
-1. In the Infisical UI, update the value of `GITEA_SECRET_KEY` in `homelab / prod`.
+1. In the Infisical UI, update the secret value in `homelab / prod`.
 2. ESO automatically reconciles within `refreshInterval` (1 hour). To apply immediately:
    ```bash
-   kubectl annotate externalsecret gitea-secret -n gitea-system \
+   kubectl annotate externalsecret <name> -n <namespace> \
      force-sync=$(date +%s) --overwrite
    ```
-3. The K8s Secret is updated. Restart the Gitea pod to pick up the new value:
+3. The K8s Secret is updated. Restart the consuming pod to pick up the new value:
    ```bash
-   kubectl rollout restart deployment gitea -n gitea-system
+   kubectl rollout restart deployment <name> -n <namespace>
    ```
 
 ## Troubleshooting

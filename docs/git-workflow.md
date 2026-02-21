@@ -220,7 +220,7 @@ Every issue and PR MUST be labeled. Labels are the tracking and filtering mechan
 |---|---|---|
 | **Agent** | `agent:homelab-admin`, `agent:devops-sre`, `agent:software-engineer`, `agent:security-analyst`, `agent:qa-tester` | Exactly one (OpenClaw only) |
 | **Type** | `type:feat`, `type:fix`, `type:chore`, `type:docs`, `type:refactor`, `type:security` | Exactly one |
-| **Area** | `area:k8s`, `area:terraform`, `area:argocd`, `area:secrets`, `area:monitoring`, `area:networking`, `area:openclaw`, `area:auth`, `area:gitea` | One or more |
+| **Area** | `area:k8s`, `area:terraform`, `area:argocd`, `area:secrets`, `area:monitoring`, `area:networking`, `area:openclaw`, `area:auth` | One or more |
 | **Priority** | `priority:critical`, `priority:high`, `priority:medium`, `priority:low` | Exactly one |
 | **Semver** | `semver:breaking` | Only when a change has breaking impact regardless of type |
 | **Status** | `status:reverted` | Applied to PRs that were merged then reverted |

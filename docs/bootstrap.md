@@ -129,7 +129,7 @@ Expected sequence:
 1. `infisical` app syncs first (sync-wave 0) → Infisical pods start
 2. `external-secrets` app syncs (sync-wave 0) → ESO operator installs CRDs
 3. `external-secrets-config` app syncs (sync-wave 1) → ClusterSecretStore is created
-4. `postgresql`, `gitea`, `monitoring`, `authentik` sync → pods start (secrets not yet available)
+4. `monitoring`, `authentik` sync → pods start (secrets not yet available)
 
 ## Step 5: Configure Infisical
 
@@ -158,26 +158,6 @@ On first visit, Infisical shows a signup screen. Create an admin account.
 
 Navigate to the `homelab` project → `prod` environment → path `/` and add these secrets:
 
-**Database credentials (pulled by ESO into K8s Secrets):**
-
-| Key | Value | How to generate |
-|---|---|---|
-| `POSTGRES_PASSWORD` | random password | `openssl rand -hex 12` |
-| `POSTGRES_USER` | `gitea` | static |
-| `POSTGRES_DB` | `gitea` | static |
-| `GITEA_DB_PASSWORD` | same as `POSTGRES_PASSWORD` | must match exactly |
-| `GITEA_SECRET_KEY` | random base64 | `openssl rand -base64 32` |
-
-> **Important:** `GITEA_DB_PASSWORD` and `POSTGRES_PASSWORD` must be identical. PostgreSQL is initialized with `POSTGRES_PASSWORD`; Gitea connects using `GITEA_DB_PASSWORD`. A mismatch causes Gitea to crash with `password authentication failed`.
-
-**Gitea admin credentials (used by the `gitea-admin-init` PostSync Job):**
-
-| Key | Value | How to generate |
-|---|---|---|
-| `GITEA_ADMIN_USERNAME` | your chosen admin username | e.g. `holden` |
-| `GITEA_ADMIN_PASSWORD` | random password | `openssl rand -hex 12` |
-| `GITEA_ADMIN_EMAIL` | your email address | e.g. `you@example.com` |
-
 **Authentik SSO secrets (added after Authentik is deployed):**
 
 | Key | Value | How to generate |
@@ -188,7 +168,6 @@ Navigate to the `homelab` project → `prod` environment → path `/` and add th
 | `AUTHENTIK_POSTGRES_PASSWORD` | Authentik PostgreSQL password | `openssl rand -hex 12` |
 | `GRAFANA_ADMIN_PASSWORD` | Grafana admin password | `openssl rand -hex 12` |
 | `GRAFANA_OAUTH_CLIENT_SECRET` | Grafana OIDC client secret | Generated when creating Authentik provider |
-| `GITEA_OAUTH_CLIENT_SECRET` | Gitea OIDC client secret | Generated when creating Authentik provider |
 
 ### 6e: Create a Machine Identity for ESO
 
@@ -219,15 +198,12 @@ This updates only the `infisical-machine-identity` K8s Secret. ESO detects the c
 kubectl get clustersecretstore infisical
 # STATUS should show: Valid / Ready: True
 
-kubectl get externalsecret -n gitea-system
-# Should show SecretSynced: True for both postgresql-secret and gitea-secret
 ```
 
 If ExternalSecrets are stuck, force a refresh:
 
 ```bash
-kubectl annotate externalsecret postgresql-secret -n gitea-system force-sync=$(date +%s) --overwrite
-kubectl annotate externalsecret gitea-secret -n gitea-system force-sync=$(date +%s) --overwrite
+kubectl annotate externalsecret <name> -n <namespace> force-sync=$(date +%s) --overwrite
 ```
 
 ## Step 6: Configure Tailscale Serve
@@ -246,9 +222,6 @@ tailscale serve --bg --https 8444 http://localhost:30090
 
 # Infisical — custom HTTPS port 8445
 tailscale serve --bg --https 8445 http://localhost:30445
-
-# Gitea — custom HTTPS port 8446
-tailscale serve --bg --https 8446 http://localhost:30300
 
 # OpenClaw — custom HTTPS port 8447
 tailscale serve --bg --https 8447 http://localhost:30789
@@ -274,9 +247,6 @@ https://holdens-mac-mini.story-larch.ts.net:8444 (tailnet only)
 
 https://holdens-mac-mini.story-larch.ts.net:8445 (tailnet only)
 |-- / proxy http://localhost:30445
-
-https://holdens-mac-mini.story-larch.ts.net:8446 (tailnet only)
-|-- / proxy http://localhost:30300
 
 https://holdens-mac-mini.story-larch.ts.net:8447 (tailnet only)
 |-- / proxy http://localhost:30789
@@ -306,7 +276,6 @@ Access URLs after bootstrap:
 | ArgoCD | `https://holdens-mac-mini.story-larch.ts.net:8443` | SSO via Authentik |
 | Grafana | `https://holdens-mac-mini.story-larch.ts.net:8444` | SSO via Authentik |
 | Infisical | `https://holdens-mac-mini.story-larch.ts.net:8445` | Local admin |
-| Gitea | `https://holdens-mac-mini.story-larch.ts.net:8446` | SSO via Authentik |
 | OpenClaw | `https://holdens-mac-mini.story-larch.ts.net:8447` | Local |
 
 ## Re-bootstrap from Scratch

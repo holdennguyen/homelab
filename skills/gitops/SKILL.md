@@ -72,7 +72,6 @@ Every issue and PR MUST be labeled. Use `--label` flags on `gh issue create` and
 | `area:networking` | Tailscale, NodePort, DNS |
 | `area:openclaw` | OpenClaw agents and skills |
 | `area:auth` | Authentik SSO and OIDC |
-| `area:gitea` | Gitea git forge |
 
 **Priority labels** — urgency (always exactly one):
 

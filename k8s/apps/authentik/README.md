@@ -1,6 +1,6 @@
 # Authentik (SSO / Identity Provider)
 
-Authentik provides **Single Sign-On (SSO)** for the homelab via **OpenID Connect (OIDC)**. One login, one password for Grafana, ArgoCD, and Gitea.
+Authentik provides **Single Sign-On (SSO)** for the homelab via **OpenID Connect (OIDC)**. One login, one password for Grafana and ArgoCD.
 
 ## Access
 
@@ -24,13 +24,11 @@ flowchart TD
     subgraph services["Service OIDC integration"]
         Grafana["Grafana\nauth.generic_oauth"]
         ArgoCD["ArgoCD\noidc.config"]
-        Gitea["Gitea\nOpenID Connect source"]
     end
 
     User["User"] -- "login" --> Server
     Server -- "OIDC token" --> Grafana
     Server -- "OIDC token" --> ArgoCD
-    Server -- "OIDC token" --> Gitea
 ```
 
 ## Directory Contents
@@ -61,7 +59,6 @@ Each service has a dedicated OIDC provider in Authentik with its own client ID a
 |---|---|---|---|
 | Grafana | `grafana` | `https://holdens-mac-mini.story-larch.ts.net:8444/login/generic_oauth` | Infisical: `GRAFANA_OAUTH_CLIENT_SECRET` |
 | ArgoCD | `argocd` | `https://holdens-mac-mini.story-larch.ts.net:8443/auth/callback` | Terraform: `argocd_oidc_client_secret` |
-| Gitea | `gitea` | `https://holdens-mac-mini.story-larch.ts.net:8446/user/oauth2/authentik/callback` | Infisical: `GITEA_OAUTH_CLIENT_SECRET` |
 
 All providers use **RS256** signing (asymmetric keys). Scope mappings assigned: `openid`, `email`, `profile`.
 
@@ -73,9 +70,6 @@ All services enforce SSO-only access — local login forms are disabled:
 |---|---|
 | ArgoCD | `configs.cm.admin.enabled: false` — admin login disabled, RBAC default `role:admin` for all SSO users |
 | Grafana | `auth.disable_login_form: true`, `auto_login: true` — auto-redirects to Authentik |
-| Gitea | `ALLOW_ONLY_EXTERNAL_REGISTRATION: true` — new users can only register via OAuth |
-
-The Gitea local admin account is retained as a break-glass mechanism (credentials in Infisical).
 
 ## Configuration
 
@@ -103,8 +97,6 @@ Key settings:
 **Grafana** — configured in Helm values (`monitoring-app.yaml`) via `grafana.ini.auth.generic_oauth`. Client secret mounted from `grafana-secret` ExternalSecret.
 
 **ArgoCD** — configured in Terraform (`argocd.tf`) via `configs.cm.oidc.config`. Client secret stored in `argocd-secret` via Terraform `set_sensitive`. Requires `terraform apply` to update.
-
-**Gitea** — configured via `gitea admin auth add-oauth` in the PostSync init job (`admin-init-job.yaml`). Client secret from `gitea-secret` ExternalSecret.
 
 ## Networking
 
@@ -165,7 +157,6 @@ kubectl get application authentik authentik-config -n argocd
 | Authentik returns 502 | Server pod not ready | `kubectl get pods -n authentik` |
 | "Invalid client" error | Wrong client_id or secret | Verify the secret in Infisical matches what's in Authentik |
 | OIDC login button not showing | Config not applied | For ArgoCD: run `terraform apply`; for Grafana: wait for ArgoCD sync |
-| Gitea shows no OAuth option | Init job didn't run | Check job: `kubectl get jobs -n gitea-system` |
 | 403 `insufficient_scope` on userinfo | Provider missing scope mappings | Assign `openid`, `email`, `profile` scope mappings to the provider in Authentik |
 | ArgoCD `malformed jwt: unexpected algorithm HS256` | Provider using HS256 instead of RS256 | Update the provider's signing key to an RS256 keypair in Authentik |
 | ArgoCD shows no applications after SSO login | RBAC policy.default is empty | Set `configs.rbac.policy.default: role:admin` in Terraform |

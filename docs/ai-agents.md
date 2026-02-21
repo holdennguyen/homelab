@@ -181,7 +181,7 @@ Every issue and PR created by agents MUST be labeled. Labels serve as the tracki
 |---|---|---|
 | **Agent** | `agent:homelab-admin`, `agent:devops-sre`, `agent:software-engineer`, `agent:security-analyst`, `agent:qa-tester` | Exactly one — who is working on this |
 | **Type** | `type:feat`, `type:fix`, `type:chore`, `type:docs`, `type:refactor`, `type:security` | Exactly one — what kind of change |
-| **Area** | `area:k8s`, `area:terraform`, `area:argocd`, `area:secrets`, `area:monitoring`, `area:networking`, `area:openclaw`, `area:auth`, `area:gitea` | One or more — what part of the homelab |
+| **Area** | `area:k8s`, `area:terraform`, `area:argocd`, `area:secrets`, `area:monitoring`, `area:networking`, `area:openclaw`, `area:auth` | One or more — what part of the homelab |
 | **Priority** | `priority:critical`, `priority:high`, `priority:medium`, `priority:low` | Exactly one — urgency |
 | **Semver** | `semver:breaking` | Only when a change has breaking impact regardless of type (most PRs don't need this) |
 
@@ -260,7 +260,7 @@ Agents follow a structured incident response procedure when deployments cause se
 All agents that modify cluster resources must verify their changes before submitting PRs:
 
 - **Helm value verification** — always confirm key paths exist via `helm show values` before modifying `valuesObject`. Charts silently ignore unknown keys.
-- **SecurityContext compatibility** — verify container images support non-root execution. Some images (e.g., Gitea with s6-overlay) require root at startup.
+- **SecurityContext compatibility** — verify container images support non-root execution. Some images use init systems (e.g., s6-overlay) that require root at startup.
 - **Cross-service impact** — ensure changes don't break sync wave dependencies or shared resources.
 
 **Rollback procedure:**

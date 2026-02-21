@@ -13,8 +13,6 @@ resources:
   # that cannot be stored in git.
   - applications/external-secrets-app.yaml
   - applications/external-secrets-config-app.yaml
-  - applications/postgresql-app.yaml
-  - applications/gitea-app.yaml
   - applications/monitoring-app.yaml
   - applications/monitoring-config-app.yaml
   - applications/authentik-app.yaml

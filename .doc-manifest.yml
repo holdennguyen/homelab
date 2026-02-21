@@ -36,10 +36,6 @@ documents:
     sources:
       - k8s/apps/external-secrets/
 
-  - doc: k8s/apps/gitea/README.md
-    sources:
-      - k8s/apps/gitea/
-
   - doc: k8s/apps/infisical/README.md
     sources:
       - k8s/apps/infisical/
@@ -51,10 +47,6 @@ documents:
   - doc: k8s/apps/openclaw/README.md
     sources:
       - k8s/apps/openclaw/
-
-  - doc: k8s/apps/postgresql/README.md
-    sources:
-      - k8s/apps/postgresql/
 
   - doc: k8s/apps/trivy-operator/README.md
     sources:
