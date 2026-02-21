@@ -20,8 +20,16 @@ spec:
       valuesObject:
         excludeNamespaces: "openclaw"
         operator:
+          # Disable on-change vulnerability scanning; rely on scheduled VulnerabilityScanner CR
+          vulnerabilityScannerEnabled: false
           scanJobsConcurrentLimit: 3
+          scanJobTTL: "30m"
+          scanJobsRetryDelay: "2m"
+          scannerReportTTL: "72h"
           builtInTrivyServer: true
+        # Schedule for config audit (compliance) scans: daily at midnight
+        compliance:
+          cron: "0 0 * * *"
         trivy:
           mode: ClientServer
           serverURL: "http://trivy-service.monitoring:4975"

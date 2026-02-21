@@ -95,6 +95,8 @@ The monitoring stack is deployed via ArgoCD using the Helm chart source directly
 Key settings:
 - **Prometheus retention:** 15 days
 - **Prometheus storage:** 10Gi PVC
+- **Scrape interval:** 60s (explicitly configured)
+- **Evaluation interval:** 60s (explicitly configured)
 - **Alertmanager storage:** 2Gi PVC
 - **Grafana storage:** 2Gi PVC (dashboard persistence)
 - **Disabled scrapers:** kubeProxy, kubeEtcd, kubeScheduler, kubeControllerManager (not applicable to OrbStack single-node)

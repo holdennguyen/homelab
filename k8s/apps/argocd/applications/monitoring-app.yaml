@@ -73,6 +73,9 @@ spec:
               runAsGroup: 65534
               runAsNonRoot: true
               fsGroup: 65534
+            # Set explicit global scrape and evaluation intervals to reduce resource usage
+            scrapeInterval: "60s"
+            evaluationInterval: "60s"
             retention: 15d
             resources:
               requests:
