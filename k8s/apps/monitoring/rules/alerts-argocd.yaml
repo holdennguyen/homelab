@@ -1,0 +1,34 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: alerts-argocd
+  namespace: monitoring
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: monitoring
+spec:
+  groups:
+    - name: argocd
+      rules:
+        - alert: ArgoCDAppOutOfSync
+          expr: argocd_app_sync_status{status="OutOfSync"} == 1
+          for: 5m
+          labels:
+            severity: warning
+            component: gitops
+          annotations:
+            summary: "ArgoCD application {{ $labels.app }} is out of sync"
+            description: "Application {{ $labels.app }} in namespace {{ $labels.namespace }} has been out of sync for more than 5 minutes"
+            runbook_url: https://github.com/holdennguyen/homelab/tree/main/docs/runbooks#argocd-app-out-of-sync
+        - alert: ArgoCDAppDegraded
+          expr: argocd_app_health_status{status="Degraded"} == 1
+          for: 5m
+          labels:
+            severity: critical
+            component: gitops
+          annotations:
+            summary: "ArgoCD application {{ $labels.app }} is degraded"
+            description: "Application {{ $labels.app }} in namespace {{ $labels.namespace }} is in a degraded state"
+            runbook_url: https://github.com/holdennguyen/homelab/tree/main/docs/runbooks#argocd-app-degraded

@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: recording-rules-requests
+  namespace: monitoring
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: monitoring
+spec:
+  groups:
+    - name: requests
+      rules:
+        - record: http:requests:rate5m
+          expr: sum by (service, method, code) (rate(http_requests_total[5m]))
+        - record: http:requests:errors:rate5m
+          expr: sum by (service) (rate(http_requests_total{code=~"4..|5.."}[5m]))
+        - record: http:requests:total:rate5m
+          expr: sum by (service) (rate(http_requests_total[5m]))

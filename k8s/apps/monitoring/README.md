@@ -88,6 +88,138 @@ Grafana ships with dashboards for:
 - CoreDNS performance
 - API server request rates and latency
 
+## Custom Dashboards and Alerting Rules
+
+This directory (`k8s/apps/monitoring/`) contains custom dashboards and alerting rules managed as GitOps resources.
+
+### Directory Structure
+
+```
+k8s/apps/monitoring/
+├── kustomization.yaml
+├── external-secret.yaml
+├── dashboards/
+│   ├── dashboard-homelab-overview.yaml
+│   ├── dashboard-node-health.yaml
+│   ├── dashboard-postgresql.yaml
+│   ├── dashboard-network.yaml
+│   ├── dashboard-gitea.yaml
+│   ├── dashboard-authentik.yaml
+│   ├── dashboard-argocd.yaml
+│   └── dashboard-infisical.yaml
+└── rules/
+    ├── recording-namespace.yaml
+    ├── recording-requests.yaml
+    ├── alerts-pods.yaml
+    ├── alerts-pvc.yaml
+    ├── alerts-nodes.yaml
+    ├── alerts-prometheus.yaml
+    ├── alerts-certificates.yaml
+    └── alerts-argocd.yaml
+```
+
+### Dashboard Provisioning
+
+Custom dashboards are deployed as ConfigMaps with the label `grafana_dashboard: "1"`. The Grafana sidecar (configured in the Helm chart) automatically picks up these ConfigMaps and loads them into Grafana without requiring manual UI changes.
+
+Each dashboard is a separate ConfigMap file in `dashboards/`, following the naming convention:
+
+```
+dashboard-<name>.yaml
+```
+
+The file contains a ConfigMap with the dashboard JSON in `data.dashboard.json`. Dashboard UIDs should be unique across all dashboards.
+
+### Prometheus Rules
+
+Prometheus recording and alerting rules are defined as `PrometheusRule` CRDs in `rules/`. These are picked up by the Prometheus Operator automatically.
+
+Two types of rules:
+
+1. **Recording rules** (`recording-*.yaml`) — pre-compute expensive queries for faster dashboard rendering
+2. **Alerting rules** (`alerts-*.yaml`) — generate alerts when conditions match
+
+Naming conventions:
+
+```
+recording-<domain>.yaml   # e.g., recording-namespace.yaml, recording-requests.yaml
+alerts-<domain>.yaml      # e.g., alerts-pods.yaml, alerts-nodes.yaml
+```
+
+### Adding a New Dashboard
+
+1. Create the dashboard JSON in Grafana (export as JSON)
+2. Create a new file `dashboards/dashboard-<name>.yaml`:
+   ```yaml
+   apiVersion: v1
+   kind: ConfigMap
+   metadata:
+     name: dashboard-<name>
+     namespace: monitoring
+     labels:
+       grafana_dashboard: "1"
+       app.kubernetes.io/name: monitoring
+       app.kubernetes.io/instance: monitoring
+   data:
+     dashboard.json: |
+       { ... }
+   ```
+3. Commit and push — ArgoCD will sync automatically; the sidecar will load the dashboard.
+
+### Adding a New Alerting or Recording Rule
+
+1. Create a new file `rules/<type>-<domain>.yaml`:
+   ```yaml
+   apiVersion: monitoring.coreos.com/v1
+   kind: PrometheusRule
+   metadata:
+     name: <name>
+     namespace: monitoring
+     labels:
+       prometheus: kube-prometheus
+       role: alert-rules
+       app.kubernetes.io/name: monitoring
+       app.kubernetes.io/instance: monitoring
+   spec:
+     groups:
+       - name: <group-name>
+         rules:
+           - alert: <alert-name>
+             expr: <promql expression>
+             for: <duration>
+             labels:
+               severity: <severity>
+             annotations:
+               summary: "..."
+               description: "..."
+   ```
+2. Commit and push — the Prometheus Operator will reload rules automatically.
+
+### Testing Alerting Rules
+
+To verify alert rules work correctly:
+
+1. Generate a synthetic condition (e.g., kill a pod repeatedly to trigger `PodCrashLooping`, fill a PVC to trigger `PVCUsageTooHigh`)
+2. Check alerts in Grafana or via Prometheus API:
+   ```bash
+   kubectl port-forward -n monitoring svc/monitoring-kube-prometheus-prometheus 9090:9090
+   # Open http://localhost:9090/alerts
+   ```
+3. Verify Alertmanager receives the alert:
+   ```bash
+   kubectl port-forward -n monitoring svc/monitoring-kube-prometheus-alertmanager 9093:9093
+   # Open http://localhost:9093/
+   ```
+4. Silence or resolve the condition, ensure the alert clears.
+
+### Notes for OpenClaw Agents
+
+- All metrics are scraped by the Prometheus instance deployed with the `kube-prometheus-stack` Helm chart.
+- Service-specific metrics (e.g., `http_requests_total`) come from the Prometheus instrumentation of those services. Ensure the services are correctly instrumented.
+- For metrics not currently available (e.g., PostgreSQL-specific metrics), consider adding a PostgreSQL exporter or instrumenting the application.
+- Dashboard UIDs should remain stable across updates. Changing a dashboard's UID will create a new dashboard in Grafana instead of updating the existing one.
+- To modify an existing dashboard, edit the JSON in place and keep the same UID.
+
 ## Configuration
 
 The monitoring stack is deployed via ArgoCD using the Helm chart source directly (no local manifests). All configuration is in the Application CR at `k8s/apps/argocd/applications/monitoring-app.yaml`.

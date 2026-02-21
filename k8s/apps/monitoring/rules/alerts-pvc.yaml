@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: alerts-pvc
+  namespace: monitoring
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: monitoring
+spec:
+  groups:
+    - name: persistentvolumeclaims
+      rules:
+        - alert: PVCUsageTooHigh
+          expr: |
+            (
+              kubelet_volume_stats_used_bytes_bytes / kubelet_volume_stats_capacity_bytes
+            ) * 100 > 80
+          for: 5m
+          labels:
+            severity: warning
+            component: storage
+          annotations:
+            summary: "PVC {{ $labels.persistentvolumeclaim }} in namespace {{ $labels.namespace }} usage is high"
+            description: "PVC {{ $labels.persistentvolumeclaim }} is {{ $value }}% full"
+            runbook_url: https://github.com/holdennguyen/homelab/tree/main/docs/runbooks#pvc-usage-too-high

@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: recording-rules-namespace
+  namespace: monitoring
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: monitoring
+spec:
+  groups:
+    - name: namespace
+      rules:
+        - record: namespace:cpu:rate
+          expr: sum by (namespace) (rate(container_cpu_usage_seconds_total{container!="",namespace!=""}[5m]))
+        - record: namespace:memory:usage
+          expr: sum by (namespace) (container_memory_working_set_bytes{container!="",namespace!=""})
+        - record: namespace:memory:limit
+          expr: sum by (namespace) (container_spec_memory_limit_bytes{container!="",namespace!=""})
+        - record: namespace:network:transmit:rate
+          expr: sum by (namespace) (rate(container_network_transmit_bytes_total[5m]))
+        - record: namespace:network:receive:rate
+          expr: sum by (namespace) (rate(container_network_receive_bytes_total[5m]))
+        - record: namespace:pod:count
+          expr: count by (namespace) (kube_pod_info)

@@ -1,0 +1,37 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: alerts-certificates
+  namespace: monitoring
+  labels:
+    prometheus: kube-prometheus
+    role: alert-rules
+    app.kubernetes.io/name: monitoring
+    app.kubernetes.io/instance: monitoring
+spec:
+  groups:
+    - name: certificates
+      rules:
+        - alert: CertificateExpiringSoon
+          expr: |
+            (
+              (certificate_validity_not_after{type="x509"} - time()) / 86400 < 30
+            ) and (certificate_validity_not_after{type="x509"} - time()) > 0
+          for: 1h
+          labels:
+            severity: warning
+            component: security
+          annotations:
+            summary: "Certificate {{ $labels.commonName }} expires in less than 30 days"
+            description: "Certificate CN {{ $labels.commonName }} expires on {{ $labels.validityNotAfter }} ({{ $value | humanizeDuration }} remaining)"
+            runbook_url: https://github.com/holdennguyen/homelab/tree/main/docs/runbooks#certificate-expiring-soon
+        - alert: CertificateExpired
+          expr: certificate_validity_not_after{type="x509"} < time()
+          for: 1h
+          labels:
+            severity: critical
+            component: security
+          annotations:
+            summary: "Certificate {{ $labels.commonName }} has expired"
+            description: "Certificate CN {{ $labels.commonName }} expired on {{ $labels.validityNotAfter }}"
+            runbook_url: https://github.com/holdennguyen/homelab/tree/main/docs/runbooks#certificate-expired
