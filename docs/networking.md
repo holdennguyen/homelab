@@ -211,10 +211,11 @@ Tailscale's MagicDNS automatically resolves `<hostname>.story-larch.ts.net` to t
 
 | Service | URL | Port | Auth |
 |---------|-----|------|------|
-| Authentik (SSO) | `https://holdens-mac-mini.story-larch.ts.net` | 443 (default) | SSO portal |
+| Authentik (SSO) | `https://holdens-mac-mini.story-larch.ts.net` | 443 (default) | SSO portal (Homelab Homepage) |
 | ArgoCD | `https://holdens-mac-mini.story-larch.ts.net:8443` | 8443 | SSO via Authentik |
 | Grafana | `https://holdens-mac-mini.story-larch.ts.net:8444` | 8444 | SSO via Authentik |
 | Infisical | `https://holdens-mac-mini.story-larch.ts.net:8445` | 8445 | Local admin |
+| Gitea | `https://holdens-mac-mini.story-larch.ts.net:8446` | 8446 | SSO via Authentik |
 | OpenClaw | `https://holdens-mac-mini.story-larch.ts.net:8447` | 8447 | Local |
 
 ### Tailscale Serve vs Funnel

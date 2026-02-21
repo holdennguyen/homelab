@@ -22,6 +22,10 @@ spec:
           existingSecret:
             secretName: authentik-secret
 
+        blueprints:
+          configMaps:
+            - authentik-blueprints
+
         global:
           envFrom:
             - secretRef:

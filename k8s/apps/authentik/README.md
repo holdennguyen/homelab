@@ -113,6 +113,40 @@ One-time Tailscale Serve setup:
 tailscale serve --bg http://localhost:30500
 ```
 
+## Application Inventory
+
+| Application | Integration | URL |
+|---|---|---|
+| Grafana | `auth.generic_oauth` | `https://holdens-mac-mini.story-larch.ts.net:8444` |
+| ArgoCD | `oidc.config` | `https://holdens-mac-mini.story-larch.ts.net:8443` |
+| Gitea | OAuth2 source | `https://holdens-mac-mini.story-larch.ts.net:8446` |
+| Infisical | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8445` |
+| Trivy Operator | Bookmark | (No web UI) |
+| Homelab Docs | Bookmark | `https://holdennguyen.github.io/homelab` |
+
+## Adding a new Bookmark Application
+
+For services without native OIDC support, you can add them to the Authentik portal as a Bookmark Application using the Blueprint system.
+
+1. Edit `k8s/apps/authentik/blueprints-configmap.yaml`
+2. Add a new entry to the `entries` list under the `bookmarks.yaml` key:
+
+```yaml
+      - model: authentik_core.application
+        id: app-my-service
+        state: present
+        attrs:
+          name: My Service
+          slug: my-service
+          group: Development # Or whatever logical group makes sense
+          meta_launch_url: https://url-to-service
+          meta_icon: https://url-to-icon.png
+          meta_description: Short description of the service
+          meta_publisher: Homelab
+```
+
+3. Commit and push the changes. ArgoCD will sync the new ConfigMap, and Authentik will automatically discover and apply the Blueprint, making the bookmark appear in the portal.
+
 ## Adding a new OIDC-protected service
 
 1. Create an OAuth2 provider in Authentik (UI or API): set client ID, secret, and redirect URI

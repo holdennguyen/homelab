@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: authentik-blueprints
+  namespace: authentik
+data:
+  bookmarks.yaml: |
+    version: 1
+    entries:
+      - model: authentik_tenants.tenant
+        id: tenant-default
+        state: present
+        identifiers:
+          domain: authentik-default
+        attrs:
+          branding_title: Homelab Portal
+      - model: authentik_core.application
+        id: app-infisical
+        state: present
+        attrs:
+          name: Infisical
+          slug: infisical
+          group: Infrastructure
+          meta_launch_url: https://holdens-mac-mini.story-larch.ts.net:8445
+          meta_icon: https://raw.githubusercontent.com/Infisical/infisical/main/docs/static/img/logo-dark.png
+          meta_description: Secret Management Platform
+          meta_publisher: Homelab
+      - model: authentik_core.application
+        id: app-mkdocs
+        state: present
+        attrs:
+          name: Homelab Docs
+          slug: mkdocs
+          group: Documentation
+          meta_launch_url: https://holdennguyen.github.io/homelab
+          meta_icon: https://squidfunk.github.io/mkdocs-material/assets/logo.png
+          meta_description: Homelab Documentation
+          meta_publisher: Homelab
+      - model: authentik_core.application
+        id: app-trivy
+        state: present
+        attrs:
+          name: Trivy Operator
+          slug: trivy
+          group: Security
+          meta_launch_url: ""
+          meta_icon: https://raw.githubusercontent.com/aquasecurity/trivy/main/docs/docs/imgs/logo.png
+          meta_description: Cluster Vulnerability Scanning
+          meta_publisher: Homelab
