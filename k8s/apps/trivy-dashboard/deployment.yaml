@@ -60,6 +60,16 @@ spec:
             - name: GITHUB__CHECKFORUPDATESINTERVALINMINUTES
               value: "360"
             - name: OPENTELEMETRY__ENABLED
+              value: "true"
+            - name: OPENTELEMETRY__OTELENDPOINT
+              value: ""
+            - name: OPENTELEMETRY__OTELPROTOCOL
+              value: "grpc"
+            - name: OPENTELEMETRY__CONSOLEENABLED
+              value: "false"
+            - name: OPENTELEMETRY__ASPNETCOREINSTRUMENTATIONENABLED
+              value: "false"
+            - name: OPENTELEMETRY__RUNTIMEINSTRUMENTATIONENABLED
               value: "false"
             - name: SERILOG__MINIMUMLEVEL__DEFAULT
               value: Information
