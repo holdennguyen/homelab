@@ -7,10 +7,10 @@ description: Manage secrets through the Infisical to External Secrets Operator t
 
 All secrets flow through: Infisical (source of truth) → ESO (sync) → K8s Secret (consumed by pods). Secrets never live in git.
 
-## Adding a Secret for a Service
+## Adding a Secret
 
 1. Add the key/value to Infisical UI under `homelab / prod`
-2. Add an entry to the service's `external-secret.yaml`:
+2. Add an entry to `k8s/apps/<service>/external-secret.yaml`:
    ```yaml
    - secretKey: MY_KEY
      remoteRef:
@@ -24,37 +24,22 @@ All secrets flow through: Infisical (source of truth) → ESO (sync) → K8s Sec
          name: <service>-secret
          key: MY_KEY
    ```
-4. Push to `main` — ArgoCD syncs, ESO creates the K8s Secret
+4. Update `docs/secret-management.md` and the service's README with the new key
+5. Push to `main` — ArgoCD syncs, ESO creates the K8s Secret
 
 ## Rotating a Secret
 
 1. Update the value in Infisical
-2. Force ESO re-sync:
-   ```bash
-   kubectl annotate externalsecret <name> -n <ns> force-sync=$(date +%s) --overwrite
-   ```
-3. Restart the consuming deployment:
-   ```bash
-   kubectl rollout restart deployment/<name> -n <ns>
-   ```
+2. Force ESO re-sync: `kubectl annotate externalsecret <name> -n <ns> force-sync=$(date +%s) --overwrite`
+3. Restart the consuming deployment: `kubectl rollout restart deployment/<name> -n <ns>`
 
-## Checking Secret Health
+## Health Check
 
 ```bash
 kubectl get clustersecretstore infisical
-kubectl describe clustersecretstore infisical
 kubectl get externalsecret -A
 kubectl get secret <name> -n <ns> -o jsonpath='{.data.<KEY>}' | base64 -d
 ```
-
-## Current Secrets
-
-| ExternalSecret | Namespace | Keys |
-|---|---|---|
-| `postgresql-secret` | `gitea-system` | POSTGRES_PASSWORD, POSTGRES_USER, POSTGRES_DB, GITEA_DB_PASSWORD |
-| `gitea-secret` | `gitea-system` | GITEA_SECRET_KEY |
-| `gitea-admin-secret` | `gitea-system` | GITEA_ADMIN_USERNAME, GITEA_ADMIN_PASSWORD, GITEA_ADMIN_EMAIL |
-| `openclaw-secret` | `openclaw` | OPENCLAW_GATEWAY_TOKEN, OPENROUTER_API_KEY, GEMINI_API_KEY |
 
 ## Troubleshooting
 

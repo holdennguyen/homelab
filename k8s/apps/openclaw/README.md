@@ -153,7 +153,7 @@ sequenceDiagram
     Argo->>Argo: Auto-sync within ~3 minutes
 ```
 
-The git workflow details are embedded in each agent's `AGENTS.md` personality and the `gitops` skill. Each agent sets its own git identity via `git config` in the cloned repo (e.g. `devops-sre[bot] <devops-sre@openclaw.homelab>`), so every commit is traceable to the specific agent. The `GITHUB_TOKEN` from Infisical powers `gh` CLI authentication.
+The git workflow details live in the `gitops` skill (assigned to all agents). Each agent's `AGENTS.md` is a lean personality definition — identity, tone, role-specific guidance — that references skills for procedural content. Each agent sets its own git identity via `git config` in the cloned repo (e.g. `devops-sre[bot] <devops-sre@openclaw.homelab>`), so every commit is traceable to the specific agent. The `GITHUB_TOKEN` from Infisical powers `gh` CLI authentication.
 
 **Branch freshness:** Agents are required to keep their feature branch up to date with `main` by running `git fetch origin main && git merge origin/main --no-edit` before every push. This prevents stale branches and merge conflicts when the PR is merged.
 
@@ -467,7 +467,7 @@ The `openclaw.json` config (in `configmap.yaml`) contains these key settings:
 | `tools.agentToAgent` | `enabled` / `allow` | All 5 agents | Enables inter-agent communication |
 | `tools.sessions` | `visibility` | `"all"` | Allows the orchestrator to view sub-agent session history for debugging |
 | `agents.defaults.subagents` | `maxSpawnDepth` | `2` | Orchestrator → sub-agent → leaf worker |
-| `agents.list[].subagents` | `allowAgents` | Per-agent list | Controls which agents each agent can spawn (see Sub-agent spawning below) |
+| `agents.list[].subagents` | `allowAgents` | Per-agent list | Controls which agents each agent can spawn — only the orchestrator has non-empty lists |
 
 ## Multi-Agent & Skills Architecture
 
@@ -507,9 +507,9 @@ flowchart TD
 
     HA --> S1 & S5 & S6 & S8
     DS --> S2 & S5 & S6 & S8
-    SE --> S3
-    SA --> S4 & S6
-    QA --> S7 & S5 & S8
+    SE --> S3 & S5
+    SA --> S4 & S5 & S6
+    QA --> S7 & S5 & S6 & S8
 ```
 
 Each agent has a `skills` allowlist in the configmap that restricts which skills it can see (omit = all skills; empty array = none):
@@ -518,9 +518,9 @@ Each agent has a `skills` allowlist in the configmap that restricts which skills
 |---|---|
 | `homelab-admin` | `homelab-admin`, `gitops`, `secret-management`, `incident-response` |
 | `devops-sre` | `devops-sre`, `gitops`, `secret-management`, `incident-response` |
-| `software-engineer` | `software-engineer` |
-| `security-analyst` | `security-analyst`, `secret-management` |
-| `qa-tester` | `qa-tester`, `gitops`, `incident-response` |
+| `software-engineer` | `software-engineer`, `gitops` |
+| `security-analyst` | `security-analyst`, `gitops`, `secret-management` |
+| `qa-tester` | `qa-tester`, `gitops`, `secret-management`, `incident-response` |
 
 ### Agents
 
@@ -579,7 +579,7 @@ Sub-agents announce results back up the chain. Configure limits in the ConfigMap
 
 1. Add the agent entry to `configmap.yaml` under `agents.list` — include a `skills` array and a `subagents.allowAgents` list
 2. Add the new agent ID to the orchestrator's `subagents.allowAgents` so it can be spawned
-3. Create `agents/workspaces/<id>/AGENTS.md` with the agent personality (must include mandatory git workflow and agent footprint sections)
+3. Create `agents/workspaces/<id>/AGENTS.md` with a lean agent personality (identity, tone, role-specific guidance, rules referencing skills)
 4. Add the agent ID to the init container's `for` loop in `deployment.yaml`
 5. Add the agent ID to `tools.agentToAgent.allow` in the config
 6. Push to `main` via PR (branch protection requires review)

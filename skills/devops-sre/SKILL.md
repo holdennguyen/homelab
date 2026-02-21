@@ -169,12 +169,14 @@ kubectl exec -n <ns> <pod> -- wget -qO- --timeout=5 http://<service>.<namespace>
 
 ### Severity classification
 
+Uses the canonical scale from the `incident-response` skill:
+
 | Severity | Criteria | Response time | Examples |
 |---|---|---|---|
-| **SEV1** | Multiple services down, data loss risk | Immediate | Node not ready, ArgoCD down, ESO ClusterSecretStore broken |
-| **SEV2** | Single service down, degraded functionality | Within 1 hour | Pod CrashLoop, ExternalSecret sync failure |
-| **SEV3** | Minor issue, workaround available | Within 24 hours | High memory usage, non-critical pod restart |
-| **SEV4** | Cosmetic, monitoring alert tuning | Best effort | Noisy alerts, log verbosity |
+| **SEV-1** | Multiple services down, data loss risk | Immediate | Node not ready, ArgoCD down, ESO ClusterSecretStore broken |
+| **SEV-2** | Single service down, degraded functionality | Within 15 min | Pod CrashLoop, ExternalSecret sync failure |
+| **SEV-3** | Minor issue, workaround available | Within 1 hour | High memory usage, non-critical pod restart |
+| **SEV-4** | Cosmetic, monitoring alert tuning | Best effort | Noisy alerts, log verbosity |
 
 ### Incident response runbook
 
@@ -244,8 +246,8 @@ kill %1
 
 | Alert | Severity | Action |
 |---|---|---|
-| `KubePodCrashLooping` | SEV2 | Check logs, fix config or resource limits |
-| `KubePodNotReady` | SEV2 | Describe pod, check readiness probe |
-| `NodeFilesystemSpaceFillingUp` | SEV3 | Clean old images: `docker system prune` on host |
-| `KubeMemoryOvercommit` | SEV3 | Review and reduce memory requests |
+| `KubePodCrashLooping` | SEV-2 | Check logs, fix config or resource limits |
+| `KubePodNotReady` | SEV-2 | Describe pod, check readiness probe |
+| `NodeFilesystemSpaceFillingUp` | SEV-3 | Clean old images: `docker system prune` on host |
+| `KubeMemoryOvercommit` | SEV-3 | Review and reduce memory requests |
 | `Watchdog` | Informational | Alertmanager health signal — absence means Alertmanager is down |

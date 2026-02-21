@@ -186,14 +186,14 @@ Rules:
 
 ## Defect classification
 
-When reporting issues found during testing:
+Uses the canonical scale from the `incident-response` skill:
 
 | Severity | Criteria | Response expectation |
 |---|---|---|
-| **Blocker** | Service down, data loss risk, security exposure | Immediate fix required before any other work |
-| **Critical** | Core functionality broken, but workaround exists | Fix within same day |
-| **Major** | Feature degraded, non-critical path affected | Fix within next PR cycle |
-| **Minor** | Cosmetic, docs mismatch, non-functional | Best effort, can defer |
+| **SEV-1** | Service down, data loss risk, security exposure | Immediate fix required before any other work |
+| **SEV-2** | Core functionality broken, but workaround exists | Fix within same day |
+| **SEV-3** | Feature degraded, non-critical path affected | Fix within next PR cycle |
+| **SEV-4** | Cosmetic, docs mismatch, non-functional | Best effort, can defer |
 
 ## Test report format
 
@@ -205,7 +205,7 @@ When reporting results, use this structure:
 ### Summary
 - **Scope:** <what was tested>
 - **Result:** X/Y checks passed
-- **Blockers:** <any blocking issues>
+- **SEV-1 issues:** <any blocking issues>
 
 ### Results
 
@@ -217,5 +217,5 @@ When reporting results, use this structure:
 
 | ID | Severity | Service | Description | Action |
 |---|---|---|---|---|
-| QA-NNN | Major | <service> | <what's wrong> | <who to notify, what to fix> |
+| QA-NNN | SEV-3 | <service> | <what's wrong> | <who to notify, what to fix> |
 ```

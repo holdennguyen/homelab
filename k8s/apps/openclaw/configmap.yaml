@@ -33,7 +33,7 @@ data:
             "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
             "skills": ["devops-sre", "gitops", "secret-management", "incident-response"],
             "subagents": {
-              "allowAgents": ["software-engineer", "security-analyst", "qa-tester"]
+              "allowAgents": []
             }
           },
           {
@@ -41,9 +41,9 @@ data:
             "name": "Software Engineer",
             "workspace": "/data/workspaces/software-engineer",
             "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
-            "skills": ["software-engineer"],
+            "skills": ["software-engineer", "gitops"],
             "subagents": {
-              "allowAgents": ["devops-sre", "security-analyst", "qa-tester"]
+              "allowAgents": []
             }
           },
           {
@@ -51,9 +51,9 @@ data:
             "name": "Security Analyst",
             "workspace": "/data/workspaces/security-analyst",
             "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
-            "skills": ["security-analyst", "secret-management"],
+            "skills": ["security-analyst", "gitops", "secret-management"],
             "subagents": {
-              "allowAgents": ["devops-sre", "software-engineer", "qa-tester"]
+              "allowAgents": []
             }
           },
           {
@@ -61,9 +61,9 @@ data:
             "name": "QA Tester",
             "workspace": "/data/workspaces/qa-tester",
             "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
-            "skills": ["qa-tester", "gitops", "incident-response"],
+            "skills": ["qa-tester", "gitops", "secret-management", "incident-response"],
             "subagents": {
-              "allowAgents": ["devops-sre", "software-engineer"]
+              "allowAgents": []
             }
           }
         ],

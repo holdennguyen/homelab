@@ -188,12 +188,14 @@ Recommendations to improve supply chain posture:
 
 ### Security incident classification
 
-| Severity | Examples | Response |
+Uses the canonical scale from the `incident-response` skill, mapped to security contexts:
+
+| Severity | Security examples | Response |
 |---|---|---|
-| **Critical** | Secret exposed in git, unauthorized cluster access, data breach | Immediate: rotate all affected secrets, audit access logs, notify owner |
-| **High** | Privileged container found, RBAC misconfiguration, CVE in running image | Within 1h: apply fix, document finding, create hardening PR |
-| **Medium** | Missing security context, stale secrets, unnecessary permissions | Within 24h: create issue, apply fix in next maintenance window |
-| **Low** | Image not pinned to digest, missing readOnlyRootFilesystem | Best effort: document and fix when touching the service |
+| **SEV-1** | Secret exposed in git, unauthorized cluster access, data breach | Immediate: rotate all affected secrets, audit access logs, notify owner |
+| **SEV-2** | Privileged container found, RBAC misconfiguration, CVE in running image | Within 15 min: apply fix, document finding, create hardening PR |
+| **SEV-3** | Missing security context, stale secrets, unnecessary permissions | Within 1 hour: create issue, apply fix in next maintenance window |
+| **SEV-4** | Image not pinned to digest, missing readOnlyRootFilesystem | Best effort: document and fix when touching the service |
 
 ### Secret compromise response
 

@@ -302,17 +302,17 @@ Each agent has a `skills` allowlist in the configmap that restricts which skills
 |---|---|
 | `homelab-admin` | `homelab-admin`, `gitops`, `secret-management`, `incident-response` |
 | `devops-sre` | `devops-sre`, `gitops`, `secret-management`, `incident-response` |
-| `software-engineer` | `software-engineer` |
-| `security-analyst` | `security-analyst`, `secret-management` |
-| `qa-tester` | `qa-tester`, `gitops`, `incident-response` |
+| `software-engineer` | `software-engineer`, `gitops` |
+| `security-analyst` | `security-analyst`, `gitops`, `secret-management` |
+| `qa-tester` | `qa-tester`, `gitops`, `secret-management`, `incident-response` |
 
-Cross-cutting skills (e.g. `secret-management`) are shared across agents that need them.
+All agents get the `gitops` skill for the mandatory git workflow. Cross-cutting skills (e.g. `secret-management`) are shared across agents that need them.
 
 ### Adding a New Agent
 
 1. Add the agent entry to `k8s/apps/openclaw/configmap.yaml` under `agents.list` — include a `skills` array and a `subagents.allowAgents` list
 2. Add the new agent ID to the orchestrator's `subagents.allowAgents` so it can be spawned
-3. Create `agents/workspaces/<id>/AGENTS.md` with the agent personality (must include the mandatory git workflow and agent footprint sections)
+3. Create `agents/workspaces/<id>/AGENTS.md` with a lean agent personality (identity, tone, role-specific guidance, rules referencing skills for procedural content)
 4. Add the agent ID to the init container's `for` loop in `k8s/apps/openclaw/deployment.yaml`
 5. Add the agent ID to `tools.agentToAgent.allow` in the configmap
 6. Push to `main` via PR (branch protection requires review) and restart: `kubectl rollout restart deployment/openclaw -n openclaw`
@@ -409,4 +409,4 @@ Add an entry to `.doc-manifest.yml` mapping the new service's README to its sour
 | Agent roster & config | `k8s/apps/openclaw/configmap.yaml` | OpenClaw (mounted at `/config`) |
 | Doc-to-source mappings | `.doc-manifest.yml` | `scripts/doc-freshness.py`, `doc-freshness` CI workflow |
 
-There is no duplication. Each piece of content has exactly one source file in git.
+Agent personalities are lean (identity, tone, role-specific guidance) and reference skills for procedural content (git workflow, documentation matrix, labels). This avoids duplication and keeps each piece of content in exactly one source file.

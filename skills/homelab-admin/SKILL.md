@@ -31,87 +31,48 @@ Orchestrate and manage the homelab Kubernetes cluster running on OrbStack (Mac m
 
 The Mac mini's Tailscale hostname is `holdens-mac-mini` on the tailnet `story-larch.ts.net`. All services are accessible via HTTPS with auto-provisioned Let's Encrypt certificates.
 
-**Tailscale IP:** `100.77.144.4`
+Discover current endpoints and devices dynamically:
 
-### Service endpoints
+```bash
+# Current Tailscale serve endpoints
+tailscale serve status
 
-| Service | Tailscale URL | NodePort | Proxy target |
-|---|---|---|---|
-| Authentik (SSO) | `https://holdens-mac-mini.story-larch.ts.net` | 30500 | `http://localhost:30500` |
-| ArgoCD | `https://holdens-mac-mini.story-larch.ts.net:8443` | 30080 | `http://localhost:30080` |
-| Grafana | `https://holdens-mac-mini.story-larch.ts.net:8444` | 30090 | `http://localhost:30090` |
-| Infisical | `https://holdens-mac-mini.story-larch.ts.net:8445` | 30445 | `http://localhost:30445` |
-| Gitea | `https://holdens-mac-mini.story-larch.ts.net:8446` | 30300 | `http://localhost:30300` |
-| Gitea SSH | N/A (TCP) | 30022 | SSH |
-| OpenClaw | `https://holdens-mac-mini.story-larch.ts.net:8447` | 30789 | `http://localhost:30789` |
+# Tailnet devices
+tailscale status
 
-### Tailnet devices
+# All NodePort services
+kubectl get svc -A -o jsonpath='{range .items[?(@.spec.type=="NodePort")]}{.metadata.namespace}/{.metadata.name}: {.spec.ports[*].nodePort}{"\n"}{end}'
+```
 
-| Device | IP | OS |
-|---|---|---|
-| holdens-mac-mini | 100.77.144.4 | macOS |
-| iphone-12-pro-max | 100.67.153.52 | iOS |
-| ipad-mini-gen-5 | 100.121.193.73 | iOS |
+For the canonical endpoint table, see `docs/networking.md`.
 
-## Namespaces
+## Cluster inventory
 
-| Namespace | Services |
-|---|---|
-| `argocd` | ArgoCD server, repo-server, application-controller, redis, dex, notifications |
-| `external-secrets` | ESO operator, cert-controller, webhook |
-| `gitea-system` | Gitea, PostgreSQL (Gitea's DB) |
-| `infisical` | Infisical standalone, PostgreSQL, Redis, ingress-nginx |
-| `monitoring` | Prometheus, Grafana, Alertmanager, node-exporter, kube-state-metrics, Trivy Operator, trivy-server |
-| `openclaw` | OpenClaw gateway (this pod) |
+Discover the current state of the cluster dynamically rather than relying on stale snapshots:
 
-## ArgoCD applications
+```bash
+# Namespaces and pods
+kubectl get pods -A
 
-| Application | Project | Description |
-|---|---|---|
-| `argocd-apps` | `default` | Root App of Apps — syncs all other Application CRs |
-| `external-secrets` | `secrets` | ESO Helm chart (installs CRDs) — sync wave 0 |
-| `external-secrets-config` | `secrets` | ClusterSecretStore for Infisical — sync wave 1 |
-| `infisical` | `secrets` | Infisical secret manager (managed by Terraform, not App of Apps) |
-| `authentik` | `apps` | Authentik SSO (Helm chart) |
-| `authentik-config` | `apps` | Authentik ExternalSecret and config |
-| `gitea` | `apps` | Gitea git forge |
-| `monitoring` | `apps` | kube-prometheus-stack (Prometheus + Grafana + Alertmanager) |
-| `monitoring-config` | `apps` | Monitoring ExternalSecret and config |
-| `trivy-operator` | `apps` | Container image vulnerability scanning (ClientServer mode) |
-| `namespace-security` | `apps` | Pod Security Standard labels per namespace |
-| `networking-policies` | `apps` | Default-deny NetworkPolicy per namespace |
-| `openclaw` | `apps` | OpenClaw AI gateway (this service) |
-| `postgresql` | `data` | PostgreSQL for Gitea |
+# ArgoCD applications and their sync status
+kubectl get applications -n argocd
+
+# PVCs
+kubectl get pvc -A
+
+# ExternalSecrets
+kubectl get externalsecret -A
+```
 
 ### ArgoCD projects
 
-| Project | Purpose | Namespaces |
-|---|---|---|
-| `secrets` | Secret management infra (ESO, Infisical) | `external-secrets`, `infisical` |
-| `data` | Databases and persistent stores | `gitea-system` |
-| `apps` | User-facing applications | `gitea-system`, `authentik`, `monitoring`, `openclaw`, `argocd` (for cluster-wide policies) |
+| Project | Purpose |
+|---|---|
+| `secrets` | Secret management infra (ESO, Infisical) |
+| `data` | Databases and persistent stores |
+| `apps` | User-facing applications and cluster-wide policies |
 
-## Persistent volumes
-
-| PVC | Namespace | Size | Purpose |
-|---|---|---|---|
-| `gitea-data` | `gitea-system` | 10Gi | Gitea repositories and data |
-| `postgresql-data` | `gitea-system` | 5Gi | Gitea's PostgreSQL data |
-| `data-postgresql-0` | `infisical` | 8Gi | Infisical's PostgreSQL data |
-| `redis-data-redis-master-0` | `infisical` | 8Gi | Infisical's Redis data |
-| `openclaw-data` | `openclaw` | 5Gi | OpenClaw state, workspaces, sessions |
-| `data-trivy-server-0` | `monitoring` | 5Gi | Trivy vulnerability DB cache (ClientServer mode) |
-
-## ExternalSecrets
-
-| ExternalSecret | Namespace | Keys | Status |
-|---|---|---|---|
-| `postgresql-secret` | `gitea-system` | POSTGRES_PASSWORD, POSTGRES_USER, POSTGRES_DB, GITEA_DB_PASSWORD | SecretSynced |
-| `gitea-secret` | `gitea-system` | GITEA_SECRET_KEY | SecretSynced |
-| `gitea-admin-secret` | `gitea-system` | GITEA_ADMIN_USERNAME, GITEA_ADMIN_PASSWORD, GITEA_ADMIN_EMAIL | SecretSynced |
-| `openclaw-secret` | `openclaw` | OPENCLAW_GATEWAY_TOKEN, OPENROUTER_API_KEY, GEMINI_API_KEY, GITHUB_TOKEN | SecretSynced |
-
-All secrets are stored in Infisical under `homelab / prod` and synced via the `infisical` ClusterSecretStore using Universal Auth.
+For the full service inventory, see `k8s/apps/argocd/README.md` and the root `README.md`.
 
 ## Delegation decision framework
 
