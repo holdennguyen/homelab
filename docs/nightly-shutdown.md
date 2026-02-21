@@ -8,6 +8,11 @@ To save power and reduce wear on the host Mac mini M4, the homelab cluster autom
 
 **Note:** This is a temporary/quick solution. Future improvements may use more robust approaches.
 
+### Implementation Decisions
+
+- **Cluster status check**: Scripts use `kubectl get nodes` instead of `orb status k8s` because OrbStack 2.x does not support the latter. When the cluster is stopped, `kubectl` fails with connection refused.
+- **Log path**: Logs are written to `~/Library/Logs/homelab/` (not `/var/log/homelab/`) because launchd runs as the logged-in user. User-level LaunchAgents cannot write to `/var/log` without elevated privileges.
+
 ## OrbStack CLI Reference
 
 The OrbStack CLI provides commands to manage the Kubernetes cluster:
