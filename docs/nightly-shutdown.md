@@ -17,7 +17,7 @@ The OrbStack CLI provides commands to manage the Kubernetes cluster:
 | `orb start k8s` | Start the Kubernetes cluster |
 | `orb stop k8s` | Stop the Kubernetes cluster |
 | `orb restart k8s` | Restart the cluster |
-| `orb status k8s` | Check cluster status |
+| `kubectl get nodes` | Check cluster status (used by scripts; `orb status k8s` not in OrbStack 2.x) |
 
 These commands cleanly shut down and start the cluster without data loss. Running pods will be terminated gracefully, and PVCs (persistent volume claims) will be preserved and remounted on startup.
 
@@ -206,7 +206,7 @@ Run each script manually to verify they work:
 # Stop test
 ./scripts/orb-stop.sh
 # Check logs: cat ~/Library/Logs/homelab/shutdown.log
-# Verify cluster stopped: orb status k8s (should error)
+# Verify cluster stopped: kubectl get nodes (should fail with connection refused)
 
 # Start test
 ./scripts/orb-start.sh
@@ -263,14 +263,14 @@ Document any issues found.
 
 ### Cluster fails to stop
 
-- Check OrbStack status: `orb status k8s`
+- Check OrbStack status: `kubectl get nodes` (fails when cluster is stopped)
 - Check for errors in shutdown log
 - Manually stop: `orb stop k8s`
 - If pods are stuck terminating, you may need to force delete them after timeout
 
 ### Cluster fails to start or health checks time out
 
-- Check OrbStack status: `orb status k8s`
+- Check OrbStack status: `kubectl get nodes` (fails when cluster is stopped)
 - Check startup log for specific failures
 - Increase timeouts in `orb-start.sh` if needed (MAX_WAIT_CLUSTER_HEALTH, MAX_WAIT_ARGOCD)
 - Check system resources: `top`, `df -h`

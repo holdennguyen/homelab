@@ -26,20 +26,17 @@ fi
 
 log "INFO" "Starting OrbStack Kubernetes shutdown sequence"
 
-if ! orb status k8s &>/dev/null; then
+# Check if cluster is running (kubectl works when cluster is up; orb status k8s not in OrbStack 2.x)
+if ! kubectl get nodes &>/dev/null; then
     log "INFO" "Cluster is not running or not accessible - nothing to stop"
     exit 0
 fi
 
-CLUSTER_STATUS=$(orb status k8s 2>&1) || true
+CLUSTER_STATUS=$(kubectl get nodes 2>&1) || true
 log "DEBUG" "Current cluster status: ${CLUSTER_STATUS}"
 
-if kubectl get nodes &>/dev/null; then
-    RUNNING_PODS=$(kubectl get pods --all-namespaces --field-selector=status.phase=Running --no-headers 2>/dev/null | wc -l | tr -d ' ')
-    log "INFO" "Found ${RUNNING_PODS} running pods across all namespaces"
-else
-    log "WARN" "kubectl cannot access cluster, but orb reports it exists"
-fi
+RUNNING_PODS=$(kubectl get pods --all-namespaces --field-selector=status.phase=Running --no-headers 2>/dev/null | wc -l | tr -d ' ')
+log "INFO" "Found ${RUNNING_PODS} running pods across all namespaces"
 
 log "INFO" "Stopping OrbStack Kubernetes cluster with 'orb stop k8s'"
 if orb stop k8s; then
@@ -50,11 +47,11 @@ else
     exit ${EXIT_CODE}
 fi
 
-# Verify cluster has stopped
+# Verify cluster has stopped (kubectl fails when cluster is down)
 MAX_WAIT=30
 WAITED=0
 while [ ${WAITED} -lt ${MAX_WAIT} ]; do
-    if ! orb status k8s &>/dev/null; then
+    if ! kubectl get nodes &>/dev/null; then
         log "INFO" "Cluster has stopped successfully (verified after ${WAITED}s)"
         break
     fi

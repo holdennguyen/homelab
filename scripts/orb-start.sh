@@ -28,14 +28,16 @@ fi
 
 log "INFO" "Starting OrbStack Kubernetes startup sequence"
 
-# Check if cluster is already running
-if orb status k8s &>/dev/null; then
-    log "INFO" "Cluster appears to be already running - verifying health"
-    if kubectl get nodes &>/dev/null; then
-        log "INFO" "Cluster is accessible - nothing to start"
+# Check if cluster is already running (kubectl works when cluster is up; orb status k8s not in OrbStack 2.x)
+if kubectl get nodes &>/dev/null; then
+    log "INFO" "Cluster is already accessible - verifying health"
+    NOT_READY=$(kubectl get nodes --no-headers 2>/dev/null | grep -cv " Ready" || true)
+    NOT_READY="${NOT_READY:-0}"
+    if [ "${NOT_READY}" -eq 0 ]; then
+        log "INFO" "Cluster is healthy - nothing to start"
         exit 0
     else
-        log "WARN" "Orb reports running but kubectl cannot access - attempting restart"
+        log "WARN" "Cluster accessible but nodes not Ready - attempting restart"
         orb restart k8s || true
     fi
 else
@@ -57,6 +59,7 @@ CLUSTER_HEALTHY=false
 while [ ${WAITED} -lt ${MAX_WAIT_CLUSTER_HEALTH} ]; do
     if kubectl get nodes &>/dev/null; then
         NOT_READY=$(kubectl get nodes --no-headers 2>/dev/null | grep -cv " Ready" || true)
+        NOT_READY="${NOT_READY:-0}"
         if [ "${NOT_READY}" -eq 0 ]; then
             CLUSTER_HEALTHY=true
             log "INFO" "All nodes are Ready (took ${WAITED}s)"
@@ -124,6 +127,8 @@ if kubectl get namespace argocd &>/dev/null; then
     while [ ${WAITED} -lt ${MAX_WAIT_ARGOCD} ]; do
         NOT_SYNCED=$(kubectl get applications -n argocd --no-headers 2>/dev/null | grep -cv " Synced " || true)
         NOT_HEALTHY=$(kubectl get applications -n argocd --no-headers 2>/dev/null | grep -cv " Healthy" || true)
+        NOT_SYNCED="${NOT_SYNCED:-0}"
+        NOT_HEALTHY="${NOT_HEALTHY:-0}"
 
         if [ "${NOT_SYNCED}" -eq 0 ] && [ "${NOT_HEALTHY}" -eq 0 ] && [ -n "${APPS}" ]; then
             log "INFO" "All ArgoCD applications are Synced and Healthy (took ${WAITED}s)"
