@@ -232,7 +232,7 @@ Tailscale's MagicDNS automatically resolves `<hostname>.story-larch.ts.net` to t
 | Infisical | `https://holdens-mac-mini.story-larch.ts.net:8445` | 8445 | Local admin |
 | Gitea | `https://holdens-mac-mini.story-larch.ts.net:8446` | 8446 | SSO via Authentik |
 | Trivy Dashboard | `https://holdens-mac-mini.story-larch.ts.net:8448` | 8448 | SSO portal bookmark |
-| OpenClaw | `https://holdens-mac-mini.story-larch.ts.net:8447` | 8447 | Local |
+| OpenClaw | `https://holdens-mac-mini.story-larch.ts.net:8447` | 8447 | SSO portal bookmark |
 
 ### Tailscale Serve vs Funnel
 

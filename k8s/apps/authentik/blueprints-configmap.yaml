@@ -43,3 +43,15 @@ data:
           meta_icon: https://avatars.githubusercontent.com/u/12783832?s=48&v=4
           meta_description: Trivy Operator Security Dashboard
           meta_publisher: Homelab
+      - model: authentik_core.application
+        id: app-openclaw
+        state: present
+        identifiers:
+          slug: openclaw
+        attrs:
+          name: OpenClaw
+          group: AI
+          meta_launch_url: https://holdens-mac-mini.story-larch.ts.net:8447
+          meta_icon: https://avatars.githubusercontent.com/u/252820863?s=48&v=4
+          meta_description: AI Agent Gateway Console
+          meta_publisher: Homelab
