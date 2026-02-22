@@ -61,25 +61,25 @@ documents:
       - terraform/
 
   # ── Cross-cutting documentation (real content, not thin wrappers) ──
-  - doc: docs/architecture.md
+  - doc: docs/getting-started/architecture.md
     sources:
       - k8s/apps/argocd/
       - terraform/
 
-  - doc: docs/bootstrap.md
+  - doc: docs/getting-started/bootstrap.md
     sources:
       - terraform/
 
-  - doc: docs/secret-management.md
+  - doc: docs/infrastructure/secret-management.md
     sources:
       - k8s/apps/external-secrets/
       - k8s/apps/infisical/
 
-  - doc: docs/networking.md
+  - doc: docs/infrastructure/networking.md
     sources:
       - k8s/apps/networking-policies/
 
-  - doc: docs/security.md
+  - doc: docs/infrastructure/security.md
     sources:
       - k8s/apps/openclaw/rbac.yaml
       - k8s/apps/openclaw/deployment.yaml
@@ -88,19 +88,19 @@ documents:
       - k8s/apps/namespace-security/
       - k8s/apps/networking-policies/
 
-  - doc: docs/ai-agents.md
+  - doc: docs/operations/ai-agents.md
     sources:
       - agents/
       - skills/
       - .cursor/rules/openclaw.mdc
 
-  - doc: docs/git-workflow.md
+  - doc: docs/operations/git-workflow.md
     sources:
       - .cursor/rules/homelab.mdc
       - .github/workflows/
       - skills/incident-response/
 
-  - doc: docs/nightly-shutdown.md
+  - doc: docs/operations/nightly-shutdown.md
     sources:
       - scripts/orb-stop.sh
       - scripts/orb-start.sh

@@ -161,13 +161,13 @@ flowchart TD
     K8sSecret -- "envFrom / secretKeyRef" --> TargetPod
 ```
 
-For the full secret management reference, see [docs/secret-management.md](./secret-management.md).
+For the full secret management reference, see [docs/secret-management.md](../infrastructure/secret-management.md).
 
 ## Host-Level Automation
 
 Some operational tasks are managed outside of Kubernetes using macOS launchd:
 
-- **Nightly shutdown/startup**: The OrbStack Kubernetes cluster automatically stops at 23:30 and starts at 06:30 daily to save power and reduce host wear. This is implemented with wrapper scripts (`scripts/orb-stop.sh`, `scripts/orb-start.sh`) and launchd plists (`scripts/com.homelab.orbstop.plist`, `scripts/com.homelab.orbstart.plist`). See [Nightly Shutdown Documentation](./nightly-shutdown.md) for full details.
+- **Nightly shutdown/startup**: The OrbStack Kubernetes cluster automatically stops at 23:30 and starts at 06:30 daily to save power and reduce host wear. This is implemented with wrapper scripts (`scripts/orb-stop.sh`, `scripts/orb-start.sh`) and launchd plists (`scripts/com.homelab.orbstop.plist`, `scripts/com.homelab.orbstart.plist`). See [Nightly Shutdown Documentation](../operations/nightly-shutdown.md) for full details.
 
 These components run on the host macOS and are not managed by ArgoCD (since ArgoCD itself runs inside the cluster that gets shut down).
 
@@ -238,7 +238,7 @@ Services are exposed through **Tailscale Serve**, which provides automatic TLS c
 | OpenClaw | `:30789` | `https://holdens-mac-mini.story-larch.ts.net:8447` | 8447 | Local |
 | Trivy Dashboard | `:30448` | `https://holdens-mac-mini.story-larch.ts.net:8448` | 8448 | Bookmark via Authentik |
 
-For the full networking reference, see [docs/networking.md](./networking.md).
+For the full networking reference, see [docs/networking.md](../infrastructure/networking.md).
 
 ## Technology Choices
 
@@ -306,4 +306,4 @@ homelab/
 
 The homelab implements defense-in-depth across network isolation (Tailscale-only, default-deny NetworkPolicies), workload hardening (Pod Security Standards, non-root containers, least-privilege RBAC), and secret hygiene (Infisical pipeline, never in git). A dedicated section covers LLM/AI agent (OpenClaw) permissions including RBAC scope, secret access, and agent workflow guardrails.
 
-For the full security report — including per-namespace PSS compliance, RBAC inventory, container security audit, supply chain controls, OpenClaw agent permissions detail, vulnerability scanning, and the hardening roadmap — see [docs/security.md](./security.md).
+For the full security report — including per-namespace PSS compliance, RBAC inventory, container security audit, supply chain controls, OpenClaw agent permissions detail, vulnerability scanning, and the hardening roadmap — see [docs/security.md](../infrastructure/security.md).

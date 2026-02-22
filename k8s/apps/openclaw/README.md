@@ -97,7 +97,7 @@ The OpenClaw ServiceAccount has a two-layer RBAC model:
 - **Namespace Role** (`openclaw-role`) — secrets read + pods/exec in the `openclaw` namespace only
 - **ClusterRole** (`openclaw-homelab-admin`) — cluster-wide read on pods, deployments, services, events, nodes, namespaces, and workload resources; targeted operational writes including patch on deployments/statefulsets (rollout restart, scale), patch on ExternalSecrets (force-sync), and patch on ArgoCD Applications (hard refresh). Does not grant create/delete on any resource, secrets read outside `openclaw`, or any cluster-scoped resource modification (ClusterRoles, NetworkPolicies, namespaces).
 
-This gives the homelab-admin agent the ability to monitor everything and operate on running workloads, while all persistent infrastructure changes flow through GitOps. See [docs/security.md](../../docs/security.md) for the full RBAC breakdown.
+This gives the homelab-admin agent the ability to monitor everything and operate on running workloads, while all persistent infrastructure changes flow through GitOps. See [docs/security.md](../../../docs/infrastructure/security.md) for the full RBAC breakdown.
 
 ## How It Fits in the Homelab
 

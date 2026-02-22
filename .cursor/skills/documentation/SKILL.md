@@ -20,7 +20,7 @@ The `doc-freshness` GitHub Actions workflow runs on every PR and will comment if
 
 ## Single Source of Truth: `k8s/apps/<service>/README.md`
 
-Every service directory under `k8s/apps/` **must** have a `README.md`. This README is the **single source of truth** for that service's documentation. The corresponding `docs/<service>.md` is always a thin MkDocs wrapper that includes the README:
+Every service directory under `k8s/apps/` **must** have a `README.md`. This README is the **single source of truth** for that service's documentation. The corresponding `docs/services/<service>.md` is always a thin MkDocs wrapper that includes the README:
 
 ```markdown
 ---
@@ -28,11 +28,11 @@ title: <Service Name>
 ---
 
 {%
-   include-markdown "../k8s/apps/<service>/README.md"
+   include-markdown "../../k8s/apps/<service>/README.md"
 %}
 ```
 
-**Never write documentation directly in `docs/<service>.md`** for services that have a `k8s/apps/<service>/` directory. Always edit the README instead.
+**Never write documentation directly in `docs/services/<service>.md`** for services that have a `k8s/apps/<service>/` directory. Always edit the README instead.
 
 ## README Structure
 
@@ -52,24 +52,24 @@ Every `k8s/apps/<service>/README.md` should include these sections (adapt as nee
 | Change area | Docs to update |
 |---|---|
 | `k8s/apps/<service>/` manifests | `k8s/apps/<service>/README.md` (the single source of truth) |
-| `k8s/apps/argocd/` (projects, applications) | `k8s/apps/argocd/README.md`, `docs/architecture.md` (Layer 1 diagram / service map) |
-| `terraform/` | `docs/bootstrap.md`, `docs/architecture.md` (Layer 0 section) |
-| `skills/` or `agents/` or `k8s/apps/openclaw/` | `k8s/apps/openclaw/README.md`, `docs/ai-agents.md` |
-| Secrets pipeline (ExternalSecret, Infisical) | `docs/secret-management.md` |
-| Networking (Tailscale, services, ports) | `docs/networking.md` |
+| `k8s/apps/argocd/` (projects, applications) | `k8s/apps/argocd/README.md`, `docs/getting-started/architecture.md` (Layer 1 diagram / service map) |
+| `terraform/` | `docs/getting-started/bootstrap.md`, `docs/getting-started/architecture.md` (Layer 0 section) |
+| `skills/` or `agents/` or `k8s/apps/openclaw/` | `k8s/apps/openclaw/README.md`, `docs/operations/ai-agents.md` |
+| Secrets pipeline (ExternalSecret, Infisical) | `docs/infrastructure/secret-management.md` |
+| Networking (Tailscale, services, ports) | `docs/infrastructure/networking.md` |
 | New service added | See "Adding a new service" checklist below |
 | **Release milestone** | Review and update root `README.md` (invoke `/release-management`) |
 
 ## Adding a New Service (documentation checklist)
 
 1. Create `k8s/apps/<service>/README.md` following the README structure above
-2. Create `docs/<service>.md` as a thin `include-markdown` wrapper (see template above)
-3. Add `<service>.md` to the `nav` in `mkdocs.yml`
+2. Create `docs/services/<service>.md` as a thin `include-markdown` wrapper (see template above)
+3. Add `services/<service>.md` to the Services section in the `nav` in `mkdocs.yml`
 4. Add doc-to-source mapping to `.doc-manifest.yml`
-5. Update the service map and repository layout in `docs/architecture.md`
+5. Update the service map and repository layout in `docs/getting-started/architecture.md`
 6. Update root `README.md` — architecture diagram, repository structure, deployed services table, and documentation index
-7. If the service has secrets, update `docs/secret-management.md` and `k8s/apps/infisical/README.md` inventory
-8. If the service has a Tailscale endpoint, update `docs/networking.md` and `docs/bootstrap.md` (Tailscale Serve commands)
+7. If the service has secrets, update `docs/infrastructure/secret-management.md` and `k8s/apps/infisical/README.md` inventory
+8. If the service has a Tailscale endpoint, update `docs/infrastructure/networking.md` and `docs/getting-started/bootstrap.md` (Tailscale Serve commands)
 
 ## Markdown Formatting Rules
 

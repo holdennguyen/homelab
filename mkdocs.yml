@@ -15,10 +15,15 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
   features:
+    - navigation.tabs
     - navigation.sections
+    - navigation.indexes
     - navigation.expand
+    - navigation.top
+    - navigation.path
     - content.code.copy
     - search.highlight
+    - search.suggest
 
 plugins:
   - search
@@ -38,20 +43,27 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Architecture: architecture.md
-  - Security: security.md
-  - Networking: networking.md
-  - Bootstrap: bootstrap.md
-  - Secret Management: secret-management.md
-  - Nightly Shutdown: nightly-shutdown.md
-  - AI Agents: ai-agents.md
-  - Git Workflow: git-workflow.md
-  - Apps:
-      - ArgoCD: argocd.md
-      - Authentik: authentik.md
-      - External Secrets: external-secrets.md
-      - Infisical: infisical.md
-      - Monitoring: monitoring.md
-      - OpenClaw: openclaw.md
-      - Trivy Operator: trivy-operator.md
-      - Trivy Dashboard: trivy-dashboard.md
+  - Getting Started:
+      - getting-started/index.md
+      - Architecture: getting-started/architecture.md
+      - Bootstrap: getting-started/bootstrap.md
+  - Infrastructure:
+      - infrastructure/index.md
+      - Networking: infrastructure/networking.md
+      - Security: infrastructure/security.md
+      - Secret Management: infrastructure/secret-management.md
+  - Services:
+      - services/index.md
+      - ArgoCD: services/argocd.md
+      - Authentik: services/authentik.md
+      - External Secrets: services/external-secrets.md
+      - Infisical: services/infisical.md
+      - Monitoring: services/monitoring.md
+      - OpenClaw: services/openclaw.md
+      - Trivy Operator: services/trivy-operator.md
+      - Trivy Dashboard: services/trivy-dashboard.md
+  - Operations:
+      - operations/index.md
+      - Git Workflow: operations/git-workflow.md
+      - AI Agents: operations/ai-agents.md
+      - Nightly Shutdown: operations/nightly-shutdown.md

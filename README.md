@@ -203,7 +203,7 @@ Once ArgoCD deploys Infisical (check: `kubectl get pods -n infisical`), open the
 | `GEMINI_API_KEY` | Google Gemini API key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
 | `GITHUB_TOKEN` | GitHub personal access token for OpenClaw agent git operations |
 
-Then create a Machine Identity in Infisical (`Settings → Machine Identities → Universal Auth`), grant it **Member** access to the `homelab` project, update `terraform/terraform.tfvars` with the new `clientId` / `clientSecret`, and re-run `terraform apply` to update the credential. See [docs/bootstrap.md](docs/bootstrap.md) for the full step-by-step.
+Then create a Machine Identity in Infisical (`Settings → Machine Identities → Universal Auth`), grant it **Member** access to the `homelab` project, update `terraform/terraform.tfvars` with the new `clientId` / `clientSecret`, and re-run `terraform apply` to update the credential. See [docs/getting-started/bootstrap.md](docs/getting-started/bootstrap.md) for the full step-by-step.
 
 ### 4. Expose Services via Tailscale
 
@@ -246,26 +246,28 @@ kubectl get pods -A | grep -v Running | grep -v Completed
 
 | Document | What it covers |
 |---|---|
-| [docs/architecture.md](docs/architecture.md) | 3-layer design, technology choices, full service map, repository layout |
-| [docs/security.md](docs/security.md) | Security posture, RBAC, network policies, Pod Security Standards, LLM agent permissions, hardening roadmap |
-| [docs/bootstrap.md](docs/bootstrap.md) | Step-by-step setup from scratch: prerequisites, secrets generation, Terraform, Infisical, Tailscale |
-| [docs/secret-management.md](docs/secret-management.md) | How secrets flow from Infisical → ESO → Kubernetes; adding secrets; rotating credentials |
-| [docs/networking.md](docs/networking.md) | Tailscale Serve + NodePort architecture, request path, TLS, full port map, troubleshooting |
-| [docs/authentik.md](docs/authentik.md) | Authentik SSO, OIDC provider setup, per-service integration |
-| [docs/monitoring.md](docs/monitoring.md) | Grafana + Prometheus stack, dashboards, SSO integration |
-| [docs/openclaw.md](docs/openclaw.md) | OpenClaw AI gateway deployment, image builds, multi-agent architecture |
-| [docs/ai-agents.md](docs/ai-agents.md) | Cursor rules + OpenClaw agents/skills, when to use which |
-| [docs/git-workflow.md](docs/git-workflow.md) | Branch conventions, PR requirements, post-merge cleanup for Cursor and OpenClaw |
+| **Getting Started** | |
+| [docs/getting-started/architecture.md](docs/getting-started/architecture.md) | 3-layer design, technology choices, full service map, repository layout |
+| [docs/getting-started/bootstrap.md](docs/getting-started/bootstrap.md) | Step-by-step setup from scratch: prerequisites, secrets generation, Terraform, Infisical, Tailscale |
+| **Infrastructure** | |
+| [docs/infrastructure/security.md](docs/infrastructure/security.md) | Security posture, RBAC, network policies, Pod Security Standards, LLM agent permissions, hardening roadmap |
+| [docs/infrastructure/secret-management.md](docs/infrastructure/secret-management.md) | How secrets flow from Infisical → ESO → Kubernetes; adding secrets; rotating credentials |
+| [docs/infrastructure/networking.md](docs/infrastructure/networking.md) | Tailscale Serve + NodePort architecture, request path, TLS, full port map, troubleshooting |
+| **Services** | |
+| [docs/services/argocd.md](docs/services/argocd.md) | App of Apps pattern, sync waves, adding new applications |
+| [docs/services/authentik.md](docs/services/authentik.md) | Authentik SSO, OIDC provider setup, per-service integration |
+| [docs/services/external-secrets.md](docs/services/external-secrets.md) | ClusterSecretStore, ExternalSecret pattern, adding secrets for new services |
+| [docs/services/infisical.md](docs/services/infisical.md) | Infisical deployment, first-time setup, machine identity, bootstrap secrets |
+| [docs/services/monitoring.md](docs/services/monitoring.md) | Grafana + Prometheus monitoring stack, dashboards, SSO integration |
+| [docs/services/openclaw.md](docs/services/openclaw.md) | OpenClaw AI gateway deployment, image builds, multi-agent architecture |
+| [docs/services/trivy-operator.md](docs/services/trivy-operator.md) | Container image vulnerability scanning, ClientServer mode, Helm values |
+| [docs/services/trivy-dashboard.md](docs/services/trivy-dashboard.md) | Trivy Operator Dashboard web UI, vulnerability report viewer |
+| **Operations** | |
+| [docs/operations/git-workflow.md](docs/operations/git-workflow.md) | Branch conventions, PR requirements, post-merge cleanup for Cursor and OpenClaw |
+| [docs/operations/ai-agents.md](docs/operations/ai-agents.md) | Cursor rules + OpenClaw agents/skills, when to use which |
+| [docs/operations/nightly-shutdown.md](docs/operations/nightly-shutdown.md) | Automated nightly shutdown/startup using OrbStack CLI and macOS launchd |
+| **Implementation Details** | |
 | [terraform/README.md](terraform/README.md) | All Terraform variables, what resources are managed, day-2 operations |
-| [k8s/apps/argocd/README.md](k8s/apps/argocd/README.md) | App of Apps pattern, sync waves, adding new applications |
-| [k8s/apps/authentik/README.md](k8s/apps/authentik/README.md) | Authentik SSO deployment, ExternalSecret, OIDC provider configuration |
-| [k8s/apps/infisical/README.md](k8s/apps/infisical/README.md) | Infisical deployment, first-time setup, machine identity, bootstrap secrets |
-| [k8s/apps/external-secrets/README.md](k8s/apps/external-secrets/README.md) | ClusterSecretStore, ExternalSecret pattern, adding secrets for new services |
-| [docs/nightly-shutdown.md](docs/nightly-shutdown.md) | Automated nightly shutdown/startup using OrbStack CLI and macOS launchd |
-| [k8s/apps/monitoring/README.md](k8s/apps/monitoring/README.md) | Grafana + Prometheus monitoring stack, ExternalSecret, SSO integration |
-| [k8s/apps/openclaw/README.md](k8s/apps/openclaw/README.md) | OpenClaw AI gateway deployment, configuration, image builds |
-| [k8s/apps/trivy-operator/README.md](k8s/apps/trivy-operator/README.md) | Container image vulnerability scanning, ClientServer mode, Helm values |
-| [k8s/apps/trivy-dashboard/README.md](k8s/apps/trivy-dashboard/README.md) | Trivy Operator Dashboard web UI, vulnerability report viewer |
 
 ## Documentation Freshness Tracking
 

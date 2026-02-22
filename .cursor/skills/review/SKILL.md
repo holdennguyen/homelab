@@ -28,17 +28,17 @@ For each service in `k8s/apps/<service>/`:
 - [ ] Operational commands are tested and current
 - [ ] Troubleshooting table covers recent issues
 - [ ] Mermaid diagrams follow conventions (no `style`/`classDef`, no spaces in IDs, quoted special chars)
-- [ ] `docs/<service>.md` thin wrapper exists
-- [ ] Service listed in `mkdocs.yml` nav
+- [ ] `docs/services/<service>.md` thin wrapper exists
+- [ ] Service listed in `mkdocs.yml` nav under Services section
 - [ ] Entry exists in `.doc-manifest.yml`
 
 ## Cross-Cutting Checklist
 
-- [ ] `docs/architecture.md` shows all current services and relationships
+- [ ] `docs/getting-started/architecture.md` shows all current services and relationships
 - [ ] Root `README.md` service inventory is complete
-- [ ] `docs/bootstrap.md` matches current Terraform setup
-- [ ] `docs/networking.md` reflects current Tailscale endpoints and ports
-- [ ] `docs/secret-management.md` covers all ExternalSecrets
+- [ ] `docs/getting-started/bootstrap.md` matches current Terraform setup
+- [ ] `docs/infrastructure/networking.md` reflects current Tailscale endpoints and ports
+- [ ] `docs/infrastructure/secret-management.md` covers all ExternalSecrets
 - [ ] No broken links across documentation
 - [ ] Consistent terminology across docs
 
