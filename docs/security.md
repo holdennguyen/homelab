@@ -381,6 +381,251 @@ flowchart LR
 5. **Consider per-agent GitHub tokens** with even narrower scopes if agent count grows
 6. **Restrict `sessions.visibility`** if sensitive data flows through agent sessions
 
+## Host Isolation — How OpenClaw Cannot Reach the Mac Mini
+
+OpenClaw runs inside a Kubernetes container on OrbStack. Multiple independent layers prevent it from accessing the bare-metal Mac mini, personal files, macOS credentials, or anything outside its narrow sandbox.
+
+### Isolation layers (defense in depth)
+
+```mermaid
+flowchart TD
+    subgraph host["Mac mini M4 (macOS)"]
+        FS["macOS filesystem\n~/Documents, ~/Desktop,\nKeychain, Safari passwords,\niMessage DB, Photos, etc."]
+        Procs["macOS processes\nFinder, Mail, Messages,\nKeychain Access, etc."]
+        Net["macOS network stack\nWi-Fi, Bluetooth, Tailscale"]
+    end
+
+    subgraph orbstack["OrbStack VM (Linux)"]
+        subgraph k8s["Kubernetes Cluster"]
+            subgraph openclawNs["openclaw namespace"]
+                Pod["OpenClaw Pod\nUID 1000, non-root"]
+            end
+        end
+    end
+
+    Pod -. "BLOCKED\nno access" .-> FS
+    Pod -. "BLOCKED\nno access" .-> Procs
+    Pod -- "only HTTPS :443\n(LLM APIs, GitHub)" --> Net
+
+    style FS fill:#ff6b6b,color:#fff
+    style Procs fill:#ff6b6b,color:#fff
+```
+
+### Layer-by-layer breakdown
+
+| Layer | What it does | What OpenClaw cannot do |
+|---|---|---|
+| **OrbStack VM boundary** | OrbStack runs Kubernetes inside a lightweight Linux VM. The container's Linux kernel is separate from macOS. | Cannot invoke macOS APIs, cannot access macOS processes, cannot use macOS Keychain, cannot interact with Finder/Messages/Safari |
+| **Container filesystem isolation** | The container has its own root filesystem. Only explicitly mounted volumes are visible. | Cannot see `/Users/holden.nguyen/`, cannot read Desktop/Documents/Downloads, cannot access Photos/Music/Mail, cannot read browser profiles or cookies |
+| **hostPath scope** | Two host directories are mounted — both read-only, both containing only Markdown files | Can read `agents/workspaces/*.md` and `skills/*.md`. Cannot write to them. Cannot mount additional host paths without changing the deployment manifest (which requires a PR + human review) |
+| **Non-root execution** | Pod runs as UID 1000 with `runAsNonRoot: true` | Cannot escalate to root inside the container, cannot modify system binaries, cannot change container network config |
+| **Namespace-scoped RBAC** | ServiceAccount has a Role (not ClusterRole) limited to the `openclaw` namespace | Cannot list/get/modify pods, secrets, or any resource in other namespaces (`argocd`, `monitoring`, `infisical`, `authentik`). Cannot create Deployments, DaemonSets, or any cluster-scoped resource |
+| **Network policies** | Default-deny with explicit allowlist: DNS, K8s API (:6443), Tailscale ingress (:18789), internet egress (:443) | Cannot reach other namespaces' pods over the network (declarative intent — enforcement depends on CNI). Cannot open arbitrary ports. Cannot reach macOS services on the host network (except through the K8s API server) |
+| **Secret scoping** | Only `openclaw-secret` is injected (5 API keys). Infisical stores all other secrets in separate ExternalSecrets per namespace | Cannot read Authentik passwords, Grafana credentials, PostgreSQL passwords, or any secret outside its namespace |
+| **GitHub token scope** | Fine-grained PAT: only `holdennguyen/homelab`, only code/issues/PRs | Cannot access other repos, cannot modify repo settings/webhooks, cannot access GitHub account settings, cannot read private repos beyond `homelab` |
+| **Git workflow guardrails** | Branch protection on `main` requires PR + human review | Cannot push directly to `main`, cannot merge without human approval, cannot bypass branch protection |
+
+### What OpenClaw CAN access
+
+To be precise about the actual attack surface:
+
+| Resource | Access level | Risk |
+|---|---|---|
+| Its own container filesystem (`/data`, `/tmp`, etc.) | Read-write | Low — only agent workspace data, no personal files |
+| `agents/workspaces/*.md` via hostPath | Read-only | Minimal — only Markdown personality files |
+| `skills/*.md` via hostPath | Read-only | Minimal — only skill definition Markdown files |
+| `openclaw-secret` (5 API keys) | Read via env vars and `kubectl get secret` | Medium — LLM API keys could incur billing; GitHub token scoped to one repo |
+| Pods in `openclaw` namespace | Read + exec | Medium — only the OpenClaw pod itself runs there |
+| K8s API server | Scoped to `openclaw` namespace reads | Low |
+| Internet on port 443 | Outbound HTTPS | Required for LLM APIs and GitHub; could theoretically exfiltrate data from its own namespace |
+
+### What would need to change for OpenClaw to harm the host
+
+For OpenClaw to access personal files, macOS credentials, or bare-metal resources, an attacker would need to:
+
+1. **Escape the container** — exploit a Linux kernel vulnerability in the OrbStack VM to break out of the container namespace
+2. **Escape the VM** — exploit the OrbStack hypervisor to break from the Linux VM into macOS
+3. **Escalate on macOS** — gain access to the logged-in user's macOS session
+
+Each of these is a distinct, independently difficult exploit. The combination of all three makes host compromise via OpenClaw extremely unlikely in practice — especially for a single-user homelab that is not exposed to the public internet.
+
+## Personal Task Gateway — Safely Extending OpenClaw to Personal Tasks
+
+If you want OpenClaw to handle personal tasks — sending messages, making phone calls, checking bank balances — you should **never** give it direct access to the Mac mini. Instead, build a Kubernetes-native gateway layer that brokers access to each personal service through constrained, auditable APIs.
+
+### Architecture: K8s proxy services instead of host access
+
+```mermaid
+flowchart TD
+    subgraph openclawNs["openclaw namespace"]
+        OC["OpenClaw Pod"]
+    end
+
+    subgraph gatewayNs["personal-gateway namespace"]
+        MsgGW["messaging-proxy\n(iMessage/SMS API)"]
+        CallGW["voice-proxy\n(phone call API)"]
+        BankGW["finance-proxy\n(bank read-only API)"]
+        AuditLog["audit-logger\n(all actions logged)"]
+    end
+
+    subgraph host["Mac mini (macOS)"]
+        Shortcuts["Shortcuts.app\n(sandboxed automation)"]
+        Keychain["macOS Keychain\n(credentials stay here)"]
+    end
+
+    subgraph external["External APIs"]
+        Twilio["Twilio / VoIP"]
+        Plaid["Plaid / bank API"]
+    end
+
+    OC -- "K8s Service\nstructured API" --> MsgGW
+    OC -- "K8s Service\nstructured API" --> CallGW
+    OC -- "K8s Service\nstructured API" --> BankGW
+    MsgGW --> Shortcuts
+    CallGW --> Twilio
+    BankGW --> Plaid
+    MsgGW & CallGW & BankGW --> AuditLog
+
+    style Keychain fill:#ff6b6b,color:#fff
+```
+
+### Design principles
+
+| Principle | Why | How |
+|---|---|---|
+| **No host shell access** | A shell on the Mac mini means access to everything — Keychain, iMessage DB, browser sessions, all files | Every personal capability is a dedicated K8s service (a proxy) that exposes a narrow, typed API — never a shell |
+| **Least-privilege per service** | Banking does not need message access; messaging does not need call access | Each proxy runs in its own pod with its own ServiceAccount, secrets, and NetworkPolicy. OpenClaw talks to each via K8s Service DNS |
+| **Audit everything** | Personal actions (send a message, initiate a call, check a balance) must be logged for review | Every proxy logs the request, who triggered it, the timestamp, and the outcome. Logs are retained on a PVC and queryable |
+| **Read-only by default** | Checking a bank balance is safe; initiating a wire transfer is not | Proxies default to read-only. Write actions (send message, make call, initiate payment) require explicit confirmation via a callback to the user |
+| **Credentials stay on the host** | Bank passwords, iMessage auth, and phone account credentials must never enter a K8s pod | The proxy calls out to the host (e.g., via macOS Shortcuts HTTP endpoint or a host-side daemon) which holds the actual credentials in Keychain |
+| **Separate namespace** | Isolate personal task infrastructure from homelab infrastructure | All proxies run in a dedicated `personal-gateway` namespace with its own RBAC, secrets, and network policies |
+
+### Per-capability architecture
+
+#### Messaging (iMessage / SMS)
+
+| Component | Where | Role |
+|---|---|---|
+| `messaging-proxy` pod | `personal-gateway` namespace | Accepts structured API calls (`send_message`, `read_messages`) from OpenClaw. Validates, rate-limits, and logs |
+| Host-side daemon or Shortcuts endpoint | Mac mini macOS | Receives HTTP requests from the proxy (via NodePort/localhost). Interacts with Messages.app via AppleScript or Shortcuts. Credentials never leave the host |
+| NetworkPolicy | K8s | `messaging-proxy` can only talk to the host on one specific port. OpenClaw can only talk to `messaging-proxy` |
+
+**API contract example:**
+
+```
+POST /api/messages/send
+{
+  "to": "+1234567890",
+  "body": "Running 10 minutes late",
+  "confirmation_required": true
+}
+
+Response: { "status": "pending_confirmation", "confirmation_id": "abc123" }
+```
+
+The proxy never sends the message directly — it returns a confirmation ID. OpenClaw must relay this to the user. Only after the user confirms does the proxy forward the request to the host.
+
+#### Phone calls (VoIP)
+
+| Component | Where | Role |
+|---|---|---|
+| `voice-proxy` pod | `personal-gateway` namespace | Accepts call requests, validates the number against an allowlist, logs, and forwards to Twilio/VoIP provider |
+| Twilio API | External | Initiates the actual call. Credentials (Twilio SID, auth token) are in Infisical, injected via ESO into the `personal-gateway` namespace only |
+| Rate limiter | In `voice-proxy` | Max N calls per hour, no international numbers unless explicitly allowlisted |
+
+**Safeguards:**
+
+- Phone number allowlist (only pre-approved contacts)
+- Call duration limit
+- No simultaneous calls
+- All calls logged with timestamp, number, duration, and who triggered it
+
+#### Banking / finance (read-only)
+
+| Component | Where | Role |
+|---|---|---|
+| `finance-proxy` pod | `personal-gateway` namespace | Accepts read-only queries (`get_balance`, `list_transactions`). No write operations |
+| Plaid API (or similar) | External | Provides read-only bank account access via tokenized OAuth. The Plaid access token is in Infisical, never in the pod env |
+| Write operations | **Intentionally absent** | The proxy does not implement `transfer`, `pay`, or any write endpoint. There is no code path for moving money, so even a compromised agent cannot initiate a transaction |
+
+**Safeguards:**
+
+- Strictly read-only API (no transfer/payment endpoints exist)
+- Plaid access token scoped to read-only permissions at the provider level
+- Response data filtered: full account numbers are never returned, only last-4 digits
+- Query rate limited: max N requests per hour
+
+### Kubernetes controls for the personal-gateway namespace
+
+```yaml
+# Namespace with restricted PSS
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: personal-gateway
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+```
+
+| Control | Configuration |
+|---|---|
+| **RBAC** | Each proxy pod gets its own ServiceAccount with zero K8s API permissions (no Role/RoleBinding). They are pure application pods — they do not need kubectl access |
+| **NetworkPolicy** | Default-deny all. Allow ingress from `openclaw` namespace only (on specific proxy ports). Allow egress only to the specific external API each proxy needs. No cross-proxy communication |
+| **Secrets** | Each proxy has its own ExternalSecret pulling only its specific credentials from Infisical. The messaging proxy cannot read the banking token and vice versa |
+| **Pod Security** | `restricted` PSS enforced: non-root, read-only root filesystem, no privilege escalation, no host access, seccomp profile |
+| **Resource limits** | CPU and memory limits prevent a compromised proxy from consuming node resources |
+| **No hostPath** | Personal-gateway pods do NOT mount any host directories. All host interaction goes through network calls to a host-side daemon |
+
+### Network flow diagram
+
+```mermaid
+flowchart LR
+    subgraph openclawNs["openclaw namespace"]
+        OC["OpenClaw"]
+    end
+
+    subgraph gatewayNs["personal-gateway namespace"]
+        MP["messaging-proxy\nport 8081"]
+        VP["voice-proxy\nport 8082"]
+        FP["finance-proxy\nport 8083"]
+    end
+
+    subgraph host["Mac mini host"]
+        HD["host-daemon\nport 9090\nlocalhost only"]
+    end
+
+    subgraph internet["External APIs"]
+        TW["Twilio API\n:443"]
+        PL["Plaid API\n:443"]
+    end
+
+    OC -- "allowed by NP" --> MP
+    OC -- "allowed by NP" --> VP
+    OC -- "allowed by NP" --> FP
+    MP -- "NodePort → localhost" --> HD
+    VP -- ":443 only" --> TW
+    FP -- ":443 only" --> PL
+
+    MP -. "BLOCKED" .-> TW
+    MP -. "BLOCKED" .-> PL
+    FP -. "BLOCKED" .-> TW
+    FP -. "BLOCKED" .-> HD
+    OC -. "BLOCKED" .-> HD
+```
+
+Each proxy can only reach its designated backend. OpenClaw cannot bypass the proxies to reach the host daemon or external APIs directly (enforced by NetworkPolicy).
+
+### Summary: full power vs. K8s-mediated access
+
+| Approach | OpenClaw gets | Risk |
+|---|---|---|
+| **Full host access** (DO NOT DO THIS) | Shell on Mac mini, access to Keychain, iMessage DB, browser sessions, all files, all macOS APIs | **Catastrophic** — a misbehaving agent can read passwords, send messages as you, access bank accounts, delete files |
+| **K8s gateway layer** (recommended) | Structured API calls to purpose-built proxies, each with its own credentials, audit log, rate limits, and confirmation gates | **Controlled** — each capability is independently scoped, auditable, and revocable. A compromised agent can only do what the proxy API permits, and write actions require human confirmation |
+
+The K8s layer acts as a **permission membrane**: OpenClaw asks for things through typed APIs, but the actual credentials and execution happen in isolated, auditable proxies that the agent cannot modify or bypass.
+
 ## Hardening Roadmap
 
 Open items to improve the security posture in future releases:
