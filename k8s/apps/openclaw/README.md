@@ -481,12 +481,22 @@ The bot routes all messages to the `homelab-admin` orchestrator, which can deleg
 
 ### Configuration Reference
 
-The Discord channel is configured in `configmap.yaml` under `channels.discord`:
+Discord requires two config sections in `openclaw.json`:
+
+**Channel config** (`channels.discord`):
 
 | Key | Value | Purpose |
 |---|---|---|
 | `enabled` | `true` | Activate the Discord channel on startup |
 | `groupPolicy` | `"open"` | Allow messages from all guild channels (mention-gating still applies) |
+
+**Plugin entry** (`plugins.entries.discord`):
+
+| Key | Value | Purpose |
+|---|---|---|
+| `enabled` | `true` | Load the Discord extension plugin at startup |
+
+The plugin entry is required because the ConfigMap is mounted read-only. OpenClaw normally auto-enables channel plugins by writing to the config file at startup, but this fails on a read-only filesystem. Explicitly setting `plugins.entries.discord.enabled: true` in the ConfigMap bypasses the auto-enable write.
 
 The bot token is resolved from the `DISCORD_BOT_TOKEN` environment variable (injected via ESO from Infisical). No token is stored in the config file.
 
@@ -636,6 +646,7 @@ The `openclaw.json` config (in `configmap.yaml`) contains these key settings:
 | `agents.list[].subagents` | `allowAgents` | Per-agent list | Controls which agents each agent can spawn — only the orchestrator has non-empty lists |
 | `channels.discord` | `enabled` | `true` | Connect to Discord on startup using `DISCORD_BOT_TOKEN` env var |
 | `channels.discord` | `groupPolicy` | `"open"` | Respond in any guild channel the bot can see (mention required) |
+| `plugins.entries.discord` | `enabled` | `true` | Load Discord extension plugin (required for read-only ConfigMap) |
 
 ## Multi-Agent & Skills Architecture
 

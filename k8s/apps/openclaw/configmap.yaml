@@ -91,6 +91,11 @@ data:
           "extraDirs": ["/skills"]
         }
       },
+      "plugins": {
+        "entries": {
+          "discord": { "enabled": true }
+        }
+      },
       "tools": {
         "agentToAgent": {
           "enabled": true,
