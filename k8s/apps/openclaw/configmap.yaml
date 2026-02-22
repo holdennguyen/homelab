@@ -80,6 +80,12 @@ data:
           }
         }
       },
+      "channels": {
+        "discord": {
+          "enabled": true,
+          "groupPolicy": "open"
+        }
+      },
       "skills": {
         "load": {
           "extraDirs": ["/skills"]

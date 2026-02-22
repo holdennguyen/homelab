@@ -54,7 +54,7 @@ flowchart TD
     subgraph infisical_store["Infisical (project: homelab / env: prod)"]
         AUTHENTIK_SECRETS["AUTHENTIK_SECRET_KEY\nAUTHENTIK_BOOTSTRAP_PASSWORD\nAUTHENTIK_BOOTSTRAP_TOKEN\nAUTHENTIK_POSTGRES_PASSWORD"]
         GRAFANA_SECRETS["GRAFANA_ADMIN_PASSWORD\nGRAFANA_OAUTH_CLIENT_SECRET"]
-        OPENCLAW_SECRETS["OPENCLAW_GATEWAY_TOKEN\nOPENROUTER_API_KEY\nGEMINI_API_KEY\nGITHUB_TOKEN"]
+        OPENCLAW_SECRETS["OPENCLAW_GATEWAY_TOKEN\nOPENROUTER_API_KEY\nGEMINI_API_KEY\nGITHUB_TOKEN\nDISCORD_BOT_TOKEN"]
     end
 
     TFVars --> TFState
@@ -99,6 +99,7 @@ flowchart LR
                         s17["OPENROUTER_API_KEY"]
                         s18["GEMINI_API_KEY"]
                         s19["GITHUB_TOKEN"]
+                        s20["DISCORD_BOT_TOKEN"]
                     end
                 end
             end

@@ -28,12 +28,16 @@ flowchart TD
     end
 
     subgraph infisical["Infisical (homelab / prod)"]
-        InfisicalSecrets["OPENCLAW_GATEWAY_TOKEN\nOPENROUTER_API_KEY\nGEMINI_API_KEY\nGITHUB_TOKEN"]
+        InfisicalSecrets["OPENCLAW_GATEWAY_TOKEN\nOPENROUTER_API_KEY\nGEMINI_API_KEY\nGITHUB_TOKEN\nDISCORD_BOT_TOKEN"]
     end
 
     subgraph providers["AI Model Providers"]
         OpenRouter["OpenRouter API\nstepfun/step-3.5-flash:free\n(primary)"]
         Gemini["Google Gemini API\ngemini-2.5-pro\n(fallback)"]
+    end
+
+    subgraph chatChannels["Chat Channels"]
+        Discord["Discord\nBot API"]
     end
 
     Clients -- "WireGuard" --> TServe
@@ -48,6 +52,7 @@ flowchart TD
     K8sSecret -- "env vars" --> Deploy
     Deploy -- "primary" --> OpenRouter
     Deploy -. "fallback" .-> Gemini
+    Deploy <-- "messages" --> Discord
 ```
 
 ## Directory Contents
@@ -220,6 +225,7 @@ Add the following secrets to Infisical under **homelab / prod**:
 | `OPENROUTER_API_KEY` | From [openrouter.ai/keys](https://openrouter.ai/keys) | Yes (primary model provider) |
 | `GEMINI_API_KEY` | From [aistudio.google.com/apikey](https://aistudio.google.com/apikey) | Yes (fallback model provider) |
 | `GITHUB_TOKEN` | GitHub PAT (Fine-grained) with repo scope for `holdennguyen/homelab` | Yes (for git workflow) |
+| `DISCORD_BOT_TOKEN` | From [Discord Developer Portal](https://discord.com/developers/applications) → Bot → Reset Token | Yes (for Discord chat channel) |
 
 After adding secrets, ESO syncs them into the `openclaw-secret` K8s Secret within the `refreshInterval` (1 hour), or force an immediate sync:
 
@@ -230,7 +236,7 @@ kubectl annotate externalsecret openclaw-secret -n openclaw \
 
 ### Adding More Providers or Channels
 
-To add a new API key (e.g., `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or `TELEGRAM_BOT_TOKEN`):
+To add a new API key (e.g., `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, or `TELEGRAM_BOT_TOKEN`; see the Discord channel setup for a complete worked example):
 
 1. Add the key to Infisical under `homelab / prod`
 2. Add a new entry to `external-secret.yaml`:
@@ -330,6 +336,67 @@ tailscale serve --bg --https 8447 http://localhost:30789
 ```
 
 Access from any Tailscale device: `https://holdens-mac-mini.story-larch.ts.net:8447`
+
+## Discord Chat Channel
+
+OpenClaw connects to Discord as a chat channel, allowing users to converse with homelab agents from any Discord client (mobile, desktop, or web).
+
+### How It Works
+
+```mermaid
+sequenceDiagram
+    participant User as Discord User
+    participant Discord as Discord API
+    participant OC as OpenClaw Pod
+    participant Model as AI Model Provider
+
+    User->>Discord: Send message in channel / DM
+    Discord->>OC: Gateway event (WebSocket)
+    OC->>OC: Route to default agent (homelab-admin)
+    OC->>Model: LLM request
+    Model-->>OC: Response
+    OC->>Discord: Send reply to channel / DM
+    Discord-->>User: Bot message appears
+```
+
+### Configuration
+
+The Discord channel is configured in `configmap.yaml` under `channels.discord`:
+
+| Key | Value | Purpose |
+|---|---|---|
+| `enabled` | `true` | Activate the Discord channel on startup |
+| `groupPolicy` | `"open"` | Allow all guild channels (mention-gating still applies) |
+
+The bot token is resolved from the `DISCORD_BOT_TOKEN` environment variable (injected via ESO from Infisical). No token is stored in the config file.
+
+### Discord Bot Setup
+
+1. Go to the [Discord Developer Portal](https://discord.com/developers/applications) and create a new application
+2. Navigate to **Bot** → click **Reset Token** → copy the token
+3. Under **Privileged Gateway Intents**, enable **Message Content Intent**
+4. Navigate to **OAuth2** → **URL Generator**:
+   - Scopes: `bot`, `applications.commands`
+   - Bot Permissions: `Send Messages`, `Read Message History`, `View Channels`
+5. Open the generated URL to invite the bot to your Discord server
+6. Add the bot token to Infisical under `homelab / prod / DISCORD_BOT_TOKEN`
+7. Force ESO sync and restart the pod:
+
+```bash
+kubectl annotate externalsecret openclaw-secret -n openclaw \
+  force-sync=$(date +%s) --overwrite
+kubectl rollout restart deployment/openclaw -n openclaw
+```
+
+### Verify Connection
+
+```bash
+# Check channel status
+kubectl exec -n openclaw deploy/openclaw -- node dist/index.js channels status
+
+# Check logs for Discord connection
+kubectl logs -n openclaw deploy/openclaw --tail=50 | grep -i discord
+```
 
 ## Running CLI Commands Inside the Pod
 
@@ -664,3 +731,6 @@ kubectl exec -n openclaw deploy/openclaw -- node dist/index.js config get
 | OpenRouter 401/403 | Invalid or missing `OPENROUTER_API_KEY` | Add/update the key in Infisical `homelab / prod / OPENROUTER_API_KEY`; force ESO re-sync; restart pod |
 | OpenRouter rate limit (429) | Account credit exhausted | Top up credits at [openrouter.ai/credits](https://openrouter.ai/credits); or switch to a cheaper model in `agents.defaults.model.primary` |
 | Tailscale URL not responding | `tailscale serve` not configured | Run `tailscale serve --bg --https 8447 http://localhost:30789` |
+| Discord bot not connecting | Missing or invalid `DISCORD_BOT_TOKEN` | Verify the token in Infisical; force ESO re-sync; restart pod |
+| Discord bot connects but ignores messages | Message Content Intent not enabled | Enable it in Discord Developer Portal → Bot → Privileged Gateway Intents |
+| Discord bot can't see a channel | Missing permissions in the server | Ensure the bot role has View Channel + Send Messages on the target channel |

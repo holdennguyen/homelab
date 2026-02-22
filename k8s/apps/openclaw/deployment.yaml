@@ -91,6 +91,11 @@ spec:
                 secretKeyRef:
                   name: openclaw-secret
                   key: GITHUB_TOKEN
+            - name: DISCORD_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secret
+                  key: DISCORD_BOT_TOKEN
             - name: GIT_CONFIG_COUNT
               value: "2"
             - name: GIT_CONFIG_KEY_0
