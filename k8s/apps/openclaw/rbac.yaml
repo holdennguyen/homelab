@@ -7,6 +7,7 @@ metadata:
     app.kubernetes.io/name: openclaw
     app.kubernetes.io/instance: openclaw
 ---
+# Namespace Role: openclaw-specific permissions (secrets read + pods/exec)
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
@@ -15,12 +16,7 @@ metadata:
 rules:
 - apiGroups: [""]
   resources:
-    - pods
-    - pods/log
     - secrets
-    - configmaps
-    - services
-    - persistentvolumeclaims
   verbs: ["get", "list", "watch"]
 - apiGroups: [""]
   resources:
@@ -36,6 +32,97 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: openclaw-role
+subjects:
+- kind: ServiceAccount
+  name: openclaw
+  namespace: openclaw
+---
+# ClusterRole: cluster-wide read + targeted operational writes
+# Gives homelab-admin the ability to monitor all namespaces, restart
+# deployments, force-sync ExternalSecrets, and manage ArgoCD Applications.
+# Does NOT grant: create/delete deployments, services, namespaces, or
+# cluster-scoped resources. Persistent changes go through GitOps.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: openclaw-homelab-admin
+rules:
+# Cluster-wide read: core resources
+- apiGroups: [""]
+  resources:
+    - pods
+    - pods/log
+    - services
+    - endpoints
+    - configmaps
+    - events
+    - nodes
+    - namespaces
+    - persistentvolumeclaims
+    - persistentvolumes
+    - replicationcontrollers
+  verbs: ["get", "list", "watch"]
+# Cluster-wide read: workload resources
+- apiGroups: ["apps"]
+  resources:
+    - deployments
+    - statefulsets
+    - daemonsets
+    - replicasets
+  verbs: ["get", "list", "watch"]
+# Operational writes: rollout restart (patch annotation), scale
+- apiGroups: ["apps"]
+  resources:
+    - deployments
+    - statefulsets
+  verbs: ["patch"]
+- apiGroups: ["apps"]
+  resources:
+    - deployments/scale
+    - statefulsets/scale
+  verbs: ["get", "patch"]
+# Operational writes: delete stuck pods
+- apiGroups: [""]
+  resources:
+    - pods
+  verbs: ["delete"]
+# Operational writes: annotate resources (force-sync, etc.)
+- apiGroups: [""]
+  resources:
+    - configmaps
+    - services
+    - persistentvolumeclaims
+  verbs: ["patch"]
+# ExternalSecrets: read status + patch for force-sync annotation
+- apiGroups: ["external-secrets.io"]
+  resources:
+    - externalsecrets
+  verbs: ["get", "list", "watch", "patch"]
+# ArgoCD Applications: read status + patch for hard refresh annotation
+- apiGroups: ["argoproj.io"]
+  resources:
+    - applications
+    - appprojects
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["argoproj.io"]
+  resources:
+    - applications
+  verbs: ["patch"]
+# Resource metrics: kubectl top pods/nodes
+- apiGroups: ["metrics.k8s.io"]
+  resources:
+    - pods
+    - nodes
+  verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: openclaw-homelab-admin
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: openclaw-homelab-admin
 subjects:
 - kind: ServiceAccount
   name: openclaw

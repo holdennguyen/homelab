@@ -65,7 +65,7 @@ flowchart TD
 | `configmap.yaml` | Multi-agent `openclaw.json` config (gateway, agents, channels, skills, tools) |
 | `deployment.yaml` | Single-replica deployment with config/skills/workspace volumes |
 | `service.yaml` | NodePort service exposing port 30789 |
-| `rbac.yaml` | ServiceAccount + ClusterRoleBinding (cluster-admin) |
+| `rbac.yaml` | ServiceAccount + namespace Role + ClusterRole (`openclaw-homelab-admin`) |
 | `kustomization.yaml` | Kustomize resource list |
 
 Related files outside this directory:
@@ -92,7 +92,12 @@ This ensures that the container processes do not have root privileges on the hos
 
 Note: OpenClaw uses a `hostPath` volume to inject agent workspace definitions from the host (`/Users/holden.nguyen/homelab/agents/workspaces`). This is an exception to the cluster's default-deny network policies and requires the `openclaw` namespace to be exempt from the `restricted` pod security profile (due to the use of `hostPath`).
 
-The OpenClaw service account is scoped to its own namespace via a Role with minimal permissions: read-only access to pods, logs, secrets, configmaps, services, and PVCs, plus exec into pods for debugging. The previous `cluster-admin` ClusterRoleBinding has been removed, limiting the blast radius if the service account token were compromised.
+The OpenClaw ServiceAccount has a two-layer RBAC model:
+
+- **Namespace Role** (`openclaw-role`) — secrets read + pods/exec in the `openclaw` namespace only
+- **ClusterRole** (`openclaw-homelab-admin`) — cluster-wide read on pods, deployments, services, events, nodes, namespaces, and workload resources; targeted operational writes including patch on deployments/statefulsets (rollout restart, scale), patch on ExternalSecrets (force-sync), and patch on ArgoCD Applications (hard refresh). Does not grant create/delete on any resource, secrets read outside `openclaw`, or any cluster-scoped resource modification (ClusterRoles, NetworkPolicies, namespaces).
+
+This gives the homelab-admin agent the ability to monitor everything and operate on running workloads, while all persistent infrastructure changes flow through GitOps. See [docs/security.md](../../docs/security.md) for the full RBAC breakdown.
 
 ## How It Fits in the Homelab
 
@@ -722,7 +727,7 @@ When the primary model fails, OpenClaw automatically falls through to Gemini. Au
 
 Agent configuration is in the `openclaw-config` ConfigMap (mounted at `/config/openclaw.json`). Each agent has its own AGENTS.md personality file in `agents/workspaces/<id>/AGENTS.md`, copied into the pod workspace on every restart by the `init-workspaces` init container.
 
-The pod runs with a `cluster-admin` ServiceAccount so agents can execute `kubectl`, `helm`, and other ops tools against the cluster directly.
+The pod runs with a dedicated ServiceAccount (`openclaw`) that has a targeted ClusterRole (`openclaw-homelab-admin`) — cluster-wide read plus scoped operational writes (restart, scale, annotate). Agents execute `kubectl`, `helm`, and other ops tools against the cluster, bounded by these RBAC permissions.
 
 ### Skills
 

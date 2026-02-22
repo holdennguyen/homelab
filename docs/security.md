@@ -108,12 +108,12 @@ Every service runs under a dedicated ServiceAccount with least-privilege permiss
 
 | Service | ServiceAccount | Scope | Permissions |
 |---|---|---|---|
-| OpenClaw | `openclaw` (ns: `openclaw`) | Namespace Role | Read pods, logs, secrets, configmaps, services, PVCs; create pods/exec |
+| OpenClaw | `openclaw` (ns: `openclaw`) | Namespace Role + ClusterRole | See [OpenClaw RBAC detail](#kubernetes-rbac) below |
 | ArgoCD | `argocd-*` (ns: `argocd`) | ClusterRole | Managed by Helm chart — application controller needs cluster-wide access to sync resources |
 | ESO | `external-secrets` (ns: `external-secrets`) | ClusterRole | Managed by Helm chart — needs cluster-wide access to create secrets in any namespace |
 | Monitoring | `kube-prometheus-stack-*` | ClusterRole | Managed by Helm chart — Prometheus needs cluster-wide metrics scraping |
 
-The previous `cluster-admin` ClusterRoleBinding on the OpenClaw ServiceAccount was removed in v1.1.0, scoping it down to a namespace-only Role.
+OpenClaw's RBAC was expanded from a namespace-only Role (v1.1.0–v1.3.0) to a namespace Role + targeted ClusterRole in v1.4.0. The ClusterRole grants cluster-wide read and scoped operational writes (rollout restart, force-sync, ArgoCD hard refresh) without granting `cluster-admin`. See the [full RBAC breakdown](#kubernetes-rbac) in the OpenClaw security section.
 
 ## Secret Management
 
@@ -215,14 +215,47 @@ This section provides a detailed breakdown of OpenClaw's permissions, access, an
 
 ### Kubernetes RBAC
 
-The `openclaw` ServiceAccount has a **namespace-scoped Role** (not a ClusterRole). It cannot access resources in any other namespace via the Kubernetes API.
+The `openclaw` ServiceAccount has two layers of RBAC:
+
+1. **Namespace Role** (`openclaw-role` in `openclaw` namespace) — namespace-specific permissions
+2. **ClusterRole** (`openclaw-homelab-admin`) — cluster-wide read + targeted operational writes
+
+#### Namespace Role (openclaw namespace only)
 
 | Resources | Verbs | Risk |
 |---|---|---|
-| pods, pods/log, secrets, configmaps, services, persistentvolumeclaims | get, list, watch | Low (read-only) |
+| secrets | get, list, watch | **Medium** — can read secrets in the `openclaw` namespace (API keys) |
 | pods/exec | create | **Medium** — allows shell access into pods in the `openclaw` namespace |
 
-Since only the OpenClaw pod itself runs in the namespace, `pods/exec` is effectively self-referential. However, if additional pods are ever deployed to the `openclaw` namespace, this permission would extend to them.
+Since only the OpenClaw pod itself runs in the namespace, `pods/exec` is effectively self-referential. Secrets read is limited to the `openclaw` namespace — the agent cannot read secrets in `argocd`, `monitoring`, `authentik`, or other namespaces.
+
+#### ClusterRole (cluster-wide)
+
+| Resources | Verbs | Purpose | Risk |
+|---|---|---|---|
+| pods, pods/log, services, endpoints, configmaps, events, nodes, namespaces, PVCs, PVs, replicationcontrollers | get, list, watch | Cluster-wide monitoring (`kubectl get pods -A`, `kubectl describe node`) | Low (read-only) |
+| deployments, statefulsets, daemonsets, replicasets | get, list, watch | Workload status across namespaces | Low (read-only) |
+| deployments, statefulsets | patch | Rollout restart (annotation), rollout undo | **Medium** — can restart or roll back any deployment |
+| deployments/scale, statefulsets/scale | get, patch | Emergency scaling (`kubectl scale`) | **Medium** — can scale to 0 (mitigated by Critical Risk Protocol) |
+| pods | delete | Remove stuck pods | Low |
+| configmaps, services, PVCs | patch | Annotate resources for troubleshooting | Low |
+| externalsecrets (external-secrets.io) | get, list, watch, patch | Check sync status, force-sync annotation | Low |
+| applications, appprojects (argoproj.io) | get, list, watch | Check ArgoCD sync status | Low (read-only) |
+| applications (argoproj.io) | patch | Hard refresh annotation | Low |
+| pods, nodes (metrics.k8s.io) | get, list | `kubectl top pods/nodes` | Low (read-only) |
+
+#### What the ClusterRole does NOT grant
+
+| Capability | Why excluded |
+|---|---|
+| **Create** deployments, services, namespaces, configmaps | Persistent resource creation goes through GitOps (git → ArgoCD) |
+| **Delete** deployments, services, statefulsets, namespaces | Destructive deletions go through GitOps (git revert → ArgoCD prune) |
+| **Read secrets** outside `openclaw` namespace | Secrets in `argocd`, `monitoring`, `authentik`, `infisical` are not accessible |
+| **Modify** ClusterRoles, ClusterRoleBindings, NetworkPolicies | Security-sensitive cluster resources are GitOps-only |
+| **Create/delete** ArgoCD Applications or AppProjects | Application lifecycle is managed through git manifests |
+| **Exec** into pods in other namespaces | pods/exec is namespace-scoped to `openclaw` only |
+
+This design allows the agent to **monitor everything, operate on running workloads, but never create or destroy infrastructure**. All persistent changes flow through GitOps.
 
 ### Secrets Accessible
 
@@ -364,13 +397,15 @@ flowchart LR
 | # | Risk | Severity | Current Mitigation | Residual Risk |
 |---|---|---|---|---|
 | 1 | `GITHUB_TOKEN` grants repo write access to all agents | Medium | Scoped to single repo; PR review required; agent footprint tracing | A misbehaving agent could create spam PRs or issues |
-| 2 | `pods/exec` + `secrets` read lets agents read their own secrets via kubectl | Medium | Only one pod in namespace; RBAC is namespace-scoped | If more pods are added to `openclaw` ns, blast radius grows |
-| 3 | Missing `allowPrivilegeEscalation: false` | Low | Container runs as non-root (UID 1000) | Theoretical escalation path if kernel vulnerability exists |
-| 4 | `--allow-unconfigured` on gateway | Low | Tailscale + gateway token + device pairing provide three auth layers | Removes one defense layer (client pre-registration) |
-| 5 | `trustedProxies` covers all RFC 1918 space | Low | Only OrbStack internal traffic uses these ranges | Broader than necessary; could be narrowed |
-| 6 | `sessions.visibility: "all"` | Low | Single-user system; no multi-tenant data | All agents see all session history |
-| 7 | Read-only hostPath volumes expose host filesystem | Low | Paths are narrow; read-only; contain only Markdown files | Container compromise could read skill/agent definitions |
-| 8 | LLM API keys grant inference access | Low | Keys are per-provider; usage-based billing with spending limits | Compromised key could incur API costs |
+| 2 | `pods/exec` + `secrets` read lets agents read their own secrets via kubectl | Medium | Only one pod in namespace; secrets read is namespace-scoped to `openclaw` | If more pods are added to `openclaw` ns, blast radius grows |
+| 3 | ClusterRole allows `patch` on deployments/statefulsets cluster-wide | Medium | Limited to patch (restart/scale) — cannot create or delete workloads; Critical Risk Protocol requires user confirmation for scaling to 0 | A misbehaving agent could restart or scale down any deployment |
+| 4 | ClusterRole allows `patch` on ArgoCD Applications | Low | Limited to patch (hard refresh annotation) — cannot create or delete Applications | Agent could trigger unnecessary refreshes; self-heal reverts any drift |
+| 5 | Missing `allowPrivilegeEscalation: false` | Low | Container runs as non-root (UID 1000) | Theoretical escalation path if kernel vulnerability exists |
+| 6 | `--allow-unconfigured` on gateway | Low | Tailscale + gateway token + device pairing provide three auth layers | Removes one defense layer (client pre-registration) |
+| 7 | `trustedProxies` covers all RFC 1918 space | Low | Only OrbStack internal traffic uses these ranges | Broader than necessary; could be narrowed |
+| 8 | `sessions.visibility: "all"` | Low | Single-user system; no multi-tenant data | All agents see all session history |
+| 9 | Read-only hostPath volumes expose host filesystem | Low | Paths are narrow; read-only; contain only Markdown files | Container compromise could read skill/agent definitions |
+| 10 | LLM API keys grant inference access | Low | Keys are per-provider; usage-based billing with spending limits | Compromised key could incur API costs |
 
 ### OpenClaw Hardening Recommendations
 
@@ -419,7 +454,7 @@ flowchart TD
 | **Container filesystem isolation** | The container has its own root filesystem. Only explicitly mounted volumes are visible. | Cannot see `/Users/holden.nguyen/`, cannot read Desktop/Documents/Downloads, cannot access Photos/Music/Mail, cannot read browser profiles or cookies |
 | **hostPath scope** | Two host directories are mounted — both read-only, both containing only Markdown files | Can read `agents/workspaces/*.md` and `skills/*.md`. Cannot write to them. Cannot mount additional host paths without changing the deployment manifest (which requires a PR + human review) |
 | **Non-root execution** | Pod runs as UID 1000 with `runAsNonRoot: true` | Cannot escalate to root inside the container, cannot modify system binaries, cannot change container network config |
-| **Namespace-scoped RBAC** | ServiceAccount has a Role (not ClusterRole) limited to the `openclaw` namespace | Cannot list/get/modify pods, secrets, or any resource in other namespaces (`argocd`, `monitoring`, `infisical`, `authentik`). Cannot create Deployments, DaemonSets, or any cluster-scoped resource |
+| **Targeted RBAC (no cluster-admin)** | ClusterRole grants cluster-wide read + scoped operational writes (restart, scale, annotate). Namespace Role grants secrets read + pods/exec in `openclaw` only | Cannot create or delete deployments, services, or namespaces. Cannot read secrets outside `openclaw`. Cannot modify ClusterRoles, NetworkPolicies, or RBAC resources. Cannot exec into pods in other namespaces |
 | **Network policies** | Default-deny with explicit allowlist: DNS, K8s API (:6443), Tailscale ingress (:18789), internet egress (:443) | Cannot reach other namespaces' pods over the network (declarative intent — enforcement depends on CNI). Cannot open arbitrary ports. Cannot reach macOS services on the host network (except through the K8s API server) |
 | **Secret scoping** | Only `openclaw-secret` is injected (5 API keys). Infisical stores all other secrets in separate ExternalSecrets per namespace | Cannot read Authentik passwords, Grafana credentials, PostgreSQL passwords, or any secret outside its namespace |
 | **GitHub token scope** | Fine-grained PAT: only `holdennguyen/homelab`, only code/issues/PRs | Cannot access other repos, cannot modify repo settings/webhooks, cannot access GitHub account settings, cannot read private repos beyond `homelab` |
@@ -436,8 +471,12 @@ To be precise about the actual attack surface:
 | `skills/*.md` via hostPath | Read-only | Minimal — only skill definition Markdown files |
 | `openclaw-secret` (5 API keys) | Read via env vars and `kubectl get secret` | Medium — LLM API keys could incur billing; GitHub token scoped to one repo |
 | Pods in `openclaw` namespace | Read + exec | Medium — only the OpenClaw pod itself runs there |
-| K8s API server | Scoped to `openclaw` namespace reads | Low |
-| Internet on port 443 | Outbound HTTPS | Required for LLM APIs and GitHub; could theoretically exfiltrate data from its own namespace |
+| Pods, deployments, services, events in **all** namespaces | Read-only | Low — monitoring only, cannot modify |
+| Deployments, statefulsets in **all** namespaces | Patch (restart, scale) | Medium — can restart or scale workloads; scaling to 0 is gated by Critical Risk Protocol |
+| ArgoCD Applications | Read + patch (hard refresh) | Low — can trigger syncs but cannot create/delete apps |
+| ExternalSecrets in **all** namespaces | Read + patch (force-sync) | Low — can check status and trigger re-sync |
+| Secrets **outside** `openclaw` namespace | **No access** | N/A — cannot read secrets in argocd, monitoring, authentik, infisical |
+| Internet on port 443 | Outbound HTTPS | Required for LLM APIs and GitHub; could theoretically exfiltrate data visible to the agent |
 
 ### What would need to change for OpenClaw to harm the host
 
