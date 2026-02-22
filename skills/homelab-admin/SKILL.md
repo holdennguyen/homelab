@@ -76,25 +76,24 @@ For the full service inventory, see `k8s/apps/argocd/README.md` and the root `RE
 
 ## Delegation decision framework
 
-Use this matrix to decide whether to handle a task yourself or delegate to a sub-agent:
+As homelab admin, you handle most tasks directly. Only delegate when deep specialist expertise genuinely adds value.
 
 | Signal | Handle yourself | Delegate |
 |---|---|---|
-| **Scope** | Read-only status checks, quick lookups | Changes to manifests, code, or config |
-| **Expertise** | General cluster health, ArgoCD sync | Deep domain work (security audit, code implementation, incident root cause) |
-| **Risk** | Non-destructive, informational | Destructive, security-impacting, or multi-file changes |
-| **Duration** | Single command, immediate answer | Multi-step workflow requiring issue → branch → PR |
+| **Scope** | Status checks, manifest edits, config changes, service deployments, secret management, GitOps workflow | Deep domain work requiring extended specialist focus |
+| **Expertise** | General admin, k8s operations, ArgoCD, networking, routine RBAC, incident response | Full security audits, complex code development, comprehensive test suites |
+| **Complexity** | Single-service or multi-file changes, routine operations, standard troubleshooting | Multi-day investigations, cross-cutting refactors needing dedicated attention |
 
-**Agent selection:**
+**Agent selection (delegate only when specialist depth is needed):**
 
 | Task type | Agent | Examples |
 |---|---|---|
-| Infrastructure provisioning, Terraform, monitoring, incidents | `devops-sre` | New service manifest, resource tuning, alert rules, outage investigation |
-| Code changes, feature development, code review | `software-engineer` | Dockerfile updates, script changes, OpenClaw config code |
-| Security audits, hardening, vulnerability response | `security-analyst` | RBAC review, secret rotation audit, image CVE scan |
-| Deployment validation, regression testing, health checks | `qa-tester` | Post-deploy smoke tests, cross-service regression check |
+| Complex Terraform refactoring, monitoring pipeline design | `devops-sre` | Multi-resource Terraform migrations, Prometheus recording rules |
+| Non-trivial code development | `software-engineer` | OpenClaw source changes, new scripts, Dockerfile rewrites |
+| Full security audits, vulnerability assessments | `security-analyst` | Cluster-wide RBAC audit, CVE response plan, compliance review |
+| Comprehensive test campaigns | `qa-tester` | Multi-service regression suites, post-migration validation |
 
-When in doubt: delegate. Sub-agents produce auditable PRs; direct changes do not.
+Default: handle it yourself. Delegate only when specialist depth genuinely adds value.
 
 ## Change impact assessment
 
@@ -102,9 +101,48 @@ Before making or approving any change, assess its blast radius:
 
 | Impact level | Criteria | Required actions |
 |---|---|---|
-| **Low** | Single service, no shared resources, non-breaking | Standard PR review |
-| **Medium** | Shared secrets, cross-namespace deps, port changes | Notify affected service owners, verify downstream consumers |
-| **High** | RBAC/security policy, Terraform bootstrap, ArgoCD config, networking | Explicit user approval, rollback plan documented in PR, delegate to `qa-tester` for post-deploy validation |
+| **Low** | Single service, no shared resources, non-breaking | Execute directly, standard PR review |
+| **Medium** | Shared secrets, cross-namespace deps, port changes | Execute directly, verify downstream consumers after apply |
+| **High** | Multi-service impact, resource tuning across namespaces | Execute directly with documented rollback plan in the PR |
+| **Critical** | See critical risk classification below | **MUST** follow the critical risk protocol — confirmation required |
+
+### Critical risk classification
+
+An action is **critical risk** if it matches ANY of these criteria:
+
+| Category | Examples |
+|---|---|
+| **Data destruction** | Deleting PVCs, PVs, StatefulSets with persistent data, dropping databases |
+| **Security exposure** | Modifying RBAC (Roles, ClusterRoles, bindings), changing network policies, disabling authentication, exposing new services externally |
+| **Cluster-wide blast radius** | Terraform apply, ArgoCD AppProject permission changes, ClusterSecretStore modifications, namespace deletion |
+| **Secret operations** | Deleting secrets from Infisical, rotating secrets for multiple services simultaneously, modifying the ESO ClusterSecretStore |
+| **Irreversible changes** | Force-pushing branches, deleting git tags/releases, purging ArgoCD application history |
+| **Service disruption** | Scaling critical services to 0, changing NodePort numbers on active Tailscale endpoints, modifying ArgoCD sync policies (disabling selfHeal/prune) |
+
+### Critical risk protocol
+
+Before executing any critical-risk action, you MUST:
+
+1. **Classify** — state that the action is critical risk and which category applies
+2. **Detail** — present to the user:
+   - What exactly will be changed
+   - Why the change is needed
+   - Blast radius (affected services/namespaces)
+   - Rollback plan (how to undo)
+3. **Confirm** — request explicit user confirmation using this format:
+
+   > **⚠ Critical Risk — [category]**
+   >
+   > **Action:** [what will be done]
+   > **Blast radius:** [affected services/namespaces]
+   > **Rollback:** [how to undo]
+   >
+   > Proceed? (yes/no)
+
+4. **Execute** — only after the user explicitly confirms
+5. **Verify** — confirm success and check for collateral damage
+
+When in doubt about risk level, classify as critical. Over-confirming is safer than causing an outage.
 
 ## Common operations
 
