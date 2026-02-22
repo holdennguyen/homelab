@@ -71,6 +71,16 @@ Every `k8s/apps/<service>/README.md` should include these sections (adapt as nee
 7. If the service has secrets, update `docs/secret-management.md` and `k8s/apps/infisical/README.md` inventory
 8. If the service has a Tailscale endpoint, update `docs/networking.md` and `docs/bootstrap.md` (Tailscale Serve commands)
 
+## Markdown Formatting Rules
+
+Follow these rules to ensure markdown renders correctly in MkDocs:
+
+- **Blank line before lists** — always add a blank line between a paragraph/text line and the first `- ` or `1. ` list item. Without it, some renderers collapse the list into the preceding paragraph.
+- **Blank line after headings** — always add a blank line after `#` headings before content.
+- **Consistent list indentation** — use 2 spaces for nested list items.
+- **No trailing whitespace** — remove trailing spaces on all lines.
+- **Blank line before and after code fences** — always add blank lines around ` ``` ` blocks.
+
 ## Mermaid Diagram Conventions
 
 When writing mermaid diagrams in documentation:

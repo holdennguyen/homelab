@@ -51,6 +51,7 @@ Terraform bootstraps the cluster exactly once. After `terraform apply`, no more 
 **Why Terraform for ArgoCD, not `kubectl apply`?**
 
 Every `kubectl apply` invocation is an untracked side-effect. Terraform tracks all resources in `terraform.tfstate`, which means:
+
 - `terraform plan` shows exactly what will change before applying
 - `terraform destroy` cleanly removes everything
 - The full bootstrap is reproducible from a fresh cluster with a single command
@@ -117,12 +118,14 @@ flowchart LR
 Every Application CR carries standard `app.kubernetes.io/*` labels (`name`, `part-of`, `component`, `managed-by`). See the [ArgoCD README](../k8s/apps/argocd/README.md#adding-a-new-application) for the full labeling rules and new-application template.
 
 **Branch protection** on `main`:
+
 - PRs require at least one approving review before merge
 - Force pushes and branch deletion are blocked
 - Linear history is required (no merge commits)
 - Admin bypass is available for emergencies (`enforce_admins: false`)
 
 **Sync policies** on all applications:
+
 - `automated.prune: true` — resources removed from git are deleted from the cluster
 - `automated.selfHeal: true` — any manual `kubectl` change is reverted within ~3 minutes
 - All applications target `targetRevision: HEAD` — every merge to `main` is deployed

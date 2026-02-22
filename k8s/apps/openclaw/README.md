@@ -750,11 +750,13 @@ Skills follow the [AgentSkills](https://agentskills.io) format with OpenClaw-com
 ### Sub-agent spawning
 
 The orchestrator pattern uses `maxSpawnDepth: 2`:
+
 - **Depth 0** — main agent (`homelab-admin`) receives user requests
 - **Depth 1** — orchestrator spawns specialized sub-agents via `sessions_spawn`
 - **Depth 2** — sub-agents can spawn leaf workers for parallel tasks
 
 Sub-agents announce results back up the chain. Configure limits in the ConfigMap:
+
 - `maxConcurrent: 4` — max parallel sub-agents
 - `maxChildrenPerAgent: 3` — max children per agent session
 - `archiveAfterMinutes: 120` — auto-cleanup of finished sub-agent sessions

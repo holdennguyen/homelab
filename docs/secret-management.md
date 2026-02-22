@@ -115,6 +115,7 @@ flowchart LR
 > **ArgoCD OIDC client secret** is the only secret managed via Terraform instead of ESO (to avoid annotation-propagation conflicts with `argocd-secret`). All other secrets are pulled from Infisical by ESO.
 
 The ClusterSecretStore in `k8s/apps/external-secrets/cluster-secret-store.yaml` is configured with:
+
 - `projectSlug: homelab`
 - `environmentSlug: prod`
 - `secretsPath: /`

@@ -44,7 +44,17 @@ For modified K8s manifests, verify:
 - Namespaces exist or `CreateNamespace=true` is set
 - Container images use pinned tags (not `:latest` for upstream)
 
-### 6. Mermaid Syntax Check
+### 6. Markdown Formatting Check
+
+For modified `*.md` files, verify:
+- Blank line before every bullet list (a text line followed directly by `- ` will collapse in MkDocs)
+- Blank line after headings
+- No trailing whitespace
+- Consistent list indentation (2 spaces for nesting)
+
+Flag as **WARN** if any violations found. See the `/documentation` skill for the full formatting rules.
+
+### 7. Mermaid Syntax Check
 
 For modified `*.md` files containing mermaid blocks, verify:
 - No spaces in node IDs (use camelCase/PascalCase/underscores)
@@ -63,4 +73,5 @@ Summarize results as a checklist:
 - [ ] Secret scan — PASS/FAIL
 - [ ] Doc freshness — PASS/WARN
 - [ ] Labels and conventions — PASS/FAIL
+- [ ] Markdown formatting — PASS/WARN/N/A
 - [ ] Mermaid syntax — PASS/WARN/N/A
