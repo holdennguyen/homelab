@@ -441,9 +441,6 @@ flowchart TD
     Pod -. "BLOCKED\nno access" .-> FS
     Pod -. "BLOCKED\nno access" .-> Procs
     Pod -- "only HTTPS :443\n(LLM APIs, GitHub)" --> Net
-
-    style FS fill:#ff6b6b,color:#fff
-    style Procs fill:#ff6b6b,color:#fff
 ```
 
 ### Layer-by-layer breakdown
@@ -524,8 +521,6 @@ flowchart TD
     CallGW --> Twilio
     BankGW --> Plaid
     MsgGW & CallGW & BankGW --> AuditLog
-
-    style Keychain fill:#ff6b6b,color:#fff
 ```
 
 ### Design principles

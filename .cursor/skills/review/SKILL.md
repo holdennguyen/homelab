@@ -27,6 +27,7 @@ For each service in `k8s/apps/<service>/`:
 - [ ] Networking table shows current ports/endpoints
 - [ ] Operational commands are tested and current
 - [ ] Troubleshooting table covers recent issues
+- [ ] Mermaid diagrams follow conventions (no `style`/`classDef`, no spaces in IDs, quoted special chars)
 - [ ] `docs/<service>.md` thin wrapper exists
 - [ ] Service listed in `mkdocs.yml` nav
 - [ ] Entry exists in `.doc-manifest.yml`

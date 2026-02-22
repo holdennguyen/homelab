@@ -71,6 +71,20 @@ Every `k8s/apps/<service>/README.md` should include these sections (adapt as nee
 7. If the service has secrets, update `docs/secret-management.md` and `k8s/apps/infisical/README.md` inventory
 8. If the service has a Tailscale endpoint, update `docs/networking.md` and `docs/bootstrap.md` (Tailscale Serve commands)
 
+## Mermaid Diagram Conventions
+
+When writing mermaid diagrams in documentation:
+
+- **No spaces in node IDs** — use `camelCase`, `PascalCase`, or underscores (e.g., `UserService`, not `User Service`)
+- **Quote edge labels with special characters** — wrap in double quotes: `A -->|"O(1) lookup"| B`
+- **Quote node labels with special characters** — use double quotes: `A["Process (main)"]`
+- **Avoid reserved keywords as node IDs** — `end`, `subgraph`, `graph`, `flowchart` (use `endNode`, `processEnd` instead)
+- **No explicit colors or styling** — never use `style`, `classDef`, or `:::` syntax; they break dark mode. Let the MkDocs Material theme handle colors automatically
+- **Subgraph IDs** — use explicit IDs with labels: `subgraph authFlow [Authentication Flow]`
+- **No click events** — `click` syntax is disabled for security
+
+These conventions ensure diagrams render correctly in both light and dark mode on the MkDocs Material site.
+
 ## Rules
 
 - Keep docs concise — document the *what* and *why*, not step-by-step kubectl commands.

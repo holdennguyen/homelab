@@ -44,6 +44,17 @@ For modified K8s manifests, verify:
 - Namespaces exist or `CreateNamespace=true` is set
 - Container images use pinned tags (not `:latest` for upstream)
 
+### 6. Mermaid Syntax Check
+
+For modified `*.md` files containing mermaid blocks, verify:
+- No spaces in node IDs (use camelCase/PascalCase/underscores)
+- No `style`, `classDef`, or `:::` directives (break dark mode)
+- No reserved keywords as bare node IDs (`end`, `subgraph`, `graph`)
+- Edge labels with special characters are quoted: `-->|"label"|`
+- Node labels with parentheses/colons are double-quoted: `A["Label (detail)"]`
+
+Flag as **WARN** if any violations found. See the `/documentation` skill for the full mermaid conventions.
+
 ## Report Format
 
 Summarize results as a checklist:
@@ -52,3 +63,4 @@ Summarize results as a checklist:
 - [ ] Secret scan — PASS/FAIL
 - [ ] Doc freshness — PASS/WARN
 - [ ] Labels and conventions — PASS/FAIL
+- [ ] Mermaid syntax — PASS/WARN/N/A
