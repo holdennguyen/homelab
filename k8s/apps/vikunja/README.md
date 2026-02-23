@@ -32,7 +32,7 @@ One-time Tailscale Serve setup (run on the Mac mini):
 tailscale serve --bg --https 8449 http://localhost:30888
 ```
 
-Vikunja also appears as a bookmark in the Authentik portal under the **Productivity** group.
+Vikunja is an OIDC-protected application in the Authentik portal under the **Productivity** group. Login is handled via Authentik SSO.
 
 ## Setup Steps
 
@@ -45,33 +45,33 @@ Before the first sync, add the following secrets to Infisical under `homelab / p
 | `VIKUNJA_POSTGRES_USER` | PostgreSQL superuser username | `vikunja` |
 | `VIKUNJA_POSTGRES_PASSWORD` | Password for the PostgreSQL user | (random strong password) |
 | `VIKUNJA_POSTGRES_DB` | PostgreSQL database name | `vikunja` |
-| `VIKUNJA_OIDC_CLIENT_SECRET` | Authentik OAuth2 client secret for Vikunja | (copy from Authentik provider) |
+| `VIKUNJA_OIDC_CLIENT_SECRET` | Authentik OAuth2 client secret for Vikunja | (random 64-char alphanumeric string) |
 
 The External Secrets Operator will sync these into a `vikunja-db-secret` in the `vikunja` namespace. Both the PostgreSQL and Vikunja deployments share the same password key — no duplication needed.
 
-### 2. Authentik OIDC Provider
+### 2. Authentik OIDC Provider (fully code-managed)
 
-Vikunja uses Authentik for SSO via OpenID Connect. The OAuth2 provider is created automatically via the Authentik blueprint in `k8s/apps/authentik/blueprints-configmap.yaml`.
+Vikunja uses Authentik for SSO via OpenID Connect. The entire OIDC integration is managed via code — no manual Authentik UI steps required.
 
-After ArgoCD syncs the blueprint:
+**How the secret flows:**
 
-1. Open Authentik Admin → **Applications** → **Providers** → **vikunja**
-2. Copy the **Client Secret** value
-3. Add it to Infisical as `VIKUNJA_OIDC_CLIENT_SECRET` under `homelab / prod /` (root path)
-4. Force an ExternalSecret re-sync:
+1. `VIKUNJA_OIDC_CLIENT_SECRET` is stored once in Infisical
+2. Authentik ExternalSecret (`k8s/apps/authentik/external-secret.yaml`) pulls it into `authentik-secret` → available as env var in Authentik pods via `envFrom`
+3. Authentik Blueprint (`k8s/apps/authentik/blueprints-configmap.yaml`) reads it via `!Env VIKUNJA_OIDC_CLIENT_SECRET` and sets it as the OAuth2 provider's `client_secret`
+4. Vikunja ExternalSecret (`k8s/apps/vikunja/external-secret.yaml`) also pulls it → mounted as a file at `/secrets/oidc-client-secret`
+5. Vikunja config (`k8s/apps/vikunja/vikunja-config.yaml`) references the file for `clientsecret`
 
-```bash
-kubectl annotate externalsecret vikunja-db-secret -n vikunja \
-  force-sync=$(date +%s) --overwrite
-```
+**OIDC details:**
 
-5. Restart the Vikunja deployment:
+| Setting | Value |
+|---|---|
+| Client ID | `vikunja` |
+| Redirect URI | `https://holdens-mac-mini.story-larch.ts.net:8449/auth/openid/authentik` |
+| OIDC Discovery | `https://holdens-mac-mini.story-larch.ts.net/application/o/vikunja/.well-known/openid-configuration` |
+| Scopes | `openid profile email` |
+| Signing algorithm | RS256 |
 
-```bash
-kubectl rollout restart deployment vikunja -n vikunja
-```
-
-The OIDC redirect URI is: `https://holdens-mac-mini.story-larch.ts.net:8449/auth/openid/authentik`
+For the general pattern, see [Adding a new OIDC-protected service](../authentik/README.md#adding-a-new-oidc-protected-service).
 
 ### 3. ArgoCD Sync
 
@@ -143,9 +143,13 @@ Note: Changing the PostgreSQL `POSTGRES_PASSWORD` requires a database password u
 - **Cannot connect to database:** Verify the `vikunja-db-secret` exists and has correct keys. Ensure PostgreSQL pod is Ready.
 - **No metrics in Prometheus:** Confirm the ServiceMonitor has been synced and the `vikunja` Service has the correct labels.
 - **External access not working:** Ensure Tailscale routing to the node and that the NodePort is within the allowed range (30000-32767). Check service `type: NodePort` and `nodePort: 30888`.
+- **OIDC "Login with Authentik" not showing:** Check that `vikunja-config` ConfigMap is mounted at `/etc/vikunja/config.yml` and the `auth.openid.enabled` is `true`. Verify the pod has restarted after ConfigMap changes.
+- **OIDC "invalid client" error:** Verify `VIKUNJA_OIDC_CLIENT_SECRET` in Infisical matches what the Authentik provider has. Force re-sync both ExternalSecrets (`authentik-secret` and `vikunja-db-secret`) and restart both pods.
 
 ## References
 
 - [Vikunja Documentation](https://vikunja.io)
+- [Vikunja OpenID Connect](https://vikunja.io/docs/openid)
 - [Vikunja GitHub](https://github.com/go-vikunja/vikunja)
-- [Authentik Bookmark Applications](https://docs.goauthentik.io/docs/Applications/Bookmark)
+- [Authentik Blueprints — YAML Tags](https://docs.goauthentik.io/customize/blueprints/v1/tags)
+- [Authentik OIDC Provider](https://docs.goauthentik.io/docs/add-secure-apps/providers/oauth2/)

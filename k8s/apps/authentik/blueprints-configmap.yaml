@@ -65,6 +65,7 @@ data:
           authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
           client_type: confidential
           client_id: vikunja
+          client_secret: !Env VIKUNJA_OIDC_CLIENT_SECRET
           redirect_uris: |
             https://holdens-mac-mini.story-larch.ts.net:8449/auth/openid/authentik
           signing_key: !Find [authentik_crypto.certificatekeypair, [name, "authentik Self-signed Certificate"]]
