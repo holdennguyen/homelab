@@ -46,6 +46,9 @@ flowchart TD
         subgraph openclawNs["openclaw namespace"]
             openclaw_secret["openclaw-secret\n(created by ESO)"]
         end
+        subgraph vikunjaNs["vikunja namespace"]
+            vikunja_secret["vikunja-db-secret\n(created by ESO)"]
+        end
         subgraph argocdNs2["argocd namespace"]
             argocd_secret["argocd-secret\n(admin.password set by Helm)"]
         end
@@ -55,6 +58,7 @@ flowchart TD
         AUTHENTIK_SECRETS["AUTHENTIK_SECRET_KEY\nAUTHENTIK_BOOTSTRAP_PASSWORD\nAUTHENTIK_BOOTSTRAP_TOKEN\nAUTHENTIK_POSTGRES_PASSWORD"]
         GRAFANA_SECRETS["GRAFANA_ADMIN_PASSWORD\nGRAFANA_OAUTH_CLIENT_SECRET"]
         OPENCLAW_SECRETS["OPENCLAW_GATEWAY_TOKEN\nOPENROUTER_API_KEY\nGEMINI_API_KEY\nGITHUB_TOKEN\nDISCORD_BOT_TOKEN"]
+        VIKUNJA_SECRETS["VIKUNJA_POSTGRES_USER\nVIKUNJA_POSTGRES_PASSWORD\nVIKUNJA_POSTGRES_DB\nVIKUNJA_OIDC_CLIENT_SECRET"]
     end
 
     TFVars --> TFState
@@ -67,6 +71,7 @@ flowchart TD
     AUTHENTIK_SECRETS --> authentik_secret
     GRAFANA_SECRETS --> grafana_secret
     OPENCLAW_SECRETS --> openclaw_secret
+    VIKUNJA_SECRETS --> vikunja_secret
 ```
 
 ## Bootstrap Secrets (Terraform-Managed)
@@ -100,6 +105,10 @@ flowchart LR
                         s18["GEMINI_API_KEY"]
                         s19["GITHUB_TOKEN"]
                         s20["DISCORD_BOT_TOKEN"]
+                        s21["VIKUNJA_POSTGRES_USER"]
+                        s22["VIKUNJA_POSTGRES_PASSWORD"]
+                        s23["VIKUNJA_POSTGRES_DB"]
+                        s24["VIKUNJA_OIDC_CLIENT_SECRET"]
                     end
                 end
             end

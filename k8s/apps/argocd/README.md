@@ -82,7 +82,7 @@ flowchart LR
     end
 
     subgraph dataProj["data project"]
-        A3["postgresql"]
+        A3["(reserved)"]
     end
 
     subgraph appsProj["apps project"]

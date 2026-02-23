@@ -16,3 +16,4 @@ Per-service documentation for every deployed application. Each page includes the
 | [OpenClaw](openclaw.md) | `openclaw` | Multi-agent AI gateway |
 | [Trivy Operator](trivy-operator.md) | `monitoring` | Container image vulnerability scanning |
 | [Trivy Dashboard](trivy-dashboard.md) | `trivy-dashboard` | Vulnerability report web UI |
+| [Vikunja](vikunja.md) | `vikunja` | Todo list and task management with OIDC SSO |

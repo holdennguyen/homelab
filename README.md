@@ -1,6 +1,6 @@
 # Homelab
 
-A GitOps-managed Kubernetes homelab running on OrbStack (Mac mini M4). Deploys self-hosted infrastructure services -- Authentik SSO, Grafana + Prometheus, Infisical, Trivy Operator, and OpenClaw AI gateway -- orchestrated by Argo CD, with security hardening (network policies, Pod Security Standards, non-root execution, vulnerability scanning) and AI agent skill definitions for multi-agent development workflows. All services are accessible from any device on the Tailscale network (iPhone, iPad, Mac).
+A GitOps-managed Kubernetes homelab running on OrbStack (Mac mini M4). Deploys self-hosted infrastructure services -- Authentik SSO, Grafana + Prometheus, Infisical, Trivy Operator, OpenClaw AI gateway, and Vikunja task management -- orchestrated by Argo CD, with security hardening (network policies, Pod Security Standards, non-root execution, vulnerability scanning) and AI agent skill definitions for multi-agent development workflows. All services are accessible from any device on the Tailscale network (iPhone, iPad, Mac).
 
 ## Architecture
 
@@ -51,6 +51,10 @@ flowchart TD
         subgraph trivyDashNs["trivy-dashboard namespace"]
             TrivyDash["Trivy Dashboard\nNodePort :30448"]
         end
+
+        subgraph vikunjaNs["vikunja namespace"]
+            VikunjaPod["Vikunja\nNodePort :30888"]
+        end
     end
 
     TF -- "Helm release" --> ArgoCD
@@ -64,6 +68,7 @@ flowchart TD
     ArgoCD -- "App of Apps" --> monNs
     ArgoCD -- "App of Apps" --> openclawNs
     ArgoCD -- "App of Apps" --> trivyDashNs
+    ArgoCD -- "App of Apps" --> vikunjaNs
     ArgoCD -- "manages" --> NsPolicies
     ArgoCD -- "manages" --> NetPolicies
     TrivyOp -->|watches pods| monNs
@@ -72,12 +77,14 @@ flowchart TD
     CSS -- "ExternalSecret" --> OpenClawPod
     CSS -- "ExternalSecret" --> AuthentikPod
     CSS -- "ExternalSecret" --> GrafanaPod
+    CSS -- "ExternalSecret" --> VikunjaPod
     TServe -- ":443 -> :30500" --> AuthentikPod
     TServe -- ":8443 -> :30080" --> ArgoCD
     TServe -- ":8444 -> :30090" --> GrafanaPod
     TServe -- ":8445 -> :30445" --> InfisicalSvc
     TServe -- ":8447 -> :30789" --> OpenClawPod
     TServe -- ":8448 -> :30448" --> TrivyDash
+    TServe -- ":8449 -> :30888" --> VikunjaPod
 ```
 
 ## Repository Structure
@@ -109,7 +116,8 @@ homelab/
 │       ├── networking-policies/   # Default-deny NetworkPolicy per namespace
 │       ├── openclaw/              # OpenClaw AI gateway kustomize manifests
 │       ├── trivy-operator/        # Container image vulnerability scanning
-│       └── trivy-dashboard/       # Trivy Operator Dashboard web UI
+│       ├── trivy-dashboard/       # Trivy Operator Dashboard web UI
+│       └── vikunja/               # Vikunja todo list app with OIDC SSO
 ├── docs/                          # MkDocs documentation site
 ├── agents/                        # OpenClaw agent definitions
 │   └── workspaces/                # Per-agent AGENTS.md personality files (5 agents)
@@ -152,6 +160,7 @@ sequenceDiagram
 | Trivy Operator | Helm chart via ArgoCD | `monitoring` | internal only (CRs: `kubectl get vulnerabilityreports -A`) |
 | Trivy Dashboard | Kustomize via ArgoCD | `trivy-dashboard` | `https://holdens-mac-mini.story-larch.ts.net:8448` |
 | OpenClaw | Kustomize via ArgoCD | `openclaw` | `https://holdens-mac-mini.story-larch.ts.net:8447` |
+| Vikunja | Kustomize via ArgoCD | `vikunja` | `https://holdens-mac-mini.story-larch.ts.net:8449` |
 | Namespace Security | Kustomize via ArgoCD | `argocd` | cluster-wide Pod Security Standard labels |
 | Network Policies | Kustomize via ArgoCD | `argocd` | default-deny ingress/egress per namespace |
 
@@ -202,6 +211,10 @@ Once ArgoCD deploys Infisical (check: `kubectl get pods -n infisical`), open the
 | `OPENROUTER_API_KEY` | OpenRouter API key from [openrouter.ai/keys](https://openrouter.ai/keys) |
 | `GEMINI_API_KEY` | Google Gemini API key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
 | `GITHUB_TOKEN` | GitHub personal access token for OpenClaw agent git operations |
+| `VIKUNJA_POSTGRES_USER` | Vikunja PostgreSQL username |
+| `VIKUNJA_POSTGRES_PASSWORD` | Vikunja PostgreSQL password |
+| `VIKUNJA_POSTGRES_DB` | Vikunja PostgreSQL database name |
+| `VIKUNJA_OIDC_CLIENT_SECRET` | Authentik OAuth2 client secret for Vikunja |
 
 Then create a Machine Identity in Infisical (`Settings → Machine Identities → Universal Auth`), grant it **Member** access to the `homelab` project, update `terraform/terraform.tfvars` with the new `clientId` / `clientSecret`, and re-run `terraform apply` to update the credential. See [docs/getting-started/bootstrap.md](docs/getting-started/bootstrap.md) for the full step-by-step.
 
@@ -216,6 +229,7 @@ tailscale serve --bg --https 8444 http://localhost:30090          # Grafana
 tailscale serve --bg --https 8445 http://localhost:30445          # Infisical
 tailscale serve --bg --https 8447 http://localhost:30789          # OpenClaw
 tailscale serve --bg --https 8448 http://localhost:30448          # Trivy Dashboard
+tailscale serve --bg --https 8449 http://localhost:30888          # Vikunja
 
 tailscale serve status
 ```
@@ -228,6 +242,7 @@ Access URLs (any Tailscale device):
 - Infisical: `https://holdens-mac-mini.story-larch.ts.net:8445`
 - OpenClaw: `https://holdens-mac-mini.story-larch.ts.net:8447`
 - Trivy Dashboard: `https://holdens-mac-mini.story-larch.ts.net:8448`
+- Vikunja: `https://holdens-mac-mini.story-larch.ts.net:8449`
 
 ### Verify Deployment
 
@@ -262,6 +277,7 @@ kubectl get pods -A | grep -v Running | grep -v Completed
 | [docs/services/openclaw.md](docs/services/openclaw.md) | OpenClaw AI gateway deployment, image builds, multi-agent architecture |
 | [docs/services/trivy-operator.md](docs/services/trivy-operator.md) | Container image vulnerability scanning, ClientServer mode, Helm values |
 | [docs/services/trivy-dashboard.md](docs/services/trivy-dashboard.md) | Trivy Operator Dashboard web UI, vulnerability report viewer |
+| [docs/services/vikunja.md](docs/services/vikunja.md) | Vikunja todo list app, OIDC integration, PostgreSQL setup |
 | **Operations** | |
 | [docs/operations/git-workflow.md](docs/operations/git-workflow.md) | Branch conventions, PR requirements, post-merge cleanup for Cursor and OpenClaw |
 | [docs/operations/ai-agents.md](docs/operations/ai-agents.md) | Cursor rules + OpenClaw agents/skills, when to use which |
@@ -295,3 +311,5 @@ When adding a new service or documentation file, add an entry to `.doc-manifest.
 > **Completed in v1.1.0:** Security hardening — network policies (default-deny per namespace), Pod Security Standards enforcement, RBAC scope-down (OpenClaw cluster-admin removed), non-root execution for all services, and container image vulnerability scanning (Trivy Operator).
 
 > **Completed in v1.2.0:** Infrastructure optimization & observability — automated nightly shutdown/startup, monitoring dashboards and alerting rules as code, Gitea/PostgreSQL decommissioned (GitHub adopted), Authentik app portal with bookmarks, Trivy Dashboard, agent skills optimization.
+
+> **Completed in v1.6.0:** Vikunja todo list application with OIDC authentication via Authentik, PostgreSQL database with persistent storage, Prometheus metrics, and full Tailscale Serve integration.

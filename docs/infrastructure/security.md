@@ -81,6 +81,7 @@ Every application namespace has a `default-deny-all` NetworkPolicy that blocks a
 | `openclaw` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:18789), API server egress (:6443), internet egress (:443) |
 | `external-secrets` | deny-all, allow-same-ns, allow-dns | API server egress (:6443), Infisical egress (:8080) |
 | `infisical` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:8080), ingress from `external-secrets` (:8080) |
+| `vikunja` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:3456) |
 
 Tailscale ingress rules are locked to the CGNAT range `100.64.0.0/10`, ensuring only tailnet devices can reach services.
 
@@ -99,6 +100,7 @@ Namespaces are labeled with Kubernetes Pod Security Standards (PSS) to control w
 | `authentik` | `baseline` | `restricted` | server/worker containers run as root, missing seccompProfile |
 | `infisical` | `baseline` | `restricted` | standalone + ingress-nginx run as root, missing seccompProfile |
 | `openclaw` | — | — | Excluded: uses hostPath volumes disallowed by the restricted profile |
+| `vikunja` | `baseline` | `restricted` | Vikunja runs as UID 1000; PostgreSQL runs as UID 70 |
 
 Namespaces at `baseline` enforce + `restricted` audit/warn log violations without blocking pods, surfacing non-compliant workloads in audit logs for future remediation.
 
@@ -150,6 +152,7 @@ flowchart LR
 | `openclaw-secret` | `openclaw` | `OPENCLAW_GATEWAY_TOKEN`, `OPENROUTER_API_KEY`, `GEMINI_API_KEY`, `GITHUB_TOKEN` |
 | `authentik-secret` | `authentik` | `AUTHENTIK_SECRET_KEY`, `AUTHENTIK_BOOTSTRAP_PASSWORD`, `AUTHENTIK_BOOTSTRAP_TOKEN`, `AUTHENTIK_POSTGRES_PASSWORD` |
 | `grafana-secret` | `monitoring` | `GRAFANA_ADMIN_PASSWORD`, `GRAFANA_OAUTH_CLIENT_SECRET` |
+| `vikunja-db-secret` | `vikunja` | `VIKUNJA_POSTGRES_USER`, `VIKUNJA_POSTGRES_PASSWORD`, `VIKUNJA_POSTGRES_DB`, `VIKUNJA_OIDC_CLIENT_SECRET` |
 
 ## Container Security
 
@@ -162,6 +165,7 @@ flowchart LR
 | ESO | Helm-managed | `true` | `true` | Restricted PSS compliant |
 | Infisical | root | no | no | Upstream Helm default; hardening tracked in roadmap |
 | Authentik | root | no | no | Upstream Helm default; hardening tracked in roadmap |
+| Vikunja | 1000 | `true` | no | Runs as non-root; PostgreSQL runs as UID 70 |
 
 ### Image Provenance
 
@@ -172,6 +176,7 @@ flowchart LR
 | ESO | `ghcr.io/external-secrets/external-secrets` | Official upstream (Helm chart) | Chart version pinned |
 | Prometheus/Grafana | kube-prometheus-stack images | Official upstream (Helm chart) | Chart version pinned |
 | Trivy | `aquasecurity/trivy` | Official upstream (Helm chart) | Chart version pinned |
+| Vikunja | `vikunja/vikunja:1.1.0` | Official upstream (Docker Hub) | Tag pinned |
 
 ## Supply Chain Security
 
