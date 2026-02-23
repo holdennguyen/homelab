@@ -28,7 +28,7 @@ flowchart TD
     end
 
     subgraph infisical["Infisical (homelab / prod)"]
-        InfisicalSecrets["OPENCLAW_GATEWAY_TOKEN\nOPENROUTER_API_KEY\nGEMINI_API_KEY\nGITHUB_TOKEN\nDISCORD_BOT_TOKEN"]
+        InfisicalSecrets["OPENCLAW_GATEWAY_TOKEN\nOPENROUTER_API_KEY\nGEMINI_API_KEY\nGITHUB_TOKEN\nDISCORD_BOT_TOKEN\nVIKUNJA_API_TOKEN\nDISCORD_WEBHOOK_VIKUNJA"]
     end
 
     subgraph providers["AI Model Providers"]
@@ -231,6 +231,8 @@ Add the following secrets to Infisical under **homelab / prod**:
 | `GEMINI_API_KEY` | From [aistudio.google.com/apikey](https://aistudio.google.com/apikey) | Yes (fallback model provider) |
 | `GITHUB_TOKEN` | GitHub PAT (Fine-grained) with repo scope for `holdennguyen/homelab` | Yes (for git workflow) |
 | `DISCORD_BOT_TOKEN` | From [Discord Developer Portal](https://discord.com/developers/applications) → Bot → Reset Token | Yes (for Discord chat channel) |
+| `VIKUNJA_API_TOKEN` | From Vikunja UI → Settings → API Tokens → Create Token | Yes (for Vikunja task management integration) |
+| `DISCORD_WEBHOOK_VIKUNJA` | From Discord channel → Edit Channel → Integrations → Webhooks → New Webhook | Yes (for Vikunja task notifications to Discord) |
 
 After adding secrets, ESO syncs them into the `openclaw-secret` K8s Secret within the `refreshInterval` (1 hour), or force an immediate sync:
 
@@ -687,9 +689,10 @@ flowchart TD
         S6["secret-management"]
         S7["qa-tester"]
         S8["incident-response"]
+        S9["vikunja"]
     end
 
-    HA --> S1 & S5 & S6 & S8
+    HA --> S1 & S5 & S6 & S8 & S9
     DS --> S2 & S5 & S6 & S8
     SE --> S3 & S5
     SA --> S4 & S5 & S6
@@ -700,7 +703,7 @@ Each agent has a `skills` allowlist in the configmap that restricts which skills
 
 | Agent | Assigned Skills |
 |---|---|
-| `homelab-admin` | `homelab-admin`, `gitops`, `secret-management`, `incident-response` |
+| `homelab-admin` | `homelab-admin`, `gitops`, `secret-management`, `incident-response`, `vikunja` |
 | `devops-sre` | `devops-sre`, `gitops`, `secret-management`, `incident-response` |
 | `software-engineer` | `software-engineer`, `gitops` |
 | `security-analyst` | `security-analyst`, `gitops`, `secret-management` |
@@ -743,6 +746,7 @@ Homelab-specific skills live in `skills/` at the repo root and are mounted into 
 | `gitops` | ArgoCD App of Apps pattern, sync management, mandatory git workflow, agent footprint conventions |
 | `incident-response` | Incident triage, rollback procedures, pre-merge validation, post-incident documentation |
 | `secret-management` | Infisical → ESO → K8s pipeline operations |
+| `vikunja` | Vikunja task management API — create, query, update, complete tasks; Discord notifications |
 | `common/Documentation` | Standardized documentation generation |
 
 Skills follow the [AgentSkills](https://agentskills.io) format with OpenClaw-compatible `SKILL.md` frontmatter.

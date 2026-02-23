@@ -364,6 +364,24 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
+  name: allow-egress-vikunja
+  namespace: openclaw
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: vikunja
+    ports:
+    - protocol: TCP
+      port: 3456
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
   name: allow-egress-internet
   namespace: openclaw
 spec:
@@ -615,6 +633,26 @@ spec:
   - from:
     - ipBlock:
         cidr: 100.64.0.0/10
+    ports:
+    - protocol: TCP
+      port: 3456
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-from-openclaw
+  namespace: vikunja
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: vikunja
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: openclaw
     ports:
     - protocol: TCP
       port: 3456

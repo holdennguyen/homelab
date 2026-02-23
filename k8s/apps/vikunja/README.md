@@ -205,6 +205,69 @@ Note: Changing the PostgreSQL `POSTGRES_PASSWORD` requires a database password u
 - **OIDC "invalid client" error:** Verify `VIKUNJA_OIDC_CLIENT_SECRET` in Infisical matches what the Authentik provider has. Force re-sync ExternalSecret (`vikunja-db-secret`) and restart both pods.
 - **OIDC discovery returns 404:** The Authentik provider does not exist or is not linked to the application. Re-run the API bootstrap script from Step 2.
 
+## OpenClaw & Discord Integration
+
+Vikunja integrates with OpenClaw and Discord for AI-powered task management and notifications. The integration has three components:
+
+1. **OpenClaw → Vikunja** — the `homelab-admin` agent can create, query, update, and complete tasks via the Vikunja REST API
+2. **Discord → Vikunja** — users send natural language commands in Discord (e.g., "add a todo: deploy monitoring"), and OpenClaw translates them into Vikunja API calls
+3. **Vikunja → Discord** — task change notifications are sent to a Discord channel via webhook
+
+### Prerequisites
+
+| Infisical Secret | Description |
+|---|---|
+| `VIKUNJA_API_TOKEN` | Vikunja API token (created in the Vikunja UI) |
+| `DISCORD_WEBHOOK_VIKUNJA` | Discord webhook URL for task notifications |
+
+### Creating a Vikunja API Token
+
+1. Log in to Vikunja at `https://holdens-mac-mini.story-larch.ts.net:8449`
+2. Go to **Settings → API Tokens**
+3. Click **Create Token**
+4. Give it a descriptive name (e.g., `openclaw-integration`)
+5. Set permissions: select all task and project scopes
+6. Copy the token and store it in Infisical as `VIKUNJA_API_TOKEN`
+
+### Creating a Discord Webhook
+
+1. Open Discord and navigate to the channel where you want task notifications
+2. Click the gear icon (Edit Channel) → **Integrations** → **Webhooks**
+3. Click **New Webhook**, name it (e.g., `Vikunja Tasks`), and copy the webhook URL
+4. Store the URL in Infisical as `DISCORD_WEBHOOK_VIKUNJA`
+
+### Activating the Integration
+
+After adding both secrets to Infisical:
+
+```bash
+kubectl annotate externalsecret openclaw-secret -n openclaw \
+  force-sync=$(date +%s) --overwrite
+kubectl rollout restart deployment/openclaw -n openclaw
+```
+
+### Usage via Discord
+
+Once active, message the OpenClaw bot in Discord:
+
+- `@OpenClaw add a todo: review pull request #99`
+- `@OpenClaw what tasks are due today?`
+- `@OpenClaw complete task 42`
+- `@OpenClaw show my overdue tasks`
+
+The `vikunja` skill (assigned to `homelab-admin`) handles the API calls and responds with formatted results.
+
+### Network Flow
+
+```mermaid
+flowchart LR
+    Discord["Discord User"] --> OC["OpenClaw Pod\n(openclaw namespace)"]
+    OC -- "REST API\nport 3456" --> Vik["Vikunja Pod\n(vikunja namespace)"]
+    OC -- "Webhook POST" --> DW["Discord Webhook\n(notifications)"]
+```
+
+The cross-namespace communication is allowed by NetworkPolicies: `allow-egress-vikunja` (in `openclaw`) and `allow-ingress-from-openclaw` (in `vikunja`).
+
 ## References
 
 - [Vikunja Documentation](https://vikunja.io)

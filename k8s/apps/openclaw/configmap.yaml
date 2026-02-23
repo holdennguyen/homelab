@@ -21,7 +21,7 @@ data:
             "default": true,
             "workspace": "/data/workspaces/homelab-admin",
             "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
-            "skills": ["homelab-admin", "gitops", "secret-management", "incident-response"],
+            "skills": ["homelab-admin", "gitops", "secret-management", "incident-response", "vikunja"],
             "subagents": {
               "allowAgents": ["devops-sre", "software-engineer", "security-analyst", "qa-tester"]
             }

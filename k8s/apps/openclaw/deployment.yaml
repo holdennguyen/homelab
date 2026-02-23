@@ -96,6 +96,16 @@ spec:
                 secretKeyRef:
                   name: openclaw-secret
                   key: DISCORD_BOT_TOKEN
+            - name: VIKUNJA_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secret
+                  key: VIKUNJA_API_TOKEN
+            - name: DISCORD_WEBHOOK_VIKUNJA
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secret
+                  key: DISCORD_WEBHOOK_VIKUNJA
             - name: GIT_CONFIG_COUNT
               value: "2"
             - name: GIT_CONFIG_KEY_0
