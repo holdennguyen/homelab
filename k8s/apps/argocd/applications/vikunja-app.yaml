@@ -11,7 +11,7 @@ metadata:
     app.kubernetes.io/component: productivity
     app.kubernetes.io/managed-by: argocd
 spec:
-  project: default
+  project: apps
   source:
     repoURL: https://github.com/holdennguyen/homelab.git
     targetRevision: HEAD

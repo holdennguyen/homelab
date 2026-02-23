@@ -23,6 +23,8 @@ spec:
       namespace: authentik
     - server: https://kubernetes.default.svc
       namespace: trivy-dashboard
+    - server: https://kubernetes.default.svc
+      namespace: vikunja
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace

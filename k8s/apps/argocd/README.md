@@ -33,6 +33,7 @@ flowchart TD
         ArgoDir -- "creates" --> TrivyApp["Application: trivy-operator"]
         ArgoDir -- "creates" --> TrivyScannerApp["Application: trivy-operator-vulnerability-scanner"]
         ArgoDir -- "creates" --> TrivyDashApp["Application: trivy-dashboard"]
+        ArgoDir -- "creates" --> VikApp["Application: vikunja"]
         ArgoDir -- "creates" --> NSApp["Application: namespace-security"]
         ArgoDir -- "creates" --> NPApp["Application: networking-policies"]
     end
@@ -58,6 +59,7 @@ flowchart TD
 | `applications/trivy-operator-app.yaml` | Trivy vulnerability scanner Helm chart (monitoring namespace, ClientServer mode) |
 | `applications/trivy-dashboard-app.yaml` | Trivy Operator Dashboard web UI (trivy-dashboard namespace) |
 | `applications/trivy-operator-vulnerability-scanner-app.yaml` | Trivy VulnerabilityScanner CR for scheduled daily scans |
+| `applications/vikunja-app.yaml` | Vikunja todo list application |
 | `applications/namespace-security-app.yaml` | Pod Security Standard labels for namespaces |
 | `applications/networking-policies-app.yaml` | Default-deny NetworkPolicies across all namespaces |
 
@@ -89,6 +91,7 @@ flowchart LR
         A7["openclaw"]
         A8["trivy-operator"]
         A11["trivy-dashboard"]
+        A12["vikunja"]
         A9["namespace-security"]
         A10["networking-policies"]
     end

@@ -5,7 +5,7 @@ Vikunja is a self-hosted, feature-rich todo list and task management application
 ## Architecture
 
 This deployment consists of:
-- PostgreSQL database (StatefulSet) for data persistence
+- PostgreSQL database (Deployment with PVC) for data persistence
 - Vikunja application server (Deployment)
 - Kubernetes Services for internal and external access
 - Prometheus ServiceMonitor for metrics collection
@@ -85,7 +85,7 @@ kubectl logs -n vikunja deploy/vikunja
 
 ### Changing the Vikunja version
 
-Edit `k8s/apps/vikunja/vikunja-deployment.yaml` and update the `image` tag (e.g., `vikunja/vikunja:v0.18.0`). Then commit and push; ArgoCD will roll out the update.
+Edit `k8s/apps/vikunja/vikunja-deployment.yaml` and update the `image` tag (e.g., `vikunja/vikunja:1.1.0`). Then commit and push; ArgoCD will roll out the update.
 
 ### Backing up the database
 
