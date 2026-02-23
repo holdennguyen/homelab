@@ -44,7 +44,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: vikunja-db-secret
-                  key: VIKUNJA_DB_PASSWORD
+                  key: POSTGRES_PASSWORD
             - name: VIKUNJA_DATABASE_DATABASE
               valueFrom:
                 secretKeyRef:

@@ -29,16 +29,15 @@ This deployment consists of:
 
 ### 1. Create Infisical Secrets
 
-Before the first sync, add the following secrets to Infisical under the path `/homelab/prod/vikunja/` (or your chosen environment):
+Before the first sync, add the following secrets to Infisical under `homelab / prod / ` (root path):
 
 | Key | Description | Example |
 |-----|-------------|---------|
-| `POSTGRES_USER` | PostgreSQL superuser username | `vikunja` |
-| `POSTGRES_PASSWORD` | Password for the PostgreSQL user | (random strong password) |
-| `POSTGRES_DB` | PostgreSQL database name | `vikunja` |
-| `VIKUNJA_DB_PASSWORD` | Password used by Vikunja to connect (should match `POSTGRES_PASSWORD`) | (same as above) |
+| `VIKUNJA_POSTGRES_USER` | PostgreSQL superuser username | `vikunja` |
+| `VIKUNJA_POSTGRES_PASSWORD` | Password for the PostgreSQL user | (random strong password) |
+| `VIKUNJA_POSTGRES_DB` | PostgreSQL database name | `vikunja` |
 
-The External Secrets Operator will sync these into a `vikunja-db-secret` in the `vikunja` namespace.
+The External Secrets Operator will sync these into a `vikunja-db-secret` in the `vikunja` namespace. Both the PostgreSQL and Vikunja deployments share the same password key — no duplication needed.
 
 ### 2. Authentik Bookmark
 
