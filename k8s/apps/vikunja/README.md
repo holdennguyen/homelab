@@ -49,17 +49,75 @@ Before the first sync, add the following secrets to Infisical under `homelab / p
 
 The External Secrets Operator will sync these into a `vikunja-db-secret` in the `vikunja` namespace. Both the PostgreSQL and Vikunja deployments share the same password key — no duplication needed.
 
-### 2. Authentik OIDC Provider (fully code-managed)
+### 2. Create Authentik OIDC Provider (via API)
 
-Vikunja uses Authentik for SSO via OpenID Connect. The entire OIDC integration is managed via code — no manual Authentik UI steps required.
+Vikunja uses Authentik for SSO via OpenID Connect. The provider is created via the Authentik API — same one-time bootstrap pattern as ArgoCD and Grafana.
 
-**How the secret flows:**
+Run the following on the Mac mini (requires `kubectl` access):
+
+```bash
+BOOTSTRAP_TOKEN=$(kubectl get secret authentik-secret -n authentik \
+  -o jsonpath='{.data.AUTHENTIK_BOOTSTRAP_TOKEN}' | base64 -d)
+
+OIDC_SECRET=$(kubectl get secret vikunja-db-secret -n vikunja \
+  -o jsonpath='{.data.OIDC_CLIENT_SECRET}' | base64 -d)
+
+AUTH_FLOW=$(curl -sk -H "Authorization: Bearer $BOOTSTRAP_TOKEN" \
+  "https://holdens-mac-mini.story-larch.ts.net/api/v3/flows/instances/?slug=default-provider-authorization-implicit-consent" \
+  | python3 -c "import json,sys; print(json.load(sys.stdin)['results'][0]['pk'])")
+
+INVAL_FLOW=$(curl -sk -H "Authorization: Bearer $BOOTSTRAP_TOKEN" \
+  "https://holdens-mac-mini.story-larch.ts.net/api/v3/flows/instances/?slug=default-provider-invalidation-flow" \
+  | python3 -c "import json,sys; print(json.load(sys.stdin)['results'][0]['pk'])")
+
+SIGNING_KEY=$(curl -sk -H "Authorization: Bearer $BOOTSTRAP_TOKEN" \
+  "https://holdens-mac-mini.story-larch.ts.net/api/v3/crypto/certificatekeypairs/?name=authentik+Self-signed+Certificate" \
+  | python3 -c "import json,sys; print(json.load(sys.stdin)['results'][0]['pk'])")
+
+SCOPE_OPENID=$(curl -sk -H "Authorization: Bearer $BOOTSTRAP_TOKEN" \
+  "https://holdens-mac-mini.story-larch.ts.net/api/v3/propertymappings/provider/scope/?scope_name=openid" \
+  | python3 -c "import json,sys; print(json.load(sys.stdin)['results'][0]['pk'])")
+SCOPE_EMAIL=$(curl -sk -H "Authorization: Bearer $BOOTSTRAP_TOKEN" \
+  "https://holdens-mac-mini.story-larch.ts.net/api/v3/propertymappings/provider/scope/?scope_name=email" \
+  | python3 -c "import json,sys; print(json.load(sys.stdin)['results'][0]['pk'])")
+SCOPE_PROFILE=$(curl -sk -H "Authorization: Bearer $BOOTSTRAP_TOKEN" \
+  "https://holdens-mac-mini.story-larch.ts.net/api/v3/propertymappings/provider/scope/?scope_name=profile" \
+  | python3 -c "import json,sys; print(json.load(sys.stdin)['results'][0]['pk'])")
+
+# Create the OAuth2 provider
+PROVIDER_PK=$(curl -sk -X POST \
+  -H "Authorization: Bearer $BOOTSTRAP_TOKEN" \
+  -H "Content-Type: application/json" \
+  "https://holdens-mac-mini.story-larch.ts.net/api/v3/providers/oauth2/" \
+  -d "{
+    \"name\": \"vikunja\",
+    \"authorization_flow\": \"$AUTH_FLOW\",
+    \"invalidation_flow\": \"$INVAL_FLOW\",
+    \"client_type\": \"confidential\",
+    \"client_id\": \"vikunja\",
+    \"client_secret\": \"$OIDC_SECRET\",
+    \"redirect_uris\": [{\"matching_mode\": \"strict\", \"url\": \"https://holdens-mac-mini.story-larch.ts.net:8449/auth/openid/authentik\"}],
+    \"signing_key\": \"$SIGNING_KEY\",
+    \"property_mappings\": [\"$SCOPE_OPENID\", \"$SCOPE_EMAIL\", \"$SCOPE_PROFILE\"]
+  }" | python3 -c "import json,sys; print(json.load(sys.stdin)['pk'])")
+
+# Link the provider to the application (created by blueprint)
+curl -sk -X PATCH \
+  -H "Authorization: Bearer $BOOTSTRAP_TOKEN" \
+  -H "Content-Type: application/json" \
+  "https://holdens-mac-mini.story-larch.ts.net/api/v3/core/applications/vikunja/" \
+  -d "{\"provider\": $PROVIDER_PK}"
+
+# Restart Vikunja to discover the provider
+kubectl rollout restart deployment vikunja -n vikunja
+```
+
+**How the client secret flows:**
 
 1. `VIKUNJA_OIDC_CLIENT_SECRET` is stored once in Infisical
-2. Authentik ExternalSecret (`k8s/apps/authentik/external-secret.yaml`) pulls it into `authentik-secret` → available as env var in Authentik pods via `envFrom`
-3. Authentik Blueprint (`k8s/apps/authentik/blueprints-configmap.yaml`) reads it via `!Env VIKUNJA_OIDC_CLIENT_SECRET` and sets it as the OAuth2 provider's `client_secret`
-4. Vikunja ExternalSecret (`k8s/apps/vikunja/external-secret.yaml`) also pulls it → mounted as a file at `/secrets/oidc-client-secret`
-5. Vikunja config (`k8s/apps/vikunja/vikunja-config.yaml`) references the file for `clientsecret`
+2. Vikunja ExternalSecret pulls it into `vikunja-db-secret` → mounted as a file at `/secrets/oidc-client-secret`
+3. Vikunja config (`vikunja-config.yaml`) references the file for `clientsecret`
+4. The same secret value is passed to the Authentik API when creating the provider (read from the K8s secret at creation time)
 
 **OIDC details:**
 
@@ -144,12 +202,13 @@ Note: Changing the PostgreSQL `POSTGRES_PASSWORD` requires a database password u
 - **No metrics in Prometheus:** Confirm the ServiceMonitor has been synced and the `vikunja` Service has the correct labels.
 - **External access not working:** Ensure Tailscale routing to the node and that the NodePort is within the allowed range (30000-32767). Check service `type: NodePort` and `nodePort: 30888`.
 - **OIDC "Login with Authentik" not showing:** Check that `vikunja-config` ConfigMap is mounted at `/etc/vikunja/config.yml` and the `auth.openid.enabled` is `true`. Verify the pod has restarted after ConfigMap changes.
-- **OIDC "invalid client" error:** Verify `VIKUNJA_OIDC_CLIENT_SECRET` in Infisical matches what the Authentik provider has. Force re-sync both ExternalSecrets (`authentik-secret` and `vikunja-db-secret`) and restart both pods.
+- **OIDC "invalid client" error:** Verify `VIKUNJA_OIDC_CLIENT_SECRET` in Infisical matches what the Authentik provider has. Force re-sync ExternalSecret (`vikunja-db-secret`) and restart both pods.
+- **OIDC discovery returns 404:** The Authentik provider does not exist or is not linked to the application. Re-run the API bootstrap script from Step 2.
 
 ## References
 
 - [Vikunja Documentation](https://vikunja.io)
 - [Vikunja OpenID Connect](https://vikunja.io/docs/openid)
 - [Vikunja GitHub](https://github.com/go-vikunja/vikunja)
-- [Authentik Blueprints — YAML Tags](https://docs.goauthentik.io/customize/blueprints/v1/tags)
+- [Authentik API Reference](https://docs.goauthentik.io/developer-docs/api/)
 - [Authentik OIDC Provider](https://docs.goauthentik.io/docs/add-secure-apps/providers/oauth2/)
