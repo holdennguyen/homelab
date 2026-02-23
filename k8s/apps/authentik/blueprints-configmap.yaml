@@ -55,24 +55,6 @@ data:
           meta_icon: https://avatars.githubusercontent.com/u/252820863?s=48&v=4
           meta_description: AI Agent Gateway Console
           meta_publisher: Homelab
-      - model: authentik_providers_oauth2.oauth2provider
-        id: provider-vikunja
-        state: present
-        identifiers:
-          name: vikunja
-        attrs:
-          name: vikunja
-          authorization_flow: !Find [authentik_flows.flow, [slug, default-provider-authorization-implicit-consent]]
-          client_type: confidential
-          client_id: vikunja
-          client_secret: !Env VIKUNJA_OIDC_CLIENT_SECRET
-          redirect_uris: |
-            https://holdens-mac-mini.story-larch.ts.net:8449/auth/openid/authentik
-          signing_key: !Find [authentik_crypto.certificatekeypair, [name, "authentik Self-signed Certificate"]]
-          property_mappings:
-            - !Find [authentik_providers_oauth2.scopemapping, [scope_name, openid]]
-            - !Find [authentik_providers_oauth2.scopemapping, [scope_name, email]]
-            - !Find [authentik_providers_oauth2.scopemapping, [scope_name, profile]]
       - model: authentik_core.application
         id: app-vikunja
         state: present
@@ -82,7 +64,6 @@ data:
           name: Vikunja
           slug: vikunja
           group: Productivity
-          provider: !KeyOf provider-vikunja
           meta_launch_url: https://holdens-mac-mini.story-larch.ts.net:8449
           meta_icon: https://avatars.githubusercontent.com/u/41270016?s=200&v=4
           meta_description: Todo List & Task Management

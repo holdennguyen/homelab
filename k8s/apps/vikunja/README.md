@@ -49,17 +49,31 @@ Before the first sync, add the following secrets to Infisical under `homelab / p
 
 The External Secrets Operator will sync these into a `vikunja-db-secret` in the `vikunja` namespace. Both the PostgreSQL and Vikunja deployments share the same password key — no duplication needed.
 
-### 2. Authentik OIDC Provider (fully code-managed)
+### 2. Create Authentik OIDC Provider
 
-Vikunja uses Authentik for SSO via OpenID Connect. The entire OIDC integration is managed via code — no manual Authentik UI steps required.
+Vikunja uses Authentik for SSO via OpenID Connect. The provider is created in the Authentik Admin UI (same pattern as ArgoCD and Grafana).
 
-**How the secret flows:**
+1. Open Authentik Admin → **Applications** → **Providers** → **Create** → **OAuth2/OpenID Provider**
+2. Configure:
 
-1. `VIKUNJA_OIDC_CLIENT_SECRET` is stored once in Infisical
-2. Authentik ExternalSecret (`k8s/apps/authentik/external-secret.yaml`) pulls it into `authentik-secret` → available as env var in Authentik pods via `envFrom`
-3. Authentik Blueprint (`k8s/apps/authentik/blueprints-configmap.yaml`) reads it via `!Env VIKUNJA_OIDC_CLIENT_SECRET` and sets it as the OAuth2 provider's `client_secret`
-4. Vikunja ExternalSecret (`k8s/apps/vikunja/external-secret.yaml`) also pulls it → mounted as a file at `/secrets/oidc-client-secret`
-5. Vikunja config (`k8s/apps/vikunja/vikunja-config.yaml`) references the file for `clientsecret`
+| Field | Value |
+|---|---|
+| Name | `vikunja` |
+| Authorization flow | `default-provider-authorization-implicit-consent` |
+| Client type | Confidential |
+| Client ID | `vikunja` |
+| Client Secret | Paste the value from Infisical key `VIKUNJA_OIDC_CLIENT_SECRET` |
+| Redirect URIs | `https://holdens-mac-mini.story-larch.ts.net:8449/auth/openid/authentik` |
+| Signing Key | `authentik Self-signed Certificate` |
+| Scopes | `openid`, `email`, `profile` |
+
+3. Save the provider.
+4. Go to **Applications** → **vikunja** → **Edit** → set **Provider** to `vikunja` → Save.
+5. Restart the Vikunja deployment to re-discover the OIDC provider:
+
+```bash
+kubectl rollout restart deployment vikunja -n vikunja
+```
 
 **OIDC details:**
 
@@ -70,6 +84,8 @@ Vikunja uses Authentik for SSO via OpenID Connect. The entire OIDC integration i
 | OIDC Discovery | `https://holdens-mac-mini.story-larch.ts.net/application/o/vikunja/.well-known/openid-configuration` |
 | Scopes | `openid profile email` |
 | Signing algorithm | RS256 |
+
+The client secret flows from Infisical → Vikunja ExternalSecret → K8s Secret → file mount at `/secrets/oidc-client-secret` → referenced by `vikunja-config.yaml`.
 
 For the general pattern, see [Adding a new OIDC-protected service](../authentik/README.md#adding-a-new-oidc-protected-service).
 
