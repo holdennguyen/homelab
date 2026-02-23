@@ -9,6 +9,7 @@ resources:
   - postgresql-service.yaml
   - postgresql-hba-config.yaml
   - postgresql-deployment.yaml
+  - vikunja-config.yaml
   - vikunja-pvc.yaml
   - vikunja-service.yaml
   - vikunja-deployment.yaml

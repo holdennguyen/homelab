@@ -193,7 +193,7 @@ env:
 | `authentik-secret` | `authentik` | `authentik-secret` | `AUTHENTIK_SECRET_KEY`, `AUTHENTIK_BOOTSTRAP_PASSWORD`, `AUTHENTIK_BOOTSTRAP_TOKEN`, `AUTHENTIK_POSTGRESQL__PASSWORD`, `pg-password` | Authentik server + worker pods; embedded PostgreSQL |
 | `grafana-secret` | `monitoring` | `grafana-secret` | `admin-user`, `admin-password`, `oauth-client-id`, `oauth-client-secret` | Grafana admin login; Grafana OIDC via Authentik |
 | `openclaw-secret` | `openclaw` | `openclaw-secret` | `OPENCLAW_GATEWAY_TOKEN`, `OPENROUTER_API_KEY`, `GEMINI_API_KEY`, `GITHUB_TOKEN` | OpenClaw gateway env vars, agent git workflow |
-| `vikunja-db-secret` | `vikunja` | `vikunja-db-secret` | `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` | PostgreSQL + Vikunja database credentials |
+| `vikunja-db-secret` | `vikunja` | `vikunja-db-secret` | `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `OIDC_CLIENT_SECRET` | PostgreSQL + Vikunja database credentials; Authentik OIDC client secret |
 
 ## Security
 

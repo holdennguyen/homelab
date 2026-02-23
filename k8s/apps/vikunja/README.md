@@ -9,6 +9,7 @@ This deployment consists of:
 - Vikunja application server (Deployment)
 - Kubernetes Services for internal and external access
 - Prometheus ServiceMonitor for metrics collection
+- OIDC authentication via Authentik (SSO)
 
 ## Resources
 
@@ -44,21 +45,33 @@ Before the first sync, add the following secrets to Infisical under `homelab / p
 | `VIKUNJA_POSTGRES_USER` | PostgreSQL superuser username | `vikunja` |
 | `VIKUNJA_POSTGRES_PASSWORD` | Password for the PostgreSQL user | (random strong password) |
 | `VIKUNJA_POSTGRES_DB` | PostgreSQL database name | `vikunja` |
+| `VIKUNJA_OIDC_CLIENT_SECRET` | Authentik OAuth2 client secret for Vikunja | (copy from Authentik provider) |
 
 The External Secrets Operator will sync these into a `vikunja-db-secret` in the `vikunja` namespace. Both the PostgreSQL and Vikunja deployments share the same password key — no duplication needed.
 
-### 2. Authentik Bookmark
+### 2. Authentik OIDC Provider
 
-To add Vikunja as a bookmark in Authentik:
+Vikunja uses Authentik for SSO via OpenID Connect. The OAuth2 provider is created automatically via the Authentik blueprint in `k8s/apps/authentik/blueprints-configmap.yaml`.
 
-1. Log into Authentik.
-2. Go to **Applications** → **Add Application** → **Bookmark Application**.
-3. Configuration:
-   - **Name:** Vikunja
-   - **URL:** `http://<tailscale-ip>:30888` (or the Tailscale DNS name)
-   - **Group:** (assign as needed)
-   - **Icon:** (optional)
-4. Save. The application will appear in the user portal.
+After ArgoCD syncs the blueprint:
+
+1. Open Authentik Admin → **Applications** → **Providers** → **vikunja**
+2. Copy the **Client Secret** value
+3. Add it to Infisical as `VIKUNJA_OIDC_CLIENT_SECRET` under `homelab / prod /` (root path)
+4. Force an ExternalSecret re-sync:
+
+```bash
+kubectl annotate externalsecret vikunja-db-secret -n vikunja \
+  force-sync=$(date +%s) --overwrite
+```
+
+5. Restart the Vikunja deployment:
+
+```bash
+kubectl rollout restart deployment vikunja -n vikunja
+```
+
+The OIDC redirect URI is: `https://holdens-mac-mini.story-larch.ts.net:8449/auth/openid/authentik`
 
 ### 3. ArgoCD Sync
 

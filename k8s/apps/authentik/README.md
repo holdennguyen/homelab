@@ -59,6 +59,7 @@ Each service has a dedicated OIDC provider in Authentik with its own client ID a
 |---|---|---|---|
 | Grafana | `grafana` | `https://holdens-mac-mini.story-larch.ts.net:8444/login/generic_oauth` | Infisical: `GRAFANA_OAUTH_CLIENT_SECRET` |
 | ArgoCD | `argocd` | `https://holdens-mac-mini.story-larch.ts.net:8443/auth/callback` | Terraform: `argocd_oidc_client_secret` |
+| Vikunja | `vikunja` | `https://holdens-mac-mini.story-larch.ts.net:8449/auth/openid/authentik` | Infisical: `VIKUNJA_OIDC_CLIENT_SECRET` |
 
 All providers use **RS256** signing (asymmetric keys). Scope mappings assigned: `openid`, `email`, `profile`.
 
@@ -70,6 +71,7 @@ All services enforce SSO-only access — local login forms are disabled:
 |---|---|
 | ArgoCD | `configs.cm.admin.enabled: false` — admin login disabled, RBAC default `role:admin` for all SSO users |
 | Grafana | `auth.disable_login_form: true`, `auto_login: true` — auto-redirects to Authentik |
+| Vikunja | `service.enableregistration: false` — local registration disabled, OIDC login available via config file |
 
 ## Configuration
 
@@ -98,6 +100,8 @@ Key settings:
 
 **ArgoCD** — configured in Terraform (`argocd.tf`) via `configs.cm.oidc.config`. Client secret stored in `argocd-secret` via Terraform `set_sensitive`. Requires `terraform apply` to update.
 
+**Vikunja** — configured via `config.yml` ConfigMap mounted at `/etc/vikunja/config.yml`. Client secret mounted from `vikunja-db-secret` ExternalSecret as a file at `/secrets/oidc-client-secret`. Provider created automatically via Authentik blueprint.
+
 ## Networking
 
 | Layer | Value |
@@ -122,7 +126,7 @@ tailscale serve --bg http://localhost:30500
 | Infisical | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8445` |
 | OpenClaw | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8447` |
 | Trivy Dashboard | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8448` |
-| Vikunja | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8449` |
+| Vikunja | OIDC (`auth.openid`) | `https://holdens-mac-mini.story-larch.ts.net:8449` |
 | Homelab Docs | Bookmark | `https://holdennguyen.github.io/homelab` |
 
 ## Adding a new Bookmark Application

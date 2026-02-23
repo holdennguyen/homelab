@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vikunja-config
+  namespace: vikunja
+  labels:
+    app.kubernetes.io/name: vikunja
+    app.kubernetes.io/part-of: vikunja
+    app.kubernetes.io/managed-by: argocd
+data:
+  config.yml: |
+    service:
+      enableregistration: false
+    auth:
+      openid:
+        enabled: true
+        providers:
+          authentik:
+            name: "Login with Authentik"
+            authurl: https://holdens-mac-mini.story-larch.ts.net/application/o/vikunja/
+            clientid: vikunja
+            clientsecret:
+              file: /secrets/oidc-client-secret
+            scope: openid profile email

@@ -51,7 +51,7 @@ spec:
                   name: vikunja-db-secret
                   key: POSTGRES_DB
             - name: VIKUNJA_SERVICE_PUBLICURL
-              value: "http://vikunja.vikunja.svc.cluster.local"
+              value: "https://holdens-mac-mini.story-larch.ts.net:8449"
             - name: VIKUNJA_SERVICE_TIMEZONE
               value: "UTC"
             - name: VIKUNJA_MAILER_ENABLED
@@ -80,6 +80,14 @@ spec:
           volumeMounts:
             - name: files
               mountPath: /app/files
+            - name: config
+              mountPath: /etc/vikunja/config.yml
+              subPath: config.yml
+              readOnly: true
+            - name: oidc-secret
+              mountPath: /secrets/oidc-client-secret
+              subPath: OIDC_CLIENT_SECRET
+              readOnly: true
           resources:
             requests:
               cpu: 100m
@@ -91,3 +99,12 @@ spec:
         - name: files
           persistentVolumeClaim:
             claimName: vikunja-files
+        - name: config
+          configMap:
+            name: vikunja-config
+        - name: oidc-secret
+          secret:
+            secretName: vikunja-db-secret
+            items:
+              - key: OIDC_CLIENT_SECRET
+                path: OIDC_CLIENT_SECRET
