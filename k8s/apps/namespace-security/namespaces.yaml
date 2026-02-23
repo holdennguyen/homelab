@@ -49,6 +49,16 @@ metadata:
     pod-security.kubernetes.io/audit: restricted
     pod-security.kubernetes.io/warn: restricted
 ---
+# launchfast: nginx-unprivileged runs as non-root (UID 101), read-only rootfs
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: launchfast
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+---
 # vikunja: all pods run as non-root (vikunja UID 1000, postgresql UID 70)
 apiVersion: v1
 kind: Namespace

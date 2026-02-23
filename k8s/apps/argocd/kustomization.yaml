@@ -23,3 +23,4 @@ resources:
   - applications/namespace-security-app.yaml
   - applications/trivy-operator-app.yaml
   - applications/trivy-dashboard-app.yaml
+  - applications/launchfast-app.yaml
