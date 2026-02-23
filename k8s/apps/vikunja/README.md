@@ -22,8 +22,16 @@ This deployment consists of:
 ## Access
 
 - **Internal service DNS:** `vikunja.vikunja.svc.cluster.local`
-- **External access (Tailscale):** `http://<tailscale-ip>:30888`
-  - The service is exposed via NodePort 30888. Use Tailscale to route to the node's Tailscale address.
+- **NodePort:** `http://localhost:30888`
+- **Tailscale Serve:** `https://holdens-mac-mini.story-larch.ts.net:8449`
+
+One-time Tailscale Serve setup (run on the Mac mini):
+
+```bash
+tailscale serve --bg --https 8449 http://localhost:30888
+```
+
+Vikunja also appears as a bookmark in the Authentik portal under the **Productivity** group.
 
 ## Setup Steps
 

@@ -55,3 +55,15 @@ data:
           meta_icon: https://avatars.githubusercontent.com/u/252820863?s=48&v=4
           meta_description: AI Agent Gateway Console
           meta_publisher: Homelab
+      - model: authentik_core.application
+        id: app-vikunja
+        state: present
+        identifiers:
+          slug: vikunja
+        attrs:
+          name: Vikunja
+          group: Productivity
+          meta_launch_url: https://holdens-mac-mini.story-larch.ts.net:8449
+          meta_icon: https://vikunja.io/images/vikunja-logo.svg
+          meta_description: Todo List & Task Management
+          meta_publisher: Homelab
