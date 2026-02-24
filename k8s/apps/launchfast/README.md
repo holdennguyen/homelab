@@ -95,9 +95,19 @@ Marketing site, interactive docs, and playground. Replaces the current static la
 
 Grafana dashboards, Prometheus metrics, and structured logging integrated into the homelab monitoring stack.
 
+## Authentik Portal Integration
+
+LaunchFast is registered as a **bookmark** in the Authentik SSO portal under the **Development** group. This provides single-click access from the portal alongside all other homelab services.
+
+The bookmark is managed via the Authentik Blueprint in `k8s/apps/authentik/blueprints-configmap.yaml`. When LaunchFast gains a backend API (Phase 3), the bookmark will be upgraded to a full OIDC provider with its own client credentials — same pattern as Grafana, ArgoCD, and Vikunja.
+
 ## Accessing the Landing Page
 
-**Via Tailscale Serve (recommended):**
+**Via Authentik portal (recommended):**
+
+Visit `https://holdens-mac-mini.story-larch.ts.net` and click the LaunchFast tile.
+
+**Via Tailscale Serve (direct):**
 
 ```bash
 tailscale serve --bg --https 8444 http://localhost:30100

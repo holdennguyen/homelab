@@ -56,6 +56,18 @@ data:
           meta_description: AI Agent Gateway Console
           meta_publisher: Homelab
       - model: authentik_core.application
+        id: app-launchfast
+        state: present
+        identifiers:
+          slug: launchfast
+        attrs:
+          name: LaunchFast
+          group: Development
+          meta_launch_url: https://holdens-mac-mini.story-larch.ts.net:8444
+          meta_icon: https://api.iconify.design/mdi/rocket-launch-outline.svg?color=%236c63ff
+          meta_description: Modern Startup Scaffolding CLI
+          meta_publisher: Homelab
+      - model: authentik_core.application
         id: app-vikunja
         state: present
         identifiers:
