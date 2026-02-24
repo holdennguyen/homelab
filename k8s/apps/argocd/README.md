@@ -96,7 +96,7 @@ flowchart LR
         A12["vikunja"]
         A9["namespace-security"]
         A10["networking-policies"]
-        A12["launchfast"]
+        A13["launchfast"]
     end
 
     Kustomize --> secretsProj

@@ -1,6 +1,6 @@
 # LaunchFast
 
-A CLI tool that scaffolds a new startup project with best practices — landing page, auth, payments, analytics, CI/CD, and documentation. Built entirely by a multi-agent team coordinated through OpenClaw.
+A CLI tool that scaffolds production-ready startup projects with modern best practices — landing page, auth, payments, analytics, CI/CD, and documentation. Built entirely by a multi-agent team coordinated through OpenClaw.
 
 ## How It Works
 
@@ -46,9 +46,54 @@ This service is the homelab integration point for the LaunchFast product sprint 
 | `homelab-admin` | Orchestrator — tracks progress, coordinates PRs, triggers deployments |
 | `product-manager` | Writes PRD, defines features and milestones |
 | `devops-sre` | Designs infrastructure (k8s manifests, CI/CD) |
-| `software-engineer` | Implements backend (Go/Node) and frontend (React/Next.js) |
+| `software-engineer` | Implements CLI, backend services, and frontend |
 | `qa-tester` | Writes test plans and validates functionality |
 | `security-analyst` | Reviews for vulnerabilities |
+
+## Development Phases
+
+LaunchFast follows a phased approach where each phase is gated by the previous one. Tech stack choices are evaluated per-phase rather than locked in upfront.
+
+### Phase 0 — Homelab Integration (current)
+
+Static landing page deployed via ArgoCD. Validates namespace, networking, and Tailscale access.
+
+### Phase 1 — Tech Stack Assessment
+
+Agents evaluate candidate technologies against LaunchFast requirements. The selection criteria prioritize performance, developer experience, ecosystem maturity, and alignment with modern industry trends.
+
+| Domain | Candidates Under Evaluation | Selection Criteria |
+|---|---|---|
+| CLI framework | Go (`cobra`/`bubbletea`), Rust (`clap`/`ratatui`) | Binary size, cross-compile, startup time |
+| Backend API | Go (`net/http`, `echo`), Rust (`axum`, `actix-web`) | Concurrency model, memory footprint, ecosystem |
+| Frontend | React/Next.js, SvelteKit, Astro | SSR/SSG, bundle size, DX |
+| Template engine | WebAssembly (Wasm) plugins, Go `text/template`, Tera (Rust) | Sandboxing, extensibility, user-authored templates |
+| Vector database | Qdrant, Weaviate, pgvector | Embedding search for smart template matching |
+| ML/AI integration | LLM-driven scaffold suggestions, code generation, RAG-powered docs | Context-aware project setup, natural language config |
+| CI/CD templates | GitHub Actions, GitLab CI, Dagger (Go SDK) | Reproducibility, container-native pipelines |
+
+The `product-manager` agent owns the PRD and final tech stack decision. The `software-engineer` agent produces spike prototypes for each candidate.
+
+### Phase 2 — Core CLI & Scaffolding Engine
+
+Implement the CLI binary that generates project scaffolds. Key capabilities:
+
+- Interactive project wizard (TUI or prompt-based)
+- Template registry with versioned scaffold blueprints
+- Plugin system via WebAssembly for community-contributed generators
+- AI-assisted scaffold selection using vector similarity search
+
+### Phase 3 — Backend Services & API
+
+API server for template registry, user accounts, and telemetry. Deployed to homelab alongside the landing page.
+
+### Phase 4 — Frontend & Documentation
+
+Marketing site, interactive docs, and playground. Replaces the current static landing page.
+
+### Phase 5 — Monitoring & Observability
+
+Grafana dashboards, Prometheus metrics, and structured logging integrated into the homelab monitoring stack.
 
 ## Accessing the Landing Page
 
@@ -65,15 +110,6 @@ Then visit `https://holdens-mac-mini.story-larch.ts.net:8444` from any Tailscale
 ```bash
 curl http://localhost:30100
 ```
-
-## Roadmap
-
-- [ ] Create `launchfast-dev` GitHub organization and repository
-- [ ] Agent-driven architecture planning (PRD, infra design)
-- [ ] Backend implementation (Go or Node.js CLI)
-- [ ] Frontend implementation (React/Next.js landing + docs)
-- [ ] Monitoring dashboards in Grafana
-- [ ] Documentation site (MkDocs or standalone)
 
 ## Troubleshooting
 
