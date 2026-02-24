@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: launchfast
+  namespace: launchfast
+  labels:
+    app.kubernetes.io/name: launchfast
+    app.kubernetes.io/part-of: homelab
+    app.kubernetes.io/component: web
+    app.kubernetes.io/managed-by: argocd
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: http
+      nodePort: 30100
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: launchfast

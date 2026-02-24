@@ -131,6 +131,7 @@ tailscale serve --bg http://localhost:30500
 | Infisical | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8445` |
 | OpenClaw | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8447` |
 | Trivy Dashboard | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8448` |
+| LaunchFast | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8446` |
 | Vikunja | OIDC (`auth.openid`) | `https://holdens-mac-mini.story-larch.ts.net:8449` |
 | Homelab Docs | Bookmark | `https://holdennguyen.github.io/homelab` |
 

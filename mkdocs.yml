@@ -58,6 +58,7 @@ nav:
       - Authentik: services/authentik.md
       - External Secrets: services/external-secrets.md
       - Infisical: services/infisical.md
+      - LaunchFast: services/launchfast.md
       - Monitoring: services/monitoring.md
       - OpenClaw: services/openclaw.md
       - Trivy Operator: services/trivy-operator.md

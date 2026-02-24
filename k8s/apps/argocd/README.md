@@ -36,6 +36,7 @@ flowchart TD
         ArgoDir -- "creates" --> VikApp["Application: vikunja"]
         ArgoDir -- "creates" --> NSApp["Application: namespace-security"]
         ArgoDir -- "creates" --> NPApp["Application: networking-policies"]
+        ArgoDir -- "creates" --> LFApp["Application: launchfast"]
     end
 
     AppController -- "poll every ~3min" --> git
@@ -62,6 +63,7 @@ flowchart TD
 | `applications/vikunja-app.yaml` | Vikunja todo list application |
 | `applications/namespace-security-app.yaml` | Pod Security Standard labels for namespaces |
 | `applications/networking-policies-app.yaml` | Default-deny NetworkPolicies across all namespaces |
+| `applications/launchfast-app.yaml` | LaunchFast landing page (launchfast namespace) |
 
 > **Note:** The `infisical` Application CR is **not** in this directory. It is created by `terraform/argocd.tf` because its Helm values include sensitive PostgreSQL and Redis passwords that cannot be stored in git.
 
@@ -94,6 +96,7 @@ flowchart LR
         A12["vikunja"]
         A9["namespace-security"]
         A10["networking-policies"]
+        A13["launchfast"]
     end
 
     Kustomize --> secretsProj

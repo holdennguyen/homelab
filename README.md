@@ -121,7 +121,7 @@ homelab/
 │       └── vikunja/               # Vikunja todo list app with OIDC SSO
 ├── docs/                          # MkDocs documentation site
 ├── agents/                        # OpenClaw agent definitions
-│   └── workspaces/                # Per-agent AGENTS.md personality files (5 agents)
+│   └── workspaces/                # Per-agent AGENTS.md personality files (6 agents)
 ├── skills/                        # OpenClaw homelab-specific skills (9 domains)
 ├── openclaw/                      # OpenClaw source (git submodule)
 └── scripts/                       # Helper scripts (image builds, etc.)
@@ -230,6 +230,7 @@ tailscale serve --bg http://localhost:30500                       # Authentik (S
 tailscale serve --bg --https 8443 http://localhost:30080          # ArgoCD
 tailscale serve --bg --https 8444 http://localhost:30090          # Grafana
 tailscale serve --bg --https 8445 http://localhost:30445          # Infisical
+tailscale serve --bg --https 8446 http://localhost:30100          # LaunchFast
 tailscale serve --bg --https 8447 http://localhost:30789          # OpenClaw
 tailscale serve --bg --https 8448 http://localhost:30448          # Trivy Dashboard
 tailscale serve --bg --https 8449 http://localhost:30888          # Vikunja
@@ -243,6 +244,7 @@ Access URLs (any Tailscale device):
 - ArgoCD: `https://holdens-mac-mini.story-larch.ts.net:8443`
 - Grafana: `https://holdens-mac-mini.story-larch.ts.net:8444`
 - Infisical: `https://holdens-mac-mini.story-larch.ts.net:8445`
+- LaunchFast: `https://holdens-mac-mini.story-larch.ts.net:8446`
 - OpenClaw: `https://holdens-mac-mini.story-larch.ts.net:8447`
 - Trivy Dashboard: `https://holdens-mac-mini.story-larch.ts.net:8448`
 - Vikunja: `https://holdens-mac-mini.story-larch.ts.net:8449`
