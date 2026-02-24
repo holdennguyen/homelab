@@ -355,7 +355,7 @@ Additionally, namespace-specific rules enable required connectivity:
 - **Internet Egress**: The `argocd` and `openclaw` namespaces are allowed to egress to the internet on ports 443 (HTTPS) and 22 (SSH) to facilitate Git operations and external API calls.
 - **External Secrets**: The `external-secrets` namespace can egress to the Infisical API (`infisical` namespace, port 8080); conversely, `infisical` has an ingress rule allowing traffic from `external-secrets` on that port.
 
-Additionally, the `vikunja` namespace follows the same pattern with deny-all, allow-same-namespace, allow-dns, and Tailscale ingress on port 3456.
+Additionally, the `vikunja` namespace follows the same pattern with deny-all, allow-same-namespace, allow-dns, and Tailscale ingress on port 3456. Cross-namespace communication is enabled between `openclaw` and `vikunja`: the `openclaw` namespace has an egress rule allowing traffic to the `vikunja` namespace on port 3456, and `vikunja` has a corresponding ingress rule accepting traffic from `openclaw` on the same port. This enables the OpenClaw AI agent to manage Vikunja tasks via the REST API.
 
 The complete set of policies is stored in `k8s/apps/networking-policies/`.
 

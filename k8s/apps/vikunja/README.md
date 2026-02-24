@@ -262,7 +262,7 @@ The `vikunja` skill (assigned to `homelab-admin`) handles the API calls and resp
 ```mermaid
 flowchart LR
     Discord["Discord User"] --> OC["OpenClaw Pod\n(openclaw namespace)"]
-    OC -- "REST API\nport 3456" --> Vik["Vikunja Pod\n(vikunja namespace)"]
+    OC -- "REST API\nport 80 → 3456" --> Vik["Vikunja Pod\n(vikunja namespace)"]
     OC -- "Webhook POST" --> DW["Discord Webhook\n(notifications)"]
 ```
 

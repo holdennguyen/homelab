@@ -231,6 +231,7 @@ flowchart TD
     CSS -- "ExternalSecret" --> VikunjaPod
     OpenClawPod -- "primary" --> OpenRouterAPI["OpenRouter\nstepfun/step-3.5-flash:free"]
     OpenClawPod -. "fallback" .-> GeminiAPI["Google Gemini\ngemini-2.5-pro"]
+    OpenClawPod -- "REST API\nVikunja tasks" --> VikunjaPod
     ArgoController -- "poll git" --> GitHub["GitHub\nholdennguyen/homelab"]
 ```
 

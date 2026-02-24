@@ -19,7 +19,7 @@ Interact with the Vikunja task management API from inside the OpenClaw pod. This
 
 | Setting | Value |
 |---|---|
-| Base URL | `http://vikunja.vikunja.svc.cluster.local:3456` |
+| Base URL | `http://vikunja.vikunja.svc.cluster.local` |
 | API prefix | `/api/v1` |
 | Auth header | `Authorization: Bearer $VIKUNJA_API_TOKEN` |
 | API docs | `https://vikunja.io/docs/api/` |
@@ -31,7 +31,7 @@ The `VIKUNJA_API_TOKEN` env var is injected from Infisical via ESO. All API call
 Set these at the start of any API interaction:
 
 ```bash
-VIKUNJA_URL="http://vikunja.vikunja.svc.cluster.local:3456/api/v1"
+VIKUNJA_URL="http://vikunja.vikunja.svc.cluster.local/api/v1"
 AUTH="Authorization: Bearer $VIKUNJA_API_TOKEN"
 ```
 
@@ -274,7 +274,7 @@ If the API returns 401, inform the user that the Vikunja API token may need to b
 Verify Vikunja is reachable from the OpenClaw pod:
 
 ```bash
-curl -s http://vikunja.vikunja.svc.cluster.local:3456/api/v1/info | jq '{version, frontend_url}'
+curl -s http://vikunja.vikunja.svc.cluster.local/api/v1/info | jq '{version, frontend_url}'
 ```
 
 This endpoint does not require authentication and confirms both the API and network policy are working.
