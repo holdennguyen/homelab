@@ -85,6 +85,7 @@ flowchart TD
     TServe -- ":8447 -> :30789" --> OpenClawPod
     TServe -- ":8448 -> :30448" --> TrivyDash
     TServe -- ":8449 -> :30888" --> VikunjaPod
+    OpenClawPod -- "REST API\nVikunja tasks" --> VikunjaPod
 ```
 
 ## Repository Structure
@@ -215,6 +216,8 @@ Once ArgoCD deploys Infisical (check: `kubectl get pods -n infisical`), open the
 | `VIKUNJA_POSTGRES_PASSWORD` | Vikunja PostgreSQL password |
 | `VIKUNJA_POSTGRES_DB` | Vikunja PostgreSQL database name |
 | `VIKUNJA_OIDC_CLIENT_SECRET` | Authentik OAuth2 client secret for Vikunja |
+| `VIKUNJA_API_TOKEN` | *(optional)* Vikunja API token for OpenClaw integration — create in Vikunja UI → Settings → API Tokens |
+| `DISCORD_WEBHOOK_VIKUNJA` | *(optional)* Discord webhook URL for Vikunja task notifications |
 
 Then create a Machine Identity in Infisical (`Settings → Machine Identities → Universal Auth`), grant it **Member** access to the `homelab` project, update `terraform/terraform.tfvars` with the new `clientId` / `clientSecret`, and re-run `terraform apply` to update the credential. See [docs/getting-started/bootstrap.md](docs/getting-started/bootstrap.md) for the full step-by-step.
 

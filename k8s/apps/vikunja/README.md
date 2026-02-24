@@ -257,16 +257,126 @@ Once active, message the OpenClaw bot in Discord:
 
 The `vikunja` skill (assigned to `homelab-admin`) handles the API calls and responds with formatted results.
 
-### Network Flow
+### Integration Architecture
+
+```mermaid
+flowchart TD
+    subgraph discord ["Discord"]
+        User["Discord User"]
+        Webhook["Discord Webhook\n(notifications channel)"]
+    end
+
+    subgraph openclawNs ["openclaw namespace"]
+        OC["OpenClaw Pod\nhomelab-admin agent"]
+        VikSkill["vikunja skill\n(SKILL.md)"]
+        OCSecret["openclaw-secret\nVIKUNJA_API_TOKEN\nDISCORD_WEBHOOK_VIKUNJA"]
+        OC --> VikSkill
+        OCSecret -->|"env vars"| OC
+    end
+
+    subgraph vikunjaNs ["vikunja namespace"]
+        VikSvc["Vikunja Service\nClusterIP port 80"]
+        VikPod["Vikunja Pod\ncontainerPort 3456"]
+        VikPG["PostgreSQL\ntask data"]
+        VikSvc -->|"targetPort 3456"| VikPod
+        VikPod --> VikPG
+    end
+
+    subgraph infisicalNs ["Infisical + ESO"]
+        Infisical["Infisical\nhomelab / prod"]
+        ESO["External Secrets Operator"]
+        Infisical --> ESO
+        ESO -->|"sync openclaw-secret"| OCSecret
+    end
+
+    User -->|"@OpenClaw add a todo..."| OC
+    OC -->|"REST API\nport 80"| VikSvc
+    OC -->|"Webhook POST\nembeds"| Webhook
+    OC -->|"response"| User
+```
+
+### Data Flow: Discord Command to Task Creation
+
+```mermaid
+sequenceDiagram
+    participant User as Discord User
+    participant OC as OpenClaw<br/>(homelab-admin)
+    participant Vik as Vikunja API<br/>(port 80 -> 3456)
+    participant DB as PostgreSQL
+    participant DW as Discord Webhook
+
+    User->>OC: @OpenClaw add a todo: deploy monitoring
+    OC->>OC: Parse intent via vikunja skill
+    OC->>Vik: GET /api/v1/projects<br/>(list projects, cache default)
+    Vik->>DB: Query projects
+    DB-->>Vik: Project list
+    Vik-->>OC: [{id: 1, title: "Homelab"}]
+    OC->>Vik: PUT /api/v1/projects/1/tasks<br/>{title: "deploy monitoring"}
+    Vik->>DB: INSERT task
+    DB-->>Vik: Task created
+    Vik-->>OC: {id: 42, title: "deploy monitoring"}
+    OC->>DW: POST webhook<br/>{embeds: [{title: "Task Created", ...}]}
+    OC-->>User: Created task #42: deploy monitoring
+```
+
+### Secret Flow
 
 ```mermaid
 flowchart LR
-    Discord["Discord User"] --> OC["OpenClaw Pod\n(openclaw namespace)"]
-    OC -- "REST API\nport 80 → 3456" --> Vik["Vikunja Pod\n(vikunja namespace)"]
-    OC -- "Webhook POST" --> DW["Discord Webhook\n(notifications)"]
+    subgraph infisical ["Infisical (homelab / prod)"]
+        VikToken["VIKUNJA_API_TOKEN"]
+        DiscordWH["DISCORD_WEBHOOK_VIKUNJA"]
+    end
+
+    subgraph eso ["External Secrets Operator"]
+        ES["ExternalSecret\nopenclaw-secret"]
+    end
+
+    subgraph k8s ["openclaw namespace"]
+        Secret["K8s Secret\nopenclaw-secret"]
+        Pod["OpenClaw Pod\nenv: VIKUNJA_API_TOKEN\nenv: DISCORD_WEBHOOK_VIKUNJA"]
+    end
+
+    VikToken --> ES
+    DiscordWH --> ES
+    ES -->|"creates/updates"| Secret
+    Secret -->|"secretKeyRef"| Pod
 ```
 
-The cross-namespace communication is allowed by NetworkPolicies: `allow-egress-vikunja` (in `openclaw`) and `allow-ingress-from-openclaw` (in `vikunja`).
+Both `VIKUNJA_API_TOKEN` and `DISCORD_WEBHOOK_VIKUNJA` are stored in Infisical, synced by ESO into the existing `openclaw-secret`, and injected as environment variables into the OpenClaw pod. No new ExternalSecret or K8s Secret is needed — the integration piggybacks on the existing OpenClaw secret pipeline.
+
+### Network Policies
+
+```mermaid
+flowchart LR
+    subgraph openclawNs ["openclaw namespace"]
+        OCPod["OpenClaw Pod"]
+        EgressPolicy["allow-egress-vikunja\negress TCP 3456\nto vikunja ns"]
+    end
+
+    subgraph vikunjaNs ["vikunja namespace"]
+        VikPod["Vikunja Pod\napp.kubernetes.io/name: vikunja"]
+        IngressPolicy["allow-ingress-from-openclaw\ningress TCP 3456\nfrom openclaw ns"]
+    end
+
+    subgraph internet ["Internet (port 443)"]
+        DiscordAPI["Discord Webhook API\nhttps://discord.com/api/webhooks/..."]
+    end
+
+    OCPod -->|"ClusterIP:80\nDNAT to Pod:3456"| VikPod
+    OCPod -->|"existing allow-egress-internet\nTCP 443"| DiscordAPI
+    EgressPolicy -.->|"allows"| OCPod
+    IngressPolicy -.->|"allows"| VikPod
+```
+
+Two new NetworkPolicies enable the cross-namespace communication:
+
+| Policy | Namespace | Direction | Selector | Port | Matches |
+|---|---|---|---|---|---|
+| `allow-egress-vikunja` | `openclaw` | Egress | All pods → `vikunja` namespace | TCP 3456 | Post-DNAT destination (container port) |
+| `allow-ingress-from-openclaw` | `vikunja` | Ingress | `app.kubernetes.io/name: vikunja` ← `openclaw` namespace | TCP 3456 | Container port |
+
+Discord webhook POST requests use the existing `allow-egress-internet` policy (TCP 443) in the `openclaw` namespace — no additional policy is needed for outbound Discord traffic.
 
 ## References
 

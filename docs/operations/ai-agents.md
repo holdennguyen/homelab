@@ -300,7 +300,7 @@ Each agent has a `skills` allowlist in the configmap that restricts which skills
 
 | Agent | Assigned Skills |
 |---|---|
-| `homelab-admin` | `homelab-admin`, `gitops`, `secret-management`, `incident-response` |
+| `homelab-admin` | `homelab-admin`, `gitops`, `secret-management`, `incident-response`, `vikunja` |
 | `devops-sre` | `devops-sre`, `gitops`, `secret-management`, `incident-response` |
 | `software-engineer` | `software-engineer`, `gitops` |
 | `security-analyst` | `security-analyst`, `gitops`, `secret-management` |
@@ -345,6 +345,7 @@ Skills provide domain-specific knowledge and commands to agents. They live in `s
 | `gitops` | ArgoCD App of Apps pattern, sync management, mandatory git workflow reference |
 | `incident-response` | Incident triage, rollback procedures, pre-merge validation, post-incident documentation |
 | `secret-management` | Infisical → ESO → K8s pipeline operations |
+| `vikunja` | Vikunja task management API — create, query, update, complete tasks; Discord notifications |
 
 ### Skill Format
 
