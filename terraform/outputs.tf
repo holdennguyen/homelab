@@ -40,6 +40,7 @@ output "next_steps" {
          tailscale serve --bg --https 8443 http://localhost:30080   # ArgoCD
          tailscale serve --bg --https 8444 http://localhost:30090   # Grafana
          tailscale serve --bg --https 8445 http://localhost:30445   # Infisical
+         tailscale serve --bg --https 8446 http://localhost:30100   # LaunchFast
          tailscale serve --bg --https 8447 http://localhost:30789   # OpenClaw
   EOT
 }

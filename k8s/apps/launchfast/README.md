@@ -15,7 +15,7 @@ flowchart LR
         CM --> Deploy
         Deploy --> Svc
     end
-    Tailscale["Tailscale Serve\nhttps://:8444"] --> Svc
+    Tailscale["Tailscale Serve\nhttps://:8446"] --> Svc
 ```
 
 ## Directory Contents
@@ -110,10 +110,10 @@ Visit `https://holdens-mac-mini.story-larch.ts.net` and click the LaunchFast til
 **Via Tailscale Serve (direct):**
 
 ```bash
-tailscale serve --bg --https 8444 http://localhost:30100
+tailscale serve --bg --https 8446 http://localhost:30100
 ```
 
-Then visit `https://holdens-mac-mini.story-larch.ts.net:8444` from any Tailscale device.
+Then visit `https://holdens-mac-mini.story-larch.ts.net:8446` from any Tailscale device.
 
 **Via direct NodePort:**
 

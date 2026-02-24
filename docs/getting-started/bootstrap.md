@@ -223,6 +223,9 @@ tailscale serve --bg --https 8444 http://localhost:30090
 # Infisical — custom HTTPS port 8445
 tailscale serve --bg --https 8445 http://localhost:30445
 
+# LaunchFast — custom HTTPS port 8446
+tailscale serve --bg --https 8446 http://localhost:30100
+
 # OpenClaw — custom HTTPS port 8447
 tailscale serve --bg --https 8447 http://localhost:30789
 
@@ -250,6 +253,9 @@ https://holdens-mac-mini.story-larch.ts.net:8444 (tailnet only)
 
 https://holdens-mac-mini.story-larch.ts.net:8445 (tailnet only)
 |-- / proxy http://localhost:30445
+
+https://holdens-mac-mini.story-larch.ts.net:8446 (tailnet only)
+|-- / proxy http://localhost:30100
 
 https://holdens-mac-mini.story-larch.ts.net:8447 (tailnet only)
 |-- / proxy http://localhost:30789
@@ -282,6 +288,7 @@ Access URLs after bootstrap:
 | ArgoCD | `https://holdens-mac-mini.story-larch.ts.net:8443` | SSO via Authentik |
 | Grafana | `https://holdens-mac-mini.story-larch.ts.net:8444` | SSO via Authentik |
 | Infisical | `https://holdens-mac-mini.story-larch.ts.net:8445` | Local admin |
+| LaunchFast | `https://holdens-mac-mini.story-larch.ts.net:8446` | Bookmark via Authentik |
 | OpenClaw | `https://holdens-mac-mini.story-larch.ts.net:8447` | Local |
 | Trivy Dashboard | `https://holdens-mac-mini.story-larch.ts.net:8448` | Bookmark via Authentik |
 

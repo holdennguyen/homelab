@@ -132,6 +132,9 @@ tailscale serve --bg --https 8444 http://localhost:30090
 # Infisical — custom HTTPS port (8445)
 tailscale serve --bg --https 8445 http://localhost:30445
 
+# LaunchFast — custom HTTPS port (8446)
+tailscale serve --bg --https 8446 http://localhost:30100
+
 # Trivy Dashboard — custom HTTPS port (8448)
 tailscale serve --bg --https 8448 http://localhost:30448
 
@@ -189,6 +192,9 @@ https://holdens-mac-mini.story-larch.ts.net:8444 (tailnet only)
 https://holdens-mac-mini.story-larch.ts.net:8445 (tailnet only)
 |-- / proxy http://localhost:30445
 
+https://holdens-mac-mini.story-larch.ts.net:8446 (tailnet only)
+|-- / proxy http://localhost:30100
+
 https://holdens-mac-mini.story-larch.ts.net:8447 (tailnet only)
 |-- / proxy http://localhost:30789
 
@@ -210,6 +216,9 @@ tailscale serve --https=8443 off
 
 # Stop Grafana proxy
 tailscale serve --https=8444 off
+
+# Stop LaunchFast proxy
+tailscale serve --https=8446 off
 
 # Stop Trivy Dashboard proxy
 tailscale serve --https=8448 off
@@ -244,6 +253,7 @@ Tailscale's MagicDNS automatically resolves `<hostname>.story-larch.ts.net` to t
 | ArgoCD | `https://holdens-mac-mini.story-larch.ts.net:8443` | 8443 | SSO via Authentik |
 | Grafana | `https://holdens-mac-mini.story-larch.ts.net:8444` | 8444 | SSO via Authentik |
 | Infisical | `https://holdens-mac-mini.story-larch.ts.net:8445` | 8445 | Local admin |
+| LaunchFast | `https://holdens-mac-mini.story-larch.ts.net:8446` | 8446 | SSO portal bookmark |
 | OpenClaw | `https://holdens-mac-mini.story-larch.ts.net:8447` | 8447 | SSO portal bookmark |
 | Trivy Dashboard | `https://holdens-mac-mini.story-larch.ts.net:8448` | 8448 | SSO portal bookmark |
 | Vikunja | `https://holdens-mac-mini.story-larch.ts.net:8449` | 8449 | SSO via Authentik |
@@ -279,7 +289,7 @@ flowchart TD
 
     subgraph tailnet["Tailscale Tailnet (story-larch)"]
         subgraph mac["Mac mini M4\n100.77.144.4"]
-            TS["tailscale serve\n:443, :8443, :8444, :8445, :8447, :8448, :8449"]
+            TS["tailscale serve\n:443, :8443, :8444, :8445, :8446, :8447, :8448, :8449"]
 
             subgraph orb["OrbStack Kubernetes"]
                 subgraph authentik["authentik ns"]
