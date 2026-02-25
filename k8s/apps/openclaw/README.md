@@ -388,10 +388,23 @@ flowchart TD
 | Channel | Purpose | Skills | Webhook |
 |---|---|---|---|
 | `#general` | Full homelab admin — cluster ops, GitOps, troubleshooting, general chat | All 7 skills | — |
-| `#daily-briefing` | Personal assistant — morning briefing, task management, weather, lifestyle advice | `vikunja`, `daily-briefing`, `weather` | `DISCORD_WEBHOOK_VIKUNJA` |
+| `#daily-briefing` | Personal schedule assistant & journal companion — morning briefing, interactive schedule management, task tracking, journal check-ins/reflections, weather, lifestyle advice | `vikunja`, `daily-briefing`, `weather` | `DISCORD_WEBHOOK_VIKUNJA` |
 | `#alerts` | Cluster health — incident alerts, pod failures, ArgoCD sync issues | `homelab-admin`, `incident-response` | `DISCORD_WEBHOOK_ALERTS` |
 
 Each channel has a system prompt that constrains the agent's behavior to the channel's purpose. The `groupPolicy` is set to `allowlist` so the bot only responds in explicitly configured channels.
+
+The `#daily-briefing` channel supports interactive conversations:
+
+| Interaction | Example | What happens |
+|---|---|---|
+| Morning check-in | "Slept about 6 hours, slight headache, energy 4/10" | Agent extracts structured data, saves to Journal (project 3), adjusts today's advice |
+| Evening reflection | "1. Fixed a tricky DNS issue 2. Tried a new recipe 3. Learned a guitar riff" | Agent saves to Journal (project 3), references it in tomorrow's briefing |
+| Schedule query | "Show my schedule" / "What's my day look like?" | Agent fetches today's routine tasks from project 2 |
+| Add to routine | "Add 15 min meditation after singing" | Agent reviews schedule, finds a gap, suggests placement, confirms before creating |
+| Reschedule | "Move guitar to Saturday" | Agent identifies conflicts, offers alternatives |
+| Skip task | "Skip workout today" | Marks done without breaking recurrence |
+| One-time task | "Dentist appointment Thursday 2 PM" | Creates non-recurring task at the specified time |
+| Journal lookback | "How was my sleep this week?" | Queries project 3 entries and summarizes trends |
 
 ### How It Works
 
@@ -415,8 +428,90 @@ sequenceDiagram
 
 | Notification | Channel | Schedule | Mechanism |
 |---|---|---|---|
-| Daily briefing (weather + tasks + tips) | `#daily-briefing` | 6:30 AM ICT daily | OpenClaw cron → `DISCORD_WEBHOOK_VIKUNJA` |
+| Daily briefing (weather + tasks + journal-aware advice) | `#daily-briefing` | 6:30 AM ICT daily | OpenClaw cron → `DISCORD_WEBHOOK_VIKUNJA` |
 | Cluster alerts | `#alerts` | On incident detection | Agent → `DISCORD_WEBHOOK_ALERTS` |
+
+### Daily Routine & Journal System
+
+The `#daily-briefing` channel is backed by a personalized daily routine and journal system built on Vikunja. This is not a static task list — it's a feedback loop where journal entries from today shape tomorrow's briefing.
+
+#### Vikunja Projects
+
+| Project | ID | Purpose |
+|---|---|---|
+| Inbox | 1 | Default project for ad-hoc tasks |
+| Daily Routine | 2 | 23 recurring tasks forming the daily health routine |
+| Journal | 3 | Morning check-ins and evening reflections (permanent records) |
+
+#### Daily Routine (Project 2)
+
+23 recurring tasks organized in time blocks, tailored to the owner's health goals (weight gain, sleep improvement, headache prevention):
+
+| Block | Time | Tasks |
+|---|---|---|
+| Morning | 5:30–7:30 AM | Wake + hydrate, morning check-in, stretch + breathing, walk/jog, breakfast, reading |
+| Work | 8:00 AM–5:00 PM | Mid-morning snack, eye breaks, lunch, post-lunch walk, afternoon snack, shoulder stretch |
+| Fitness | 5:30–6:30 PM | Strength training (Mon/Wed/Fri) or cardio (Tue/Thu) |
+| Dinner | 6:30–7:30 PM | Calorie-surplus meal |
+| Creative | 7:30–8:30 PM | Piano (Mon/Wed/Fri) or guitar (Tue/Thu), singing practice |
+| Wind-down | 8:30–9:30 PM | Evening reading, evening reflection, sleep prep ritual, lights out |
+| Weekend | Varies | Meal prep (Saturday), weekly health review (Sunday) |
+
+Tasks include detailed descriptions with nutrition targets (2,500–3,000 kcal/day, 120g+ protein), exercise guidance (compound lifts, zone 2 cardio), and sleep hygiene protocols.
+
+#### Journal Feedback Loop (Project 3)
+
+```mermaid
+flowchart LR
+    subgraph morning ["Morning (5:35 AM)"]
+        CheckIn["Morning Check-in\nSleep quality, energy,\nheadache, mood"]
+    end
+
+    subgraph briefing ["Briefing (6:30 AM)"]
+        Cron["Daily Briefing Cron\nReads yesterday's journal\n+ weather + tasks"]
+    end
+
+    subgraph evening ["Evening (8:50 PM)"]
+        Reflect["Evening Reflection\n3 interesting things\nfrom today"]
+    end
+
+    subgraph journal ["Vikunja Project 3 (Journal)"]
+        Entries["Journal Entries\n(permanent records)"]
+    end
+
+    CheckIn -->|"save"| Entries
+    Reflect -->|"save"| Entries
+    Entries -->|"yesterday's data"| Cron
+    Cron -->|"personalized advice"| morning
+```
+
+**Morning check-in** (5:35 AM): The user shares how they're feeling in `#daily-briefing`. The agent extracts structured data (sleep quality 1–10, energy 1–10, headache severity, mood) and saves it to project 3 with the `morning-checkin` label. This immediately adjusts today's advice — e.g., poor sleep triggers a lighter workout suggestion.
+
+**Evening reflection** (8:50 PM): The user shares 3 interesting things from the day. The agent saves them to project 3 with the `evening-reflection` label. Tomorrow's briefing references these — calling back wins, acknowledging challenges.
+
+**Daily briefing personalization**: The 6:30 AM cron briefing reads yesterday's journal entries and adjusts:
+
+| Yesterday's journal | Today's adjustment |
+|---|---|
+| Sleep quality < 5 | Suggest lighter workout, extra hydration |
+| Headache reported | Emphasize water (3L+), shorter eye break intervals |
+| Low energy | Stress all 5 meals, no skipping snacks |
+| Stressful mood | Lean into music session as a reset |
+| Evening win mentioned | Call it back: "You crushed [thing] yesterday!" |
+| Multiple bad sleep nights | Suggest earlier lights-out |
+| No entries yesterday | Gentle reminder to check in |
+
+#### Schedule-Aware Task Management
+
+When the user asks to add something to their routine via Discord, the agent follows a structured workflow:
+
+1. **Review current schedule** — fetch today's tasks from project 2
+2. **Find gaps** — identify available time slots between existing tasks
+3. **Suggest optimal placement** — based on task type (habit, hobby, errand, appointment)
+4. **Confirm** — present the suggestion with context before creating
+5. **Notify** — post a confirmation embed after creation
+
+Protected slots that cannot be overwritten: hydration reminders, meals, eye breaks, sleep prep (9 PM+). The agent respects day-of-week patterns (strength vs cardio, piano vs guitar).
 
 ### Discord Concepts (quick primer)
 
@@ -809,8 +904,8 @@ Homelab-specific skills live in `skills/` at the repo root and are mounted into 
 | `gitops` | ArgoCD App of Apps pattern, sync management, mandatory git workflow, agent footprint conventions |
 | `incident-response` | Incident triage, rollback procedures, pre-merge validation, post-incident documentation |
 | `secret-management` | Infisical → ESO → K8s pipeline operations |
-| `vikunja` | Vikunja task management API — create, query, update, complete tasks; Discord notifications |
-| `daily-briefing` | AI-powered morning briefing — weather, tasks, cluster health, contextual lifestyle advice |
+| `vikunja` | Vikunja task management API — CRUD tasks, Discord notifications, daily routine (project 2), journal (project 3) with check-ins/reflections, schedule-aware task management |
+| `daily-briefing` | AI morning briefing — weather, tasks, journal-driven advice, owner health profile, weekly schedule with nutrition targets |
 | `weather` | Real-time weather via Open-Meteo and wttr.in (no API key required) |
 | `common/Documentation` | Standardized documentation generation |
 

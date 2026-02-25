@@ -47,6 +47,9 @@ documents:
   - doc: k8s/apps/openclaw/README.md
     sources:
       - k8s/apps/openclaw/
+      - skills/daily-briefing/
+      - skills/vikunja/
+      - skills/incident-response/
 
   - doc: k8s/apps/trivy-operator/README.md
     sources:
@@ -59,6 +62,7 @@ documents:
   - doc: k8s/apps/vikunja/README.md
     sources:
       - k8s/apps/vikunja/
+      - skills/vikunja/
 
   - doc: terraform/README.md
     sources:
