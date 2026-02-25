@@ -213,6 +213,123 @@ if [ -n "$TASKS" ]; then
 fi
 ```
 
+## Journal project
+
+Project **ID 3** ("Journal") stores daily check-ins and reflections. These entries are **not** to-do items — they're records that feed into the next day's briefing.
+
+| Item | Value |
+|---|---|
+| Project ID | 3 |
+| Morning label | `morning-checkin` (ID 9, color `#F1C40F`) |
+| Evening label | `evening-reflection` (ID 10, color `#9B59B6`) |
+
+### Data model
+
+Each journal entry is a Vikunja task in project 3:
+
+| Field | Morning check-in | Evening reflection |
+|---|---|---|
+| `title` | `Morning Check-in — Feb 26, 2026` | `Evening Reflection — Feb 26, 2026` |
+| `description` | Structured data (see below) | 3 interesting things |
+| `due_date` | Date of entry (for querying) | Date of entry |
+| `priority` | 0 (not actionable) | 0 |
+| `done` | `true` (mark done immediately) | `true` |
+| Labels | `morning-checkin` (9) | `evening-reflection` (10) |
+
+### Morning check-in format
+
+When the user shares how they're feeling, extract and store structured data in the description:
+
+```
+Sleep quality: 6/10
+Energy level: 5/10
+Headache: mild / none / moderate / severe
+Mood: tired but okay
+Notes: stayed up late reading, neck feels stiff
+```
+
+The agent should conversationally extract these — don't present a form. Just ask "How are you feeling this morning?" and parse the response.
+
+### Evening reflection format
+
+Store the user's 3 interesting things verbatim, plus any extra context they share:
+
+```
+1. Finally got the ArgoCD self-heal issue figured out — felt great
+2. Tried a new chicken teriyaki recipe for dinner, turned out amazing
+3. Learned a new piano chord progression from a YouTube tutorial
+
+Mood at end of day: good, productive
+```
+
+### Save a journal entry
+
+```bash
+VIKUNJA_URL="http://vikunja.vikunja.svc.cluster.local/api/v1"
+AUTH="Authorization: Bearer $VIKUNJA_API_TOKEN"
+TODAY=$(TZ=Asia/Ho_Chi_Minh date +%Y-%m-%d)
+TITLE_DATE=$(TZ=Asia/Ho_Chi_Minh date '+%b %d, %Y')
+
+# Create the entry (morning example)
+ENTRY_ID=$(curl -s -X PUT -H "$AUTH" -H "Content-Type: application/json" \
+  "$VIKUNJA_URL/projects/3/tasks" \
+  -d "{
+    \"title\": \"Morning Check-in — $TITLE_DATE\",
+    \"description\": \"Sleep quality: 7/10\nEnergy level: 6/10\nHeadache: none\nMood: rested\nNotes: slept at 9:30, woke naturally at 5:20\",
+    \"due_date\": \"${TODAY}T00:00:00Z\",
+    \"priority\": 0,
+    \"done\": true
+  }" | jq -r '.id')
+
+# Add the label
+curl -s -X PUT -H "$AUTH" -H "Content-Type: application/json" \
+  "$VIKUNJA_URL/tasks/$ENTRY_ID/labels" \
+  -d '{"label_id": 9}'
+```
+
+### Fetch recent journal entries
+
+Used by the daily briefing to personalize advice. Fetch the last N days:
+
+```bash
+# Get all journal entries from project 3, sorted by date descending
+curl -s -H "$AUTH" "$VIKUNJA_URL/projects/3/tasks?sort_by=due_date&order_by=desc" \
+  | jq '[.[] | {id, title, description, due_date, labels: [.labels[]?.title]}][:7]'
+```
+
+### Fetch yesterday's entries (for daily briefing context)
+
+```bash
+YESTERDAY=$(TZ=Asia/Ho_Chi_Minh date -v-1d +%Y-%m-%d 2>/dev/null || TZ=Asia/Ho_Chi_Minh date -d 'yesterday' +%Y-%m-%d)
+curl -s -H "$AUTH" "$VIKUNJA_URL/projects/3/tasks?sort_by=due_date&order_by=desc" \
+  | jq --arg d "$YESTERDAY" '[.[] | select(.due_date[:10] == $d)] | .[] | {title, description}'
+```
+
+### How the agent uses journal data
+
+| Yesterday's data | Today's adjustment |
+|---|---|
+| Sleep quality < 5 | "Rough night — consider a lighter workout today. Extra hydration and a 15-min power nap at lunch if possible." |
+| Headache: moderate/severe | "Headache yesterday — double down on water today (3L+), take eye breaks every 45 min instead of 90." |
+| Energy < 4 | "Low energy yesterday — make sure you eat all 5 meals today. Your body needs the fuel." |
+| Mood: stressed/anxious | "Stressful day yesterday. Tonight's music session is your reset — lean into it." |
+| Evening reflection mentions a win | "You crushed [thing] yesterday — keep that momentum going today!" |
+| Reflection mentions a challenge | "Yesterday's [challenge] was tough. Today's a fresh start." |
+| Multiple days of poor sleep | "Sleep has been rough this week. Let's try moving lights-out to 9:00 PM tonight." |
+| Weight-related note | "Great that you're tracking — consistency is everything at this stage." |
+
+### Weekly journal summary
+
+On Sunday's weekly review, the agent should summarize the week's journal entries:
+
+```bash
+# Get this week's entries (last 7 days)
+curl -s -H "$AUTH" "$VIKUNJA_URL/projects/3/tasks?sort_by=due_date&order_by=desc" \
+  | jq '[.[] | {title, description, due_date}][:14]'
+```
+
+Compose a weekly summary covering: average sleep quality, headache frequency, energy trends, highlights from reflections, and suggested adjustments for next week.
+
 ## Daily routine project
 
 Project **ID 2** is the daily routine project. It contains ~21 recurring tasks that form Holden's personalized health routine. Always use project 2 when creating, updating, or querying routine-related tasks.

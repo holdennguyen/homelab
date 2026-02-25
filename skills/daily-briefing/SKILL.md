@@ -78,7 +78,21 @@ Location: Ho Chi Minh City (lat 10.82, lon 106.63, tz Asia/Ho_Chi_Minh).
 | 80-82 | Rain showers |
 | 95, 96, 99 | Thunderstorm |
 
-### 2. Tasks due today (Vikunja)
+### 2. Yesterday's journal (Vikunja — project 3)
+
+Fetch yesterday's morning check-in and evening reflection to personalize today's briefing:
+
+```bash
+VIKUNJA_URL="http://vikunja.vikunja.svc.cluster.local/api/v1"
+AUTH="Authorization: Bearer $VIKUNJA_API_TOKEN"
+YESTERDAY=$(TZ=Asia/Ho_Chi_Minh date -v-1d +%Y-%m-%d 2>/dev/null || TZ=Asia/Ho_Chi_Minh date -d 'yesterday' +%Y-%m-%d)
+curl -s -H "$AUTH" "$VIKUNJA_URL/projects/3/tasks?sort_by=due_date&order_by=desc" \
+  | jq --arg d "$YESTERDAY" '[.[] | select(.due_date[:10] == $d)] | .[] | {title, description}'
+```
+
+Use this data to adjust today's briefing tone and advice (see "Journal-driven personalization" below).
+
+### 3. Tasks due today (Vikunja)
 
 The `/tasks/all` endpoint is unavailable in Vikunja v1.1.0. Fetch per-project instead:
 
@@ -97,14 +111,14 @@ done
 
 To find overdue tasks, filter results where `due_date` is before now and after `"0001"` (unset dates use year 0001).
 
-### 3. Cluster health (quick pulse)
+### 4. Cluster health (quick pulse)
 
 ```bash
 kubectl get pods -A --no-headers | awk '{print $4}' | sort | uniq -c | sort -rn
 kubectl get applications -n argocd --no-headers -o custom-columns='NAME:.metadata.name,HEALTH:.status.health.status,SYNC:.status.sync.status' | grep -v "Healthy.*Synced" || echo "all-healthy"
 ```
 
-### 4. Date context
+### 5. Date context
 
 ```bash
 date -u '+%A, %B %d, %Y'
@@ -136,15 +150,25 @@ Embed 3: Today's schedule
 - Use ✅ for upcoming, 🔴 for overdue
 - Emphasize which creative activity is on the schedule today (piano vs guitar)
 
-Embed 4: Health & wellness nudge
-- One personalized tip based on weather + day-of-week + health profile
+Embed 4: Yesterday's reflection callback (if journal data exists)
+- Reference something specific from yesterday's evening reflection
 - Examples:
-  - "Strength day + 34°C = hydrate aggressively. Add a protein shake post-workout to hit your calorie target."
-  - "Rainy Tuesday — swap your morning jog for 20 min jump rope indoors. Still a cardio day!"
-  - "It's Friday — you've got piano tonight. Close the laptop by 7:30 and let the music decompress your week."
+  - "You mentioned that new teriyaki recipe turned out great — maybe prep a batch for this week's lunches?"
+  - "You said the ArgoCD deep-dive felt rewarding — that curiosity is what makes a great SRE."
+  - "Yesterday you noted feeling stressed about on-call — tonight's guitar session is your decompressor."
+- If no journal data exists yet, skip this embed
+
+Embed 5: Health & wellness nudge
+- One personalized tip based on weather + day-of-week + health profile + journal context
+- Journal data makes this smarter:
+  - Sleep quality < 5 yesterday → "Rough night — lighter workout today, extra water, maybe a 15-min nap at lunch"
+  - Headache yesterday → "You had a headache yesterday — let's keep hydration above 3L today and take eye breaks every 45 min"
+  - Low energy → "Energy was low yesterday — make sure all 5 meals happen today"
+  - Multiple bad sleep nights → "Sleep has been tough this week. Try moving lights-out to 9:00 PM tonight"
+- Without journal data, fall back to weather + day-of-week advice
 - Keep this warm and encouraging, never clinical
 
-Embed 5 (optional): Cluster health
+Embed 6 (optional): Cluster health
 - ONLY if something is degraded
 - Omit entirely when all systems healthy
 ```
@@ -180,6 +204,19 @@ Embed 5 (optional): Cluster health
 | Overdue tasks > 0 | "You have N overdue tasks — clearing those first will feel great and reduce mental load" |
 | High priority task due | "Heads up: [task name] is high priority and due today" |
 | Nutrition tasks not done | Gently nudge: "Don't skip snacks — consistent calories are key to hitting your 2,500 kcal target" |
+
+#### Journal-driven (from yesterday's entries)
+
+| Yesterday's data | Today's adjustment |
+|---|---|
+| Sleep quality < 5 | Suggest lighter workout, extra hydration, power nap at lunch |
+| Headache: moderate/severe | Double down on water (3L+), eye breaks every 45 min, check neck stretches |
+| Energy < 4 | Emphasize all 5 meals, no skipping snacks |
+| Mood: stressed/anxious | Lean into tonight's music session as a reset, suggest breathwork |
+| Evening reflection mentions a win | Call it back: "You crushed [thing] yesterday — carry that energy forward!" |
+| Evening reflection mentions a challenge | Acknowledge: "Yesterday's [challenge] was tough. Fresh start today." |
+| Multiple days of poor sleep (check last 3 entries) | Consider moving lights-out earlier, suggest magnesium or chamomile |
+| No journal entries from yesterday | Gently remind: "Missed your check-in yesterday — how are you doing this morning?" |
 
 #### Cluster-driven
 
@@ -226,6 +263,7 @@ The agent should be aware of the full weekly structure when composing briefings:
 | Time | Activity | Notes |
 |---|---|---|
 | 5:30 AM | Wake + hydrate (500 ml warm water) | Non-negotiable. Helps headaches. |
+| 5:35 AM | **Morning check-in** | Agent asks "How are you feeling?" → saves to Journal (project 3) |
 | 5:45 AM | Morning stretch + breathing (15 min) | Yoga + box breathing. Neck/shoulders focus. |
 | 6:00 AM | Morning walk or jog (30 min) | Zone 2 cardio. Sunlight for circadian rhythm. |
 | 6:30 AM | **Daily briefing arrives** | |
@@ -242,7 +280,8 @@ The agent should be aware of the full weekly structure when composing briefings:
 | 7:30 PM | Music: Piano (M/W/F) or Guitar (Tu/Th) — 30 min | |
 | 8:00 PM | Singing practice (15 min) | Breathing exercise + stress relief |
 | 8:30 PM | Evening reading (20–30 min) | Physical book, warm dim light |
-| 9:00 PM | Sleep prep: screens off, herbal tea, journal | 3 good things from today |
+| 8:50 PM | **Evening reflection: 3 interesting things** | Agent asks for highlights → saves to Journal (project 3) |
+| 9:00 PM | Sleep prep: screens off, herbal tea, journal | Wind-down ritual |
 | 9:30 PM | Lights out | 8 hours target → 5:30 AM wake |
 
 ### Weekend schedule (Sat–Sun)
