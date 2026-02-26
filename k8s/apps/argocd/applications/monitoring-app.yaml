@@ -59,6 +59,7 @@ spec:
               mountPath: /etc/secrets
               readOnly: true
           defaultDashboardsEnabled: true
+          replicaCount: 0
           sidecar:
             dashboards:
               enabled: true
@@ -91,6 +92,7 @@ spec:
                   resources:
                     requests:
                       storage: 10Gi
+            replicas: 0
 
         # Alertmanager
         alertmanager:
@@ -114,14 +116,16 @@ spec:
                   resources:
                     requests:
                       storage: 2Gi
+            replicas: 0
 
         # Node exporter
         nodeExporter:
-          enabled: true
+          enabled: false
 
         # kube-state-metrics
         kubeStateMetrics:
           enabled: true
+          replicaCount: 0
 
         # Disable components that don't apply to OrbStack single-node
         kubeProxy:
@@ -132,6 +136,10 @@ spec:
           enabled: false
         kubeControllerManager:
           enabled: false
+
+        # Scale down monitoring operator
+        prometheusOperator:
+          replicaCount: 0
 
   destination:
     server: https://kubernetes.default.svc

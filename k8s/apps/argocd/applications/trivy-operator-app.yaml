@@ -20,14 +20,13 @@ spec:
       valuesObject:
         excludeNamespaces: "openclaw"
         operator:
-          # Disable on-change vulnerability scanning; rely on scheduled VulnerabilityScanner CR
           vulnerabilityScannerEnabled: false
           scanJobsConcurrentLimit: 3
           scanJobTTL: "30m"
           scanJobsRetryDelay: "2m"
           scannerReportTTL: "72h"
           builtInTrivyServer: true
-        # Schedule for config audit (compliance) scans: daily at midnight
+          replicaCount: 0
         compliance:
           cron: "0 0 * * *"
         trivy:
@@ -48,6 +47,7 @@ spec:
               limits:
                 cpu: 500m
                 memory: 512Mi
+            replicaCount: 0
         resources:
           requests:
             cpu: 100m
