@@ -37,16 +37,16 @@ Assess and harden the security posture of the homelab cluster, applications, and
 
 ## Threat model (STRIDE)
 
-Apply STRIDE for every new service or significant configuration change:
-
-| Threat | Question to ask | Homelab mitigations |
-|---|---|---|
-| **Spoofing** | Can an attacker impersonate a user or service? | Tailscale identity (WireGuard), OPENCLAW_GATEWAY_TOKEN, Authentik SSO |
-| **Tampering** | Can data in transit or at rest be modified? | WireGuard encryption (Tailscale), ArgoCD selfHeal reverts unauthorized changes |
-| **Repudiation** | Can actions be performed without accountability? | Agent footprint (git identity, labeled issues/PRs), pod audit logs |
-| **Information Disclosure** | Can secrets or data leak? | Secrets in Infisical (never git), ESO sync, Tailscale-only access |
-| **Denial of Service** | Can the service be overwhelmed? | Resource limits on all pods, single-node (limited blast radius) |
-| **Elevation of Privilege** | Can a compromised pod escalate access? | RBAC scoping, security contexts, non-root containers |
+```mermaid
+flowchart TD
+  NewService["New service / config change"] --> STRIDE["Apply STRIDE"]
+  STRIDE --> S["Spoofing → Tailscale WireGuard + Authentik SSO"]
+  STRIDE --> T["Tampering → WireGuard encryption + ArgoCD selfHeal"]
+  STRIDE --> R["Repudiation → Agent footprint + audit logs"]
+  STRIDE --> I["Info Disclosure → Infisical (never git) + Tailscale-only"]
+  STRIDE --> D["DoS → Resource limits + single-node blast radius"]
+  STRIDE --> E["Privilege Escalation → RBAC scoping + non-root containers"]
+```
 
 ### Threat model template for new services
 
@@ -197,12 +197,14 @@ Uses the canonical scale from the `incident-response` skill, mapped to security 
 
 ### Secret compromise response
 
-1. **Identify** which secret is compromised and which services consume it
-2. **Rotate** the secret in Infisical immediately
-3. **Force sync** ESO: `kubectl annotate externalsecret <name> -n <ns> force-sync=$(date +%s) --overwrite`
-4. **Restart** all consuming deployments
-5. **Audit** git history for the secret: `git log --all -p | grep '<secret-pattern>'`
-6. **Document** the incident in a GitHub issue with timeline, blast radius, and prevention steps
+```mermaid
+flowchart TD
+  Identify["1. Identify compromised secret + consuming services"] --> Rotate["2. Rotate in Infisical"]
+  Rotate --> Sync["3. Force ESO re-sync (annotate)"]
+  Sync --> Restart["4. Restart consuming deployments"]
+  Restart --> Audit["5. Audit git history for the secret"]
+  Audit --> Document["6. Document: timeline, blast radius, prevention"]
+```
 
 ## Audit report format
 

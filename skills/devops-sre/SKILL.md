@@ -91,25 +91,15 @@ terraform apply   # apply bootstrap changes — only after reviewing plan
 
 ## Deployment strategies
 
-All deployments use Kubernetes rolling updates by default. Configure these settings in every Deployment:
-
-```yaml
-spec:
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0    # zero downtime
-      maxSurge: 1          # create new pod before killing old
+```mermaid
+flowchart LR
+  PreCheck["Pre-check: health + sync + no in-flight deploys + resources"] --> NewPod["New pod starts (maxSurge: 1)"]
+  NewPod --> Ready["Passes readiness probe"]
+  Ready --> OldPod["Old pod terminates (maxUnavailable: 0)"]
+  OldPod --> Done[Zero-downtime complete]
 ```
 
-For single-replica homelab services, this means: new pod starts → passes readiness → old pod terminates.
-
-### Pre-deployment checklist
-
-1. Verify current service health before making changes
-2. Check ArgoCD sync status is `Synced` + `Healthy`
-3. Confirm no other deployments are in progress
-4. Review resource availability on the node
+All deployments use `RollingUpdate` with `maxUnavailable: 0`, `maxSurge: 1`.
 
 ### Rollback procedure
 
@@ -178,33 +168,16 @@ Uses the canonical scale from the `incident-response` skill:
 
 ### Incident response runbook
 
-1. **Triage** — classify severity, identify affected services
-   ```bash
-   kubectl get pods -A | grep -v Running
-   kubectl get applications -n argocd
-   kubectl get events -A --field-selector type=Warning --sort-by='.metadata.creationTimestamp' | tail -20
-   ```
-
-2. **Contain** — prevent cascading failures
-   - If a deployment is crashlooping and consuming resources: `kubectl scale deployment/<name> -n <ns> --replicas=0`
-   - If ArgoCD is applying bad config: disable auto-sync temporarily via annotation
-
-3. **Diagnose** — find root cause
-   ```bash
-   kubectl logs -n <ns> deploy/<name> --tail=200
-   kubectl describe pod <failing-pod> -n <ns>
-   kubectl get events -n <ns> --sort-by='.metadata.creationTimestamp'
-   ```
-
-4. **Resolve** — fix through GitOps (preferred) or emergency rollback
-   - GitOps fix: branch → fix → PR → merge → ArgoCD sync
-   - Emergency: `kubectl rollout undo deployment/<name> -n <ns>` (follow up with git revert)
-
-5. **Document** — create a GitHub issue with:
-   - Timeline of events
-   - Root cause
-   - Resolution steps
-   - Prevention measures
+```mermaid
+flowchart TD
+  Triage["1. Triage: classify severity, identify affected services"] --> Contain["2. Contain: scale to 0 or disable auto-sync"]
+  Contain --> Diagnose["3. Diagnose: logs, describe pod, events"]
+  Diagnose --> Resolve{"4. Resolve"}
+  Resolve -->|preferred| GitOps["GitOps: branch → fix → PR → merge"]
+  Resolve -->|emergency| Undo["kubectl rollout undo (follow with git revert)"]
+  GitOps --> Document["5. Document: timeline, root cause, resolution, prevention"]
+  Undo --> Document
+```
 
 ### Common failure patterns
 

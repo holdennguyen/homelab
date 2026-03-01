@@ -9,11 +9,13 @@ Systematic workflows for auditing and maintaining documentation quality. Complem
 
 ## Review Workflow
 
-1. **Navigate** — discover what's documented by listing `k8s/apps/*/README.md` and `docs/*.md`
-2. **Audit completeness** — compare service inventory against documentation
-3. **Check freshness** — `python scripts/doc-freshness.py --stale`
-4. **Update** any gaps or inaccuracies found
-5. **Verify** changes follow documentation conventions (`/documentation` skill)
+```mermaid
+flowchart TD
+  Nav["1. Navigate: list k8s/apps/*/README.md and docs/*.md"] --> Audit["2. Audit: compare service inventory vs docs"]
+  Audit --> Freshness["3. Check freshness: doc-freshness.py --stale"]
+  Freshness --> Update["4. Update gaps and inaccuracies"]
+  Update --> Verify["5. Verify conventions (/documentation skill)"]
+```
 
 ## Service Documentation Checklist
 

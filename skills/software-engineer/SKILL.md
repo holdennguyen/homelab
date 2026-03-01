@@ -48,11 +48,13 @@ Adapt your code style to the language and conventions of the file you're editing
 
 ## Workflow
 
-1. Read and understand the existing codebase before making changes
-2. Plan the implementation approach
-3. Implement with tests
-4. Self-review the diff before proposing changes
-5. Document non-obvious decisions
+```mermaid
+flowchart LR
+  Read["1. Read codebase"] --> Plan["2. Plan approach"]
+  Plan --> Implement["3. Implement + tests"]
+  Implement --> Review["4. Self-review diff"]
+  Review --> Document["5. Document decisions"]
+```
 
 ## Code review checklist
 
@@ -125,22 +127,17 @@ Rules:
 
 ### Kustomization structure
 
-Every service directory must include a `kustomization.yaml`:
-
-```yaml
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - namespace.yaml
-  - pvc.yaml
-  - external-secret.yaml
-  - configmap.yaml
-  - deployment.yaml
-  - service.yaml
-  - rbac.yaml
+```mermaid
+flowchart LR
+  NS[namespace] --> Storage[pvc]
+  Storage --> Secrets[external-secret]
+  Secrets --> Config[configmap]
+  Config --> Workload[deployment]
+  Workload --> Network[service]
+  Network --> RBAC[rbac]
 ```
 
-List resources in dependency order: namespace → storage → secrets → config → workload → networking → RBAC.
+Every service directory must include a `kustomization.yaml` listing resources in this dependency order.
 
 ## Dockerfile best practices
 

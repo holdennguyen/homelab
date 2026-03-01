@@ -62,14 +62,21 @@ Every `k8s/apps/<service>/README.md` should include these sections (adapt as nee
 
 ## Adding a New Service (documentation checklist)
 
-1. Create `k8s/apps/<service>/README.md` following the README structure above
-2. Create `docs/services/<service>.md` as a thin `include-markdown` wrapper (see template above)
-3. Add `services/<service>.md` to the Services section in the `nav` in `mkdocs.yml`
-4. Add doc-to-source mapping to `.doc-manifest.yml`
-5. Update the service map and repository layout in `docs/getting-started/architecture.md`
-6. Update root `README.md` — architecture diagram, repository structure, deployed services table, and documentation index
-7. If the service has secrets, update `docs/infrastructure/secret-management.md` and `k8s/apps/infisical/README.md` inventory
-8. If the service has a Tailscale endpoint, update `docs/infrastructure/networking.md` and `docs/getting-started/bootstrap.md` (Tailscale Serve commands)
+```mermaid
+flowchart TD
+  A["1. Create k8s/apps/svc/README.md"] --> B["2. Create docs/services/svc.md (include-markdown wrapper)"]
+  B --> C["3. Add to nav in mkdocs.yml"]
+  C --> D["4. Add to .doc-manifest.yml"]
+  D --> E["5. Update docs/getting-started/architecture.md"]
+  E --> F["6. Update root README.md"]
+  F --> Secrets{"Has secrets?"}
+  Secrets -->|yes| G["7. Update secret-management.md + infisical README"]
+  Secrets -->|no| Tailscale
+  G --> Tailscale{"Has Tailscale endpoint?"}
+  Tailscale -->|yes| H["8. Update networking.md + bootstrap.md"]
+  Tailscale -->|no| Done[Done]
+  H --> Done
+```
 
 ## Markdown Formatting Rules
 

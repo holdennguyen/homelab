@@ -40,46 +40,30 @@ When addressing a GitHub issue (whether assigned by a user, picked from the back
 
 ## Branch Workflow
 
-1. **Start from latest main:**
-   ```bash
-   git checkout main && git pull origin main
-   git checkout -b <type>/<short-description>
-   ```
-   Branch prefixes: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`, `security/`
+```mermaid
+flowchart TD
+  Start["git checkout main && git pull"] --> Branch["git checkout -b type/description"]
+  Branch --> Changes[Make changes]
+  Changes --> Commit["git commit -m 'type: description'"]
+  Commit --> Sync["git fetch origin main && git merge origin/main"]
+  Sync --> Push["git push -u origin HEAD"]
+  Push --> PR["gh pr create"]
+  PR --> Review{Approved?}
+  Review -->|yes| Merge[Merge to main]
+  Review -->|no| Changes
+```
 
-2. **Make changes** (referencing the plan from the issue) and commit with conventional messages:
-   ```bash
-   git add <files>
-   git commit -m "<type>: <description>"
-   ```
-   Types: `feat`, `fix`, `chore`, `docs`, `refactor`, `security`
-
-3. **Keep your branch up to date** — before every push:
-   ```bash
-   git fetch origin main
-   git merge origin/main --no-edit
-   ```
-
-4. **Push and create a PR:**
-   ```bash
-   git push -u origin HEAD
-   gh pr create --title "<type>: <description>" --body "<summary>"
-   ```
+Branch prefixes: `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`, `security/`
 
 ## Post-Merge Cleanup
 
-**Never delete a branch until the merge is confirmed.** Always verify before cleanup:
-
-```bash
-gh pr view <number> --json state,mergedAt --jq '"state: \(.state), merged: \(.mergedAt // "NOT MERGED")"'
-```
-
-Only proceed with deletion if the output shows `state: MERGED` and a merge timestamp. If the PR was closed without merging, do NOT delete the branch — the commits are only on that branch.
-
-```bash
-git checkout main && git pull origin main
-git branch -d <branch-name>
-git push origin --delete <branch-name>
+```mermaid
+flowchart TD
+  Verify["gh pr view: check state + mergedAt"] --> Decision{state = MERGED?}
+  Decision -->|yes| Checkout["git checkout main && git pull"]
+  Decision -->|"no (closed without merge)"| Stop["DO NOT delete branch"]
+  Checkout --> DeleteLocal["git branch -d branch-name"]
+  DeleteLocal --> DeleteRemote["git push origin --delete branch-name"]
 ```
 
 ## Pre-Merge Validation (for K8s/Helm changes)

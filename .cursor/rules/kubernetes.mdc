@@ -8,7 +8,12 @@ autoAttach:
 
 ## Manifest Structure
 
-Each service lives in `k8s/apps/<service>/` with a `kustomization.yaml` listing its resources. ArgoCD watches these directories via Application CRs in `k8s/apps/argocd/applications/`.
+```mermaid
+flowchart LR
+  AppCR["k8s/apps/argocd/applications/svc-app.yaml"] -->|watches| SvcDir["k8s/apps/svc/"]
+  SvcDir --> Kustomization["kustomization.yaml"]
+  Kustomization --> Resources["namespace / pvc / secret / configmap / deployment / service"]
+```
 
 ## ArgoCD Application CRs
 
@@ -22,10 +27,12 @@ When creating or editing Application CRs, follow the rules in `k8s/apps/argocd/R
 
 ## Sync Waves
 
-- Wave -1: AppProjects (must exist before Applications reference them)
-- Wave 0: `external-secrets` (installs CRDs)
-- Wave 1: `external-secrets-config` (applies ClusterSecretStore, needs CRDs from wave 0)
-- Default: all other applications
+```mermaid
+flowchart LR
+  W1["Wave -1: AppProjects"] --> W0["Wave 0: external-secrets (CRDs)"]
+  W0 --> W1a["Wave 1: external-secrets-config (ClusterSecretStore)"]
+  W1a --> WD["Default: all other apps"]
+```
 
 ## Secrets
 
@@ -63,20 +70,17 @@ When adding `securityContext` to a deployment:
 
 ## Rollback
 
-All rollbacks go through git (revert commit → push → ArgoCD syncs). Never rely solely on `kubectl rollout undo` — ArgoCD will overwrite it. Use the `/incident-response` skill for the full procedure. Quick reference:
-
-```bash
-git revert <bad-commit> -m 1 --no-edit && git push origin main
+```mermaid
+flowchart TD
+  Bad[Bad commit on main] --> Revert["git revert + git push main"]
+  Revert --> Sync{ArgoCD syncs?}
+  Sync -->|yes| Healthy[Cluster restored]
+  Sync -->|stuck| Cancel["kubectl patch: remove /operation"]
+  Cancel --> Refresh["kubectl patch: hard refresh annotation"]
+  Refresh --> Healthy
 ```
 
-If ArgoCD is stuck syncing, cancel the operation and force refresh:
-
-```bash
-kubectl patch application <app> -n argocd \
-  --type json -p '[{"op":"remove","path":"/operation"}]'
-kubectl patch application <app> -n argocd \
-  --type merge -p '{"metadata":{"annotations":{"argocd.argoproj.io/refresh":"hard"}}}'
-```
+Never rely solely on `kubectl rollout undo` — ArgoCD will overwrite it. Use the `/incident-response` skill for the full procedure.
 
 ## Documentation
 

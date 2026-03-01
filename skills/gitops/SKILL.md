@@ -145,151 +145,47 @@ Example: `devops-sre/feat/42-redis-caching`
 
 ### Step-by-step process
 
-1. **Obtain a GitHub issue** — every change is tracked by exactly one issue. **Never create a duplicate.**
+```mermaid
+flowchart TD
+  Start[Start] --> HasIssue{"Existing issue?"}
+  HasIssue -->|"yes (Scenario A)"| Adopt["Read issue → add labels → comment pickup"]
+  HasIssue -->|"no (Scenario B)"| Create["gh issue create with labels + milestone"]
+  Adopt --> Plan["Post implementation plan as issue comment"]
+  Create --> Plan
+  Plan --> Branch["git checkout -b agentID/type/issueNum-desc"]
+  Branch --> Implement["Make changes (manifests, config, docs)"]
+  Implement --> Commit["git commit -m 'type: desc (#N) [agent]'"]
+  Commit --> Sync["git fetch origin main && git merge"]
+  Sync --> Push["git push -u origin HEAD"]
+  Push --> PR["gh pr create with labels + milestone + Closes #N"]
+  PR --> Report["Report PR URL"]
+```
 
-   **Scenario A — You received an existing issue** (assigned by user, orchestrator, or referenced in the task):
+**Branch prefixes:** `feat/`, `fix/`, `chore/`, `docs/`, `refactor/`
 
-   Read the issue, adopt it by adding your labels, and comment that you're picking it up:
+**Scenario A** — existing issue referenced by user/orchestrator: read, adopt labels, comment pickup.
+**Scenario B** — self-initiated: `gh issue create` with labels, milestone, agent footer.
 
-   ```bash
-   # Read the issue to understand requirements
-   gh issue view <issue-number> --repo holdennguyen/homelab
+**Implementation plan** (commented on issue before coding): approach, files to change, risks, docs to update.
 
-   # Add your agent label and any missing labels (--add-label won't duplicate existing ones)
-   gh issue edit <issue-number> \
-     --add-label "agent:<your-agent-id>,type:<type>,area:<area>,priority:<priority>" \
-     --repo holdennguyen/homelab
+**Commit format:** `<type>: <description> (#<issue-number>) [<agent-id>]`
 
-   # Assign to the current milestone if not already assigned
-   gh issue edit <issue-number> \
-     --milestone "<current-milestone>" \
-     --repo holdennguyen/homelab
-
-   # Comment that you're picking it up
-   gh issue comment <issue-number> --repo holdennguyen/homelab --body "$(cat <<'EOF'
-   Picking up this issue.
-
-   ---
-   Agent: <your-agent-id> | OpenClaw Homelab
-   EOF
-   )"
-   ```
-
-   **Scenario B — No existing issue (self-initiated work):**
-
-   Create a new issue:
-
-   ```bash
-   gh issue create \
-     --title "<type>: <description>" \
-     --body "$(cat <<'EOF'
-   <why this change is needed>
-
-   ---
-   Agent: <your-agent-id> | OpenClaw Homelab
-   EOF
-   )" \
-     --assignee holdennguyen \
-     --label "agent:<your-agent-id>,type:<type>,area:<area>,priority:<priority>" \
-     --milestone "<current-milestone>" \
-     --repo holdennguyen/homelab
-   ```
-
-   Capture the issue number from the output. If no open milestone exists, ask the orchestrator (or user) to create one before proceeding.
-
-   **How to decide:** If the user or orchestrator mentions an issue number (e.g., "fix #42", "address issue 42"), or if you were spawned with a task that references an existing issue, use Scenario A. Only use Scenario B when you discovered the problem yourself and no issue exists yet.
-
-2. **Plan the implementation and comment it on the issue** — before writing any code, post your plan as a comment:
-   ```bash
-   gh issue comment <issue-number> --repo holdennguyen/homelab --body "$(cat <<'EOF'
-   ## Implementation Plan
-
-   **Approach:** <high-level summary of what you'll do>
-
-   **Files to change:**
-   - `<path>` — <what and why>
-
-   **Risks / open questions:**
-   - <anything that could go wrong or needs clarification>
-
-   **Docs to update:**
-   - <list from the documentation matrix>
-
-   ---
-   Agent: <your-agent-id> | OpenClaw Homelab
-   EOF
-   )"
-   ```
-   The plan must cover: which files/services change, the approach and key decisions, risks or dependencies, and which docs need updating. For non-trivial changes or issues filed by someone else, wait for feedback before proceeding. For straightforward changes you filed yourself, proceed immediately after posting the plan.
-
-3. **Create a branch** from latest main:
-   ```bash
-   git checkout main && git pull origin main
-   git checkout -b <your-agent-id>/<type>/<issue-number>-<short-description>
-   ```
-
-   Branch naming convention:
-   | Prefix | Use for |
-   |---|---|
-   | `feat/` | New features, new services, new resources |
-   | `fix/` | Bug fixes, misconfigurations |
-   | `chore/` | Maintenance, dependency updates, cleanup |
-   | `docs/` | Documentation-only changes |
-   | `refactor/` | Restructuring without behavior change |
-
-4. **Make changes** to the appropriate files, referencing the plan from step 2:
-   - Kubernetes manifests: `k8s/apps/<service>/`
-   - ArgoCD applications: `k8s/apps/argocd/applications/`
-   - Terraform (Layer 0): `terraform/`
-   - Documentation: `k8s/apps/<service>/README.md` (single source of truth)
-
-5. **Commit** referencing the issue with agent tag:
-   ```bash
-   git add <files>
-   git commit -m "<type>: <description> (#<issue-number>) [<your-agent-id>]"
-   ```
-
-6. **Push and create a labeled PR** assigned to the same milestone as the issue. Reference the implementation plan from the issue:
-   ```bash
-   git push -u origin HEAD
-   gh pr create \
-     --title "<type>: <description>" \
-     --label "agent:<your-agent-id>,type:<type>,area:<area>,priority:<priority>" \
-     --assignee holdennguyen \
-     --milestone "<current-milestone>" \
-     --body "$(cat <<'EOF'
-   Closes #<issue-number>
-
-   ## Summary
-   - <bullet points: what changed and why>
-   - Implementation plan: #<issue-number> (comment)
-
-   ## Test plan
-   - [ ] ArgoCD syncs successfully
-   - [ ] Service health verified
-   - [ ] Documentation updated
-
-   ---
-   Agent: <your-agent-id> | OpenClaw Homelab
-   EOF
-   )"
-   ```
-
-7. **Report** the PR URL to the user or orchestrator agent.
+**PR body:** `Closes #N`, summary bullets, test plan checklist, agent footer.
 
 ### After merge
 
-**Before cleaning up, verify the PR was actually merged:**
-
-```bash
-gh pr view <number> --json state,mergedAt --jq '"state: \(.state), merged: \(.mergedAt // "NOT MERGED")"'
+```mermaid
+flowchart TD
+  Verify["gh pr view: check state + mergedAt"] --> Merged{MERGED?}
+  Merged -->|yes| Layer{"What changed?"}
+  Merged -->|"no (closed)"| Keep["DO NOT delete branch"]
+  Layer -->|"k8s manifests"| L1["ArgoCD auto-syncs ~3 min → verify apps"]
+  Layer -->|"terraform/"| L0["Manual terraform apply on host"]
+  Layer -->|"Docker image"| Docker["build-openclaw.sh + rollout restart"]
+  L1 --> Cleanup["Delete branch (local + remote)"]
+  L0 --> Cleanup
+  Docker --> Cleanup
 ```
-
-Only delete the branch if the state is `MERGED`. If the PR was closed without merging, the commits exist only on that branch — deleting it loses the work.
-
-- **Layer 1 (k8s manifests):** ArgoCD auto-syncs within ~3 minutes. Verify: `kubectl get applications -n argocd`
-- **Layer 0 (Terraform):** Requires manual `terraform apply` on the host after merge.
-- **Docker image changes:** Requires `./scripts/build-openclaw.sh` + `kubectl rollout restart` on the host.
 
 ### Keeping your branch up to date
 
@@ -390,12 +286,14 @@ git push origin main
 
 ## App of Apps pattern
 
-The root Application (`argocd-apps`) watches `k8s/apps/argocd/`. Each child Application CR in that directory points to a service's manifest directory.
-
-```
-k8s/apps/argocd/kustomization.yaml  →  lists Application CRs
-k8s/apps/argocd/applications/*.yaml  →  one per service
-k8s/apps/<service>/                  →  kustomize manifests
+```mermaid
+flowchart TD
+  Root["argocd-apps (root Application)"] -->|watches| ArgoDir["k8s/apps/argocd/"]
+  ArgoDir --> Kustomize[kustomization.yaml]
+  Kustomize --> App1["applications/svc1-app.yaml"]
+  Kustomize --> App2["applications/svc2-app.yaml"]
+  App1 -->|points to| Manifests1["k8s/apps/svc1/"]
+  App2 -->|points to| Manifests2["k8s/apps/svc2/"]
 ```
 
 ## Application management
@@ -417,10 +315,11 @@ kubectl get application <name> -n argocd -o jsonpath='{.status.sync.status}'
 
 ## Sync waves
 
-ESO uses sync waves to handle CRD dependencies:
-- Wave 0: `external-secrets` (installs CRDs)
-- Wave 1: `external-secrets-config` (applies ClusterSecretStore)
-- Default: all other applications (no ordering)
+```mermaid
+flowchart LR
+  W0["Wave 0: external-secrets (CRDs)"] --> W1["Wave 1: external-secrets-config (ClusterSecretStore)"]
+  W1 --> WD["Default: all other apps"]
+```
 
 ## Adding a new application
 
@@ -438,15 +337,16 @@ The homelab repository follows [Semantic Versioning 2.0.0](https://semver.org/) 
 
 ### Version bump rules
 
-The version bump for a release is determined by the **highest-impact change** among all PRs in the milestone:
+```mermaid
+flowchart TD
+  Scan["Scan milestone PRs"] --> Breaking{"Any semver:breaking?"}
+  Breaking -->|yes| Major["MAJOR bump"]
+  Breaking -->|no| Feat{"Any type:feat?"}
+  Feat -->|yes| Minor["MINOR bump"]
+  Feat -->|no| Patch["PATCH bump"]
+```
 
-| Condition | Bump | Example |
-|---|---|---|
-| Any PR has the `semver:breaking` label | **MAJOR** | Terraform state migration, removed service, renamed secrets that break consumers |
-| At least one `type:feat` PR (no breaking) | **MINOR** | New service, new agent, new skill, new capability |
-| Only `type:fix`, `type:chore`, `type:docs`, `type:refactor`, `type:security` PRs | **PATCH** | Bug fix, dependency update, doc improvement, security hardening |
-
-Priority order: MAJOR > MINOR > PATCH. A single breaking PR escalates the entire release to MAJOR.
+A single breaking PR escalates the entire release to MAJOR.
 
 ### What counts as breaking
 
@@ -470,26 +370,14 @@ Milestones are named with the target version: `vMAJOR.MINOR.PATCH` (e.g., `v0.3.
 
 ### Milestone lifecycle
 
-1. **Create** — `homelab-admin` (or the user) creates the next milestone:
-   ```bash
-   gh api repos/holdennguyen/homelab/milestones \
-     --method POST \
-     -f title="v<MAJOR>.<MINOR>.<PATCH>" \
-     -f description="<high-level goal for this release>"
-   ```
+```mermaid
+flowchart LR
+  Create["1. Create milestone (vX.Y.Z)"] --> Assign["2. Assign issues + PRs"]
+  Assign --> Track["3. Track progress (open vs closed)"]
+  Track --> Close["4. Close after release is cut"]
+```
 
-2. **Assign** — every agent assigns their issues and PRs to the current open milestone using `--milestone` on `gh issue create` and `gh pr create`
-
-3. **Track** — check milestone progress:
-   ```bash
-   gh api repos/holdennguyen/homelab/milestones --jq '.[] | select(.state=="open") | "\(.title): \(.open_issues) open, \(.closed_issues) closed"'
-   ```
-
-4. **Close** — when all issues in the milestone are resolved and the release is cut, close the milestone:
-   ```bash
-   gh api repos/holdennguyen/homelab/milestones/<milestone-number> \
-     --method PATCH -f state="closed"
-   ```
+Commands: `gh api repos/.../milestones --method POST` (create), `--milestone` flag on `gh issue/pr create` (assign), `--method PATCH -f state=closed` (close).
 
 ### Finding the current milestone
 
@@ -512,23 +400,16 @@ gh api repos/holdennguyen/homelab/milestones/<milestone-number> \
 
 ### Milestone reassessment (after incidents or scope changes)
 
-When an incident causes reverts, stale PRs are closed, or planned work is deferred, the milestone scope changes. The release manager must reassess:
-
-1. **Triage sibling PRs** — unreviewed PRs from the same batch as a reverted PR should be closed (see `incident-response` skill, Phase 6)
-2. **Move deferred issues** — parent issues of closed PRs go to the next milestone
-3. **Assign orphaned merged PRs** — any merged PR without a milestone must be assigned to the current one
-4. **Update the milestone description** — explain the scope change and why
-5. **Reassess the version bump** — if the only `type:feat` PRs were reverted, the bump may drop from MINOR to PATCH
-6. **Release what's shipped** — if the milestone has 0 open issues, cut the release with what's already merged
-
-```bash
-# Find orphaned merged PRs
-gh pr list --repo holdennguyen/homelab --state merged --json number,title,milestone \
-  --jq '.[] | select(.milestone == null) | "\(.number) | \(.title)"'
-
-# Update milestone description
-gh api repos/holdennguyen/homelab/milestones/<number> --method PATCH \
-  -f description="<updated scope>"
+```mermaid
+flowchart TD
+  Incident["Incident / scope change"] --> Triage["1. Triage sibling PRs (close unreviewed)"]
+  Triage --> Move["2. Move deferred issues to next milestone"]
+  Move --> Orphans["3. Assign orphaned merged PRs"]
+  Orphans --> Update["4. Update milestone description"]
+  Update --> Reassess["5. Reassess version bump (reverted feats?)"]
+  Reassess --> Release{"0 open issues?"}
+  Release -->|yes| Cut["6. Cut release with what shipped"]
+  Release -->|no| Wait[Continue working]
 ```
 
 ## Releases
@@ -537,42 +418,13 @@ Releases are cut when a milestone is complete. The `homelab-admin` orchestrator 
 
 ### Release process
 
-1. **Verify** all issues in the milestone are closed:
-   ```bash
-   gh api repos/holdennguyen/homelab/milestones --jq '.[] | select(.title=="<version>") | "open: \(.open_issues), closed: \(.closed_issues)"'
-   ```
-
-2. **Determine the version** by scanning the milestone's PRs for the highest semver impact:
-   ```bash
-   # Check for breaking changes
-   gh pr list --repo holdennguyen/homelab --state merged --label "semver:breaking" --search "milestone:<version>" --json number,title --jq '.[].title'
-   # Check for features
-   gh pr list --repo holdennguyen/homelab --state merged --label "type:feat" --search "milestone:<version>" --json number,title --jq '.[].title'
-   ```
-
-3. **Create the tag and GitHub Release** with auto-generated release notes:
-   ```bash
-   gh release create "v<MAJOR>.<MINOR>.<PATCH>" \
-     --repo holdennguyen/homelab \
-     --target main \
-     --title "v<MAJOR>.<MINOR>.<PATCH>" \
-     --generate-notes \
-     --latest
-   ```
-
-4. **Close the milestone**:
-   ```bash
-   gh api repos/holdennguyen/homelab/milestones/<milestone-number> \
-     --method PATCH -f state="closed"
-   ```
-
-5. **Create the next milestone** for upcoming work:
-   ```bash
-   gh api repos/holdennguyen/homelab/milestones \
-     --method POST \
-     -f title="v<next-version>" \
-     -f description="<goal>"
-   ```
+```mermaid
+flowchart TD
+  R1["1. Verify all milestone issues closed"] --> R2["2. Determine version (scan PR labels)"]
+  R2 --> R3["3. gh release create vX.Y.Z --generate-notes"]
+  R3 --> R4["4. Close milestone"]
+  R4 --> R5["5. Create next milestone"]
+```
 
 ### Release notes
 

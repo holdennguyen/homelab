@@ -78,36 +78,30 @@ For the full service inventory, see `k8s/apps/argocd/README.md` and the root `RE
 
 ## Delegation decision framework
 
-As homelab admin, you handle most tasks directly. Only delegate when deep specialist expertise genuinely adds value.
-
-| Signal | Handle yourself | Delegate |
-|---|---|---|
-| **Scope** | Status checks, manifest edits, config changes, service deployments, secret management, GitOps workflow | Deep domain work requiring extended specialist focus |
-| **Expertise** | General admin, k8s operations, ArgoCD, networking, routine RBAC, incident response | Full security audits, complex code development, comprehensive test suites |
-| **Complexity** | Single-service or multi-file changes, routine operations, standard troubleshooting | Multi-day investigations, cross-cutting refactors needing dedicated attention |
-
-**Agent selection (delegate only when specialist depth is needed):**
-
-| Task type | Agent | Examples |
-|---|---|---|
-| Complex Terraform refactoring, monitoring pipeline design | `devops-sre` | Multi-resource Terraform migrations, Prometheus recording rules |
-| Non-trivial code development | `software-engineer` | OpenClaw source changes, new scripts, Dockerfile rewrites |
-| Full security audits, vulnerability assessments | `security-analyst` | Cluster-wide RBAC audit, CVE response plan, compliance review |
-| Comprehensive test campaigns | `qa-tester` | Multi-service regression suites, post-migration validation |
-| AI-assisted code generation via Cursor CLI | `cursor-agent` | Script writing, bulk refactoring, code generation from prompts |
+```mermaid
+flowchart TD
+  Task[Incoming task] --> Scope{"Deep specialist expertise needed?"}
+  Scope -->|no| Self["Handle yourself (default)"]
+  Scope -->|yes| Agent{"Select agent"}
+  Agent -->|"Terraform, monitoring"| DevOps[devops-sre]
+  Agent -->|"Code development"| SE[software-engineer]
+  Agent -->|"Security audit"| SecAnalyst[security-analyst]
+  Agent -->|"Test campaigns"| QA[qa-tester]
+  Agent -->|"AI code gen, PR review"| Cursor[cursor-agent]
+```
 
 Default: handle it yourself. Delegate only when specialist depth genuinely adds value.
 
 ## Change impact assessment
 
-Before making or approving any change, assess its blast radius:
-
-| Impact level | Criteria | Required actions |
-|---|---|---|
-| **Low** | Single service, no shared resources, non-breaking | Execute directly, standard PR review |
-| **Medium** | Shared secrets, cross-namespace deps, port changes | Execute directly, verify downstream consumers after apply |
-| **High** | Multi-service impact, resource tuning across namespaces | Execute directly with documented rollback plan in the PR |
-| **Critical** | See critical risk classification below | **MUST** follow the critical risk protocol — confirmation required |
+```mermaid
+flowchart TD
+  Change[Assess change] --> Impact{"Blast radius?"}
+  Impact -->|"Single service, no shared resources"| Low["Low → execute directly"]
+  Impact -->|"Shared secrets, cross-ns deps"| Med["Medium → execute + verify downstream"]
+  Impact -->|"Multi-service, cross-ns tuning"| High["High → execute + rollback plan in PR"]
+  Impact -->|"Data destruction / security / cluster-wide"| Crit["Critical → MUST confirm before execute"]
+```
 
 ### Critical risk classification
 
@@ -180,25 +174,32 @@ kubectl get events -A --sort-by='.metadata.creationTimestamp' | tail -20
 
 ## GitOps workflow
 
-All changes follow: edit manifests in `k8s/apps/` → commit → push to `main` → ArgoCD syncs within ~3 minutes. ArgoCD has `selfHeal: true` and `prune: true` on all apps, so manual `kubectl apply` changes are reverted automatically.
+```mermaid
+flowchart LR
+  Edit["Edit k8s/apps/*"] --> Commit[Commit] --> Push["Push to main"]
+  Push -->|"~3 min"| ArgoCD["ArgoCD syncs (selfHeal + prune)"]
+  ArgoCD --> Cluster[Cluster updated]
+```
 
-The repo structure:
-- `terraform/` — Layer 0 bootstrap (ArgoCD Helm release, bootstrap secrets, Infisical App CR)
-- `k8s/apps/` — Layer 1 GitOps manifests (one directory per service)
-- `k8s/apps/argocd/` — App of Apps: AppProjects + Application CRs
-- `skills/` — OpenClaw skills (mounted at `/skills` in this pod)
-- `agents/workspaces/` — Agent AGENTS.md personalities (copied into pod by init container)
-- `docs/` — MkDocs documentation site (auto-deploys to GitHub Pages on push)
+Manual `kubectl apply` changes are reverted automatically by selfHeal.
+
+**Repo structure:** `terraform/` (Layer 0) · `k8s/apps/` (Layer 1 manifests) · `k8s/apps/argocd/` (App of Apps) · `skills/` (OpenClaw, mounted at `/skills`) · `agents/workspaces/` (personalities, copied by init container) · `docs/` (MkDocs, auto-deploys to GitHub Pages)
 
 ## Adding a new service
 
-1. Create `k8s/apps/<service>/` with manifests and `kustomization.yaml`
-2. Create `k8s/apps/argocd/applications/<service>-app.yaml` (assign to correct project, include standard labels)
-3. Add to `k8s/apps/argocd/kustomization.yaml`
-4. If the service needs secrets: add to Infisical, create ExternalSecret, reference in deployment
-5. If the service needs a Tailscale endpoint: `tailscale serve --bg --https <port> http://localhost:<nodeport>`
-6. Update root `README.md` — architecture diagram, repository structure, deployed services table, documentation index
-7. Push to `main`
+```mermaid
+flowchart TD
+  A["1. Create k8s/apps/svc/ + kustomization.yaml"] --> B["2. Create argocd/applications/svc-app.yaml"]
+  B --> C["3. Add to argocd/kustomization.yaml"]
+  C --> Secrets{"Needs secrets?"}
+  Secrets -->|yes| D["4. Add to Infisical + ExternalSecret"]
+  Secrets -->|no| Tailscale
+  D --> Tailscale{"Needs Tailscale?"}
+  Tailscale -->|yes| E["5. tailscale serve --bg --https"]
+  Tailscale -->|no| F
+  E --> F["6. Update root README.md"]
+  F --> G["7. Push to main"]
+```
 
 ## Adding secrets for a service
 

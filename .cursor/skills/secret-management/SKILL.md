@@ -5,33 +5,32 @@ description: Manage secrets through the Infisical to External Secrets Operator t
 
 # Secret Management
 
-All secrets flow through: Infisical (source of truth) → ESO (sync) → K8s Secret (consumed by pods). Secrets never live in git.
+```mermaid
+flowchart LR
+  Infisical["Infisical (source of truth)"] -->|ESO sync| ExternalSecret[ExternalSecret CR]
+  ExternalSecret -->|creates| K8sSecret[K8s Secret]
+  K8sSecret -->|"secretKeyRef"| Pod[Pod env vars]
+```
+
+Secrets never live in git.
 
 ## Adding a Secret
 
-1. Add the key/value to Infisical UI under `homelab / prod`
-2. Add an entry to `k8s/apps/<service>/external-secret.yaml`:
-   ```yaml
-   - secretKey: MY_KEY
-     remoteRef:
-       key: MY_KEY
-   ```
-3. Add the env var to the service's `deployment.yaml`:
-   ```yaml
-   - name: MY_KEY
-     valueFrom:
-       secretKeyRef:
-         name: <service>-secret
-         key: MY_KEY
-   ```
-4. Update `docs/secret-management.md` and the service's README with the new key
-5. Push to `main` — ArgoCD syncs, ESO creates the K8s Secret
+```mermaid
+flowchart TD
+  A["1. Add key/value to Infisical (homelab/prod)"] --> B["2. Add entry to external-secret.yaml"]
+  B --> C["3. Add secretKeyRef to deployment.yaml"]
+  C --> D["4. Update docs + service README"]
+  D --> E["5. Push to main → ArgoCD syncs → ESO creates Secret"]
+```
 
 ## Rotating a Secret
 
-1. Update the value in Infisical
-2. Force ESO re-sync: `kubectl annotate externalsecret <name> -n <ns> force-sync=$(date +%s) --overwrite`
-3. Restart the consuming deployment: `kubectl rollout restart deployment/<name> -n <ns>`
+```mermaid
+flowchart TD
+  R1["1. Update value in Infisical"] --> R2["2. Force ESO re-sync (annotate externalsecret)"]
+  R2 --> R3["3. Restart consuming deployment"]
+```
 
 ## Health Check
 

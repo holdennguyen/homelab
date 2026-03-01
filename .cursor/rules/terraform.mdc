@@ -10,10 +10,14 @@ Terraform manages Layer 0 only — the bootstrap layer that creates ArgoCD and i
 
 ## What Terraform Owns
 
-- ArgoCD Helm release and configuration
-- Root Application CR (`argocd-apps`) and Infisical Application CR
-- Bootstrap K8s Secrets (Infisical encryption key, auth secret, machine identity)
-- ArgoCD root Application and Infisical Application CRs
+```mermaid
+flowchart TD
+  TF[terraform apply] --> ArgoCD[ArgoCD Helm Release + Config]
+  TF --> RootApp["Root App CR (argocd-apps)"]
+  TF --> InfApp[Infisical Application CR]
+  TF --> BootSecrets["Bootstrap K8s Secrets (encryption key, auth, machine identity)"]
+  RootApp -->|hands off to| GitOps["Layer 1: GitOps (ArgoCD)"]
+```
 
 ## Rules
 

@@ -30,13 +30,14 @@ Validate deployments, test service health, and catch regressions across the home
 
 ### Test types and when to apply them
 
-| Test type | When | What it validates | Who triggers |
-|---|---|---|---|
-| **Pre-deploy review** | Before merging a PR | YAML validity, label conventions, resource limits, docs | On PR review |
-| **Smoke test** | After ArgoCD syncs a change | Service starts, health endpoint 200, no crashloops | After every merge to main |
-| **Regression test** | After any infrastructure change | Existing services still healthy, secrets synced, endpoints reachable | After merges touching shared resources |
-| **Full cluster validation** | Weekly or after major changes | All services, all secrets, all ArgoCD apps | On demand or scheduled |
-| **Chaos/failure test** | Before adding critical services | Service recovers from pod kill, secret rotation, node restart | On demand |
+```mermaid
+flowchart LR
+  PR["PR created"] --> PreDeploy["Pre-deploy: YAML, labels, limits, docs"]
+  Merge["Merge to main"] --> Smoke["Smoke: starts, health 200, no crashloops"]
+  InfraChange["Infra change"] --> Regression["Regression: existing services healthy"]
+  Major["Major change / weekly"] --> Full["Full: all services + secrets + apps"]
+  Critical["Before critical service"] --> Chaos["Chaos: pod kill, secret rotation recovery"]
+```
 
 ### Test priority matrix
 

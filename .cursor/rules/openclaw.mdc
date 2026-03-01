@@ -12,11 +12,14 @@ OpenClaw runs as a multi-agent AI gateway in the `openclaw` namespace. It uses a
 
 ## Agents
 
-Agents are defined in two places:
-- **Config:** `k8s/apps/openclaw/configmap.yaml` → `openclaw.json` → `agents.list` (id, name, workspace, model)
-- **Personality:** `agents/workspaces/<id>/AGENTS.md` (single source of truth, copied into pod workspace by init container)
-
-Each agent has a dedicated workspace directory on the PVC at `/data/workspaces/<id>/`.
+```mermaid
+flowchart TD
+  Config["configmap.yaml → agents.list (id, name, workspace, model)"]
+  Personality["agents/workspaces/ID/AGENTS.md"]
+  Config --> Pod[OpenClaw Pod]
+  Personality -->|"init container copies"| PVC["/data/workspaces/ID/"]
+  PVC --> Pod
+```
 
 ## Skills
 
@@ -50,21 +53,32 @@ When changing models: update `agents.defaults.model` AND every `agents.list[].mo
 
 ## Adding a New Agent
 
-1. Add the agent entry to `k8s/apps/openclaw/configmap.yaml` under `agents.list` — include `model` as object form `{ "primary", "fallbacks" }` and a `skills` array with only the relevant skill names
-2. Create `agents/workspaces/<id>/AGENTS.md` with the agent personality
-3. Add the agent ID to the init container's `for` loop in `k8s/apps/openclaw/deployment.yaml`
-4. Add the agent ID to `tools.agentToAgent.allow` in the configmap
-5. Push to `main` and restart: `kubectl rollout restart deployment/openclaw -n openclaw`
+```mermaid
+flowchart TD
+  A1["1. Add to agents.list in configmap.yaml (model as object form)"] --> A2["2. Create agents/workspaces/ID/AGENTS.md"]
+  A2 --> A3["3. Add ID to init container for-loop in deployment.yaml"]
+  A3 --> A4["4. Add ID to tools.agentToAgent.allow in configmap"]
+  A4 --> A5["5. Push to main → rollout restart"]
+```
 
 ## Adding a New Skill
 
-1. Create `skills/<name>/SKILL.md` with the frontmatter above
-2. Add the skill name to the `skills` array of each agent that should use it in the configmap
-3. Push to `main` and restart: `kubectl rollout restart deployment/openclaw -n openclaw`
+```mermaid
+flowchart TD
+  S1["1. Create skills/NAME/SKILL.md with frontmatter"] --> S2["2. Add skill name to agents skills array in configmap"]
+  S2 --> S3["3. Push to main → rollout restart"]
+```
 
 ## Sub-agent Spawning
 
-- `maxSpawnDepth: 2` — orchestrator (depth 0) → sub-agents (depth 1) → leaf workers (depth 2)
-- `maxConcurrent: 4` — max parallel sub-agents
-- `maxChildrenPerAgent: 3` — max children per agent session
-- Sub-agents communicate back via `sessions_announce`
+```mermaid
+flowchart TD
+  Orch["Orchestrator (depth 0)"] -->|"max 4 concurrent, max 3 children"| Sub1["Sub-agent (depth 1)"]
+  Orch --> Sub2["Sub-agent (depth 1)"]
+  Sub1 --> Leaf1["Leaf worker (depth 2)"]
+  Sub1 --> Leaf2["Leaf worker (depth 2)"]
+  Leaf1 -.->|sessions_announce| Orch
+  Sub2 -.->|sessions_announce| Orch
+```
+
+`maxSpawnDepth: 2`, `maxConcurrent: 4`, `maxChildrenPerAgent: 3`.

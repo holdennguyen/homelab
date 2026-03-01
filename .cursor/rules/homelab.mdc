@@ -9,9 +9,24 @@ This is a GitOps-driven homelab running on a Mac mini M4 with OrbStack Kubernete
 
 ## Architecture
 
-- **Layer 0 (Terraform):** Bootstraps ArgoCD, bootstrap secrets, Infisical Application CR. Run once.
-- **Layer 1 (ArgoCD):** App of Apps pattern syncs all services from `k8s/apps/` on every push to `main`.
-- **Layer 2 (Infisical + ESO):** Secrets flow from Infisical → External Secrets Operator → K8s Secrets. Never in git.
+```mermaid
+flowchart TD
+  subgraph L0["Layer 0 — Terraform (run once)"]
+    TF[terraform apply] --> ArgoCDHelm[ArgoCD Helm Release]
+    TF --> BootSecrets[Bootstrap Secrets]
+    TF --> InfisicalApp[Infisical App CR]
+  end
+  subgraph L1["Layer 1 — ArgoCD (every push to main)"]
+    AppOfApps[App of Apps] -->|syncs| Services["k8s/apps/* manifests"]
+  end
+  subgraph L2["Layer 2 — Secrets (never in git)"]
+    Infisical[Infisical] --> ESO[External Secrets Operator]
+    ESO --> K8sSecrets[K8s Secrets]
+  end
+  ArgoCDHelm --> AppOfApps
+  GitPush["git push main"] --> L1
+  K8sSecrets -->|consumed by| Services
+```
 
 ## Core Rules
 
