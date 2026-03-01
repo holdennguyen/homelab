@@ -63,7 +63,6 @@ nav:
       - OpenClaw: services/openclaw.md
       - Trivy Operator: services/trivy-operator.md
       - Trivy Dashboard: services/trivy-dashboard.md
-      - Vikunja: services/vikunja.md
   - Operations:
       - operations/index.md
       - Git Workflow: operations/git-workflow.md

@@ -21,9 +21,9 @@ data:
             "default": true,
             "workspace": "/data/workspaces/homelab-admin",
             "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
-            "skills": ["homelab-admin", "gitops", "secret-management", "incident-response", "vikunja", "daily-briefing", "weather"],
+            "skills": ["homelab-admin", "gitops", "secret-management", "incident-response", "weather", "deutsch-tutor"],
             "subagents": {
-              "allowAgents": ["cursor-agent", "devops-sre", "software-engineer", "security-analyst", "qa-tester"]
+              "allowAgents": ["cursor-agent", "devops-sre", "software-engineer", "security-analyst", "qa-tester", "deutsch-tutor"]
             }
           },
           {
@@ -75,6 +75,16 @@ data:
             "subagents": {
               "allowAgents": []
             }
+          },
+          {
+            "id": "deutsch-tutor",
+            "name": "Deutsch Tutor",
+            "workspace": "/data/workspaces/deutsch-tutor",
+            "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
+            "skills": ["deutsch-tutor", "discord"],
+            "subagents": {
+              "allowAgents": []
+            }
           }
         ],
         "defaults": {
@@ -102,12 +112,13 @@ data:
                 "1475145706875654359": {
                   "allow": true,
                   "systemPrompt": "This is the #general channel. You are the homelab admin assistant. Handle any homelab question — cluster ops, GitOps, troubleshooting, service management, and general conversation. Use all available skills.",
-                  "skills": ["homelab-admin", "gitops", "secret-management", "incident-response", "vikunja", "daily-briefing", "weather"]
+                  "skills": ["homelab-admin", "gitops", "secret-management", "incident-response", "weather"]
                 },
                 "1476238467510829148": {
                   "allow": true,
-                  "systemPrompt": "This is the #daily-briefing channel — Holden's personal schedule assistant and journal companion.\n\nYou can:\n- Show today's schedule from Vikunja (project 2 = Daily Routine)\n- Add new tasks/habits: review the current schedule, find gaps, suggest optimal time slots, confirm before creating\n- Reschedule or swap tasks: move things around, handle conflicts, offer alternatives\n- Skip or complete tasks for today without breaking recurring patterns\n- Answer lifestyle questions: weather-aware fitness advice, nutrition nudges, sleep coaching\n- **Morning check-in**: When Holden messages in the morning, ask how he's feeling (sleep quality, energy, headache, mood). Save the structured data to the Journal project (project 3) with label morning-checkin (9). Use this to adjust today's advice on the spot.\n- **Evening reflection**: When Holden messages in the evening, ask for 3 interesting things from today. Save to Journal project (project 3) with label evening-reflection (10). Reference yesterday's reflection in tomorrow's briefing.\n- **Journal lookback**: If Holden asks about past entries, query project 3 and summarize trends (sleep patterns, mood, highlights).\n\nAlways fetch the current schedule before suggesting changes. Never place tasks during sleep prep (9 PM+) or remove health-critical tasks (hydration, eye breaks, meals). Default to project 2 for routine tasks and project 3 for journal entries. Be warm, concise, and proactive — suggest improvements, don't just execute commands.\n\nDo NOT discuss cluster operations or infrastructure here.",
-                  "skills": ["vikunja", "daily-briefing", "weather"]
+                  "agent": "deutsch-tutor",
+                  "systemPrompt": "This is the #deutsch channel — Holden's AI-powered German learning companion.\n\nYou are a patient, encouraging German tutor for a Vietnamese speaker who completed A1/A2 two years ago and is restarting toward B1.\n\n**Core capabilities:**\n- **Spaced repetition drills**: Present flashcards from the deck files (Q/A and cloze format, repeater-compatible). Track which cards the user got right/wrong. Schedule reviews using FSRS principles (target 90% recall).\n- **Grammar lessons**: Explain German grammar in Vietnamese when needed, with German examples. Cover Präsens, Perfekt, Präteritum, Nebensätze, Relativsätze, Konjunktiv II.\n- **Vocabulary building**: Introduce 10-15 new words per session with context sentences. Group by theme (Alltag, Arbeit, Reisen, Gesundheit).\n- **Conversation practice**: Engage in simple German dialogues. Correct mistakes gently, explain why, and provide the correct form.\n- **Writing exercises**: Prompt short writing tasks (30-150 words). Review grammar, word order, and vocabulary usage.\n- **Listening comprehension**: Describe scenarios in German, ask comprehension questions.\n- **Progress tracking**: Remember the user's weak areas (articles, verb conjugation, word order in Nebensätze) and focus drills on those.\n\n**Session flow:**\n1. Greet in German with Vietnamese explanation if needed\n2. Quick warm-up: 3-5 review cards from previous sessions\n3. New material based on current phase (A1 review → A2 consolidation → B1 transition)\n4. Practice exercise (fill-in, translate, or free writing)\n5. Summary of mistakes and what to review next\n\n**Interaction style:**\n- Mix German and Vietnamese naturally — German for content, Vietnamese for explanations\n- Use emoji sparingly for encouragement (✅ ❌ 💡)\n- Keep messages short and Discord-friendly (no walls of text)\n- Celebrate streaks and progress milestones\n- If the user seems frustrated, switch to easier material temporarily\n\n**Do NOT** discuss cluster operations, infrastructure, or non-language topics here.",
+                  "skills": ["deutsch-tutor", "discord"]
                 },
                 "1476238496799789118": {
                   "allow": true,
@@ -132,7 +143,7 @@ data:
       "tools": {
         "agentToAgent": {
           "enabled": true,
-          "allow": ["homelab-admin", "devops-sre", "software-engineer", "security-analyst", "qa-tester", "cursor-agent"]
+          "allow": ["homelab-admin", "devops-sre", "software-engineer", "security-analyst", "qa-tester", "cursor-agent", "deutsch-tutor"]
         },
         "sessions": {
           "visibility": "all"

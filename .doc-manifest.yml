@@ -47,8 +47,7 @@ documents:
   - doc: k8s/apps/openclaw/README.md
     sources:
       - k8s/apps/openclaw/
-      - skills/daily-briefing/
-      - skills/vikunja/
+      - skills/deutsch-tutor/
       - skills/incident-response/
 
   - doc: k8s/apps/trivy-operator/README.md
@@ -58,11 +57,6 @@ documents:
   - doc: k8s/apps/trivy-dashboard/README.md
     sources:
       - k8s/apps/trivy-dashboard/
-
-  - doc: k8s/apps/vikunja/README.md
-    sources:
-      - k8s/apps/vikunja/
-      - skills/vikunja/
 
   - doc: terraform/README.md
     sources:
@@ -87,12 +81,9 @@ documents:
     sources:
       - k8s/apps/external-secrets/
       - k8s/apps/infisical/
-      - k8s/apps/vikunja/external-secret.yaml
-
   - doc: docs/infrastructure/networking.md
     sources:
       - k8s/apps/networking-policies/
-      - k8s/apps/vikunja/vikunja-service.yaml
 
   - doc: docs/infrastructure/security.md
     sources:
@@ -102,8 +93,6 @@ documents:
       - k8s/apps/openclaw/external-secret.yaml
       - k8s/apps/namespace-security/
       - k8s/apps/networking-policies/
-      - k8s/apps/vikunja/vikunja-deployment.yaml
-      - k8s/apps/vikunja/external-secret.yaml
 
   - doc: docs/operations/ai-agents.md
     sources:

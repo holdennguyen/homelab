@@ -18,7 +18,6 @@ resources:
   - applications/authentik-app.yaml
   - applications/authentik-config-app.yaml
   - applications/openclaw-app.yaml
-  - applications/vikunja-app.yaml
   - applications/networking-policies-app.yaml
   - applications/namespace-security-app.yaml
   - applications/trivy-operator-app.yaml
