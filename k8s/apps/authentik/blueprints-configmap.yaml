@@ -67,16 +67,3 @@ data:
           meta_icon: https://api.iconify.design/mdi/rocket-launch-outline.svg?color=%236c63ff
           meta_description: Modern Startup Scaffolding CLI
           meta_publisher: Homelab
-      - model: authentik_core.application
-        id: app-vikunja
-        state: present
-        identifiers:
-          slug: vikunja
-        attrs:
-          name: Vikunja
-          slug: vikunja
-          group: Productivity
-          meta_launch_url: https://holdens-mac-mini.story-larch.ts.net:8449
-          meta_icon: https://avatars.githubusercontent.com/u/41270016?s=200&v=4
-          meta_description: Todo List & Task Management
-          meta_publisher: Homelab

@@ -1,6 +1,6 @@
 # Authentik (SSO / Identity Provider)
 
-Authentik provides **Single Sign-On (SSO)** for the homelab via **OpenID Connect (OIDC)**. One login, one password for Grafana, ArgoCD, and Vikunja.
+Authentik provides **Single Sign-On (SSO)** for the homelab via **OpenID Connect (OIDC)**. One login, one password for Grafana and ArgoCD.
 
 ## Access
 
@@ -24,13 +24,11 @@ flowchart TD
     subgraph services["Service OIDC integration"]
         Grafana["Grafana\nauth.generic_oauth"]
         ArgoCD["ArgoCD\noidc.config"]
-        Vikunja["Vikunja\nauth.openid"]
     end
 
     User["User"] -- "login" --> Server
     Server -- "OIDC token" --> Grafana
     Server -- "OIDC token" --> ArgoCD
-    Server -- "OIDC token" --> Vikunja
 ```
 
 ## Directory Contents
@@ -62,7 +60,6 @@ Each service has a dedicated OIDC provider in Authentik with its own client ID a
 |---|---|---|---|
 | Grafana | `grafana` | `https://holdens-mac-mini.story-larch.ts.net:8444/login/generic_oauth` | Infisical: `GRAFANA_OAUTH_CLIENT_SECRET` |
 | ArgoCD | `argocd` | `https://holdens-mac-mini.story-larch.ts.net:8443/auth/callback` | Terraform: `argocd_oidc_client_secret` |
-| Vikunja | `vikunja` | `https://holdens-mac-mini.story-larch.ts.net:8449/auth/openid/authentik` | Infisical: `VIKUNJA_OIDC_CLIENT_SECRET` |
 
 All providers use **RS256** signing (asymmetric keys). Scope mappings assigned: `openid`, `email`, `profile`.
 
@@ -74,7 +71,6 @@ All services enforce SSO-only access — local login forms are disabled:
 |---|---|
 | ArgoCD | `configs.cm.admin.enabled: false` — admin login disabled, RBAC default `role:admin` for all SSO users |
 | Grafana | `auth.disable_login_form: true`, `auto_login: true` — auto-redirects to Authentik |
-| Vikunja | `service.enableregistration: false` — local registration disabled, OIDC login available via config file |
 
 ## Configuration
 
@@ -105,8 +101,6 @@ All OIDC providers are created via the Authentik API using the bootstrap token. 
 
 **ArgoCD** — Client-side configured in Terraform (`argocd.tf`) via `configs.cm.oidc.config`. Client secret stored in `argocd-secret` via Terraform `set_sensitive`. Requires `terraform apply` to update.
 
-**Vikunja** — Client-side configured via `config.yml` ConfigMap mounted at `/etc/vikunja/config.yml`. Client secret mounted from `vikunja-db-secret` ExternalSecret as a file at `/secrets/oidc-client-secret`.
-
 ## Networking
 
 | Layer | Value |
@@ -132,7 +126,6 @@ tailscale serve --bg http://localhost:30500
 | OpenClaw | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8447` |
 | Trivy Dashboard | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8448` |
 | LaunchFast | Bookmark | `https://holdens-mac-mini.story-larch.ts.net:8446` |
-| Vikunja | OIDC (`auth.openid`) | `https://holdens-mac-mini.story-larch.ts.net:8449` |
 | Homelab Docs | Bookmark | `https://holdennguyen.github.io/homelab` |
 
 ## Adding a new Bookmark Application
@@ -322,7 +315,7 @@ kubectl get application authentik authentik-config -n argocd
 | "Login failed" on Grafana/ArgoCD | Redirect URI mismatch | Check the redirect URI in Authentik matches exactly (scheme, host, port, path) |
 | Authentik returns 502 | Server pod not ready | `kubectl get pods -n authentik` |
 | "Invalid client" error | Wrong client_id or secret | Verify the secret in Infisical matches what's in Authentik provider |
-| OIDC login button not showing | Config not applied | For ArgoCD: run `terraform apply`; for Grafana/Vikunja: wait for ArgoCD sync |
+| OIDC login button not showing | Config not applied | For ArgoCD: run `terraform apply`; for Grafana: wait for ArgoCD sync |
 | 403 `insufficient_scope` on userinfo | Provider missing scope mappings | Assign `openid`, `email`, `profile` scope mappings to the provider in Authentik |
 | ArgoCD `malformed jwt: unexpected algorithm HS256` | Provider using HS256 instead of RS256 | Update the provider's signing key to an RS256 keypair in Authentik |
 | ArgoCD shows no applications after SSO login | RBAC policy.default is empty | Set `configs.rbac.policy.default: role:admin` in Terraform |

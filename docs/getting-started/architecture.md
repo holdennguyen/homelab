@@ -66,7 +66,7 @@ Applications are organized into three **AppProjects** that scope which repos, na
 |---|---|---|
 | `secrets` | Secret management infrastructure | `infisical`, `external-secrets`, `external-secrets-config` |
 | `data` | Databases and data stores | (reserved for future use) |
-| `apps` | User-facing applications | `monitoring`, `authentik`, `openclaw`, `trivy-operator`, `trivy-operator-vulnerability-scanner`, `trivy-dashboard`, `vikunja`, `namespace-security`, `networking-policies` |
+| `apps` | User-facing applications | `monitoring`, `authentik`, `openclaw`, `trivy-operator`, `trivy-operator-vulnerability-scanner`, `trivy-dashboard`, `namespace-security`, `networking-policies` |
 | `default` | Bootstrap only | `argocd-apps` (root) |
 
 ```mermaid
@@ -98,7 +98,6 @@ flowchart LR
             OCApp["openclaw"]
             TrivyApp["trivy-operator"]
             TrivyDashApp["trivy-dashboard"]
-            VikApp["vikunja"]
             NSApp["namespace-security"]
             NPApp["networking-policies"]
         end
@@ -216,22 +215,14 @@ flowchart TD
         TrivyDashPod["Trivy Dashboard\nNodePort :30448"]
     end
 
-    subgraph vikunjaNs["vikunja namespace"]
-        VikunjaPod["Vikunja\nNodePort :30888"]
-        VikunjaPG["PostgreSQL\n(Vikunja internal)"]
-        VikunjaPod --> VikunjaPG
-    end
 
     AuthentikPod -. "OIDC" .-> GrafanaPod
     AuthentikPod -. "OIDC" .-> ArgoServer
-    AuthentikPod -. "OIDC" .-> VikunjaPod
     ESOPod --> CSS
     CSS -- "Universal Auth" --> InfisicalPod
     CSS -- "ExternalSecret" --> OpenClawPod
-    CSS -- "ExternalSecret" --> VikunjaPod
     OpenClawPod -- "primary" --> OpenRouterAPI["OpenRouter\nstepfun/step-3.5-flash:free"]
     OpenClawPod -. "fallback" .-> GeminiAPI["Google Gemini\ngemini-2.5-pro"]
-    OpenClawPod -- "REST API\nVikunja tasks" --> VikunjaPod
     ArgoController -- "poll git" --> GitHub["GitHub\nholdennguyen/homelab"]
 ```
 
@@ -246,7 +237,6 @@ Services are exposed through **Tailscale Serve**, which provides automatic TLS c
 | Grafana | `:30090` | `https://holdens-mac-mini.story-larch.ts.net:8444` | 8444 | SSO via Authentik |
 | Infisical | `:30445` | `https://holdens-mac-mini.story-larch.ts.net:8445` | 8445 | Local admin |
 | OpenClaw | `:30789` | `https://holdens-mac-mini.story-larch.ts.net:8447` | 8447 | Local |
-| Vikunja | `:30888` | `https://holdens-mac-mini.story-larch.ts.net:8449` | 8449 | SSO via Authentik |
 | Trivy Dashboard | `:30448` | `https://holdens-mac-mini.story-larch.ts.net:8448` | 8448 | Bookmark via Authentik |
 
 For the full networking reference, see [docs/networking.md](../infrastructure/networking.md).
@@ -293,7 +283,6 @@ homelab/
 │       ├── openclaw/               # OpenClaw AI gateway manifests
 │       ├── trivy-operator/         # Trivy vulnerability scanner (README only; deployed via Helm)
 │       ├── trivy-dashboard/       # Trivy Operator Dashboard web UI
-│       ├── vikunja/               # Vikunja todo list app with OIDC SSO
 │       ├── namespace-security/     # Pod Security Standard labels for namespaces
 │       └── networking-policies/    # Default-deny NetworkPolicies for all namespaces
 ├── docs/                           # MkDocs documentation site

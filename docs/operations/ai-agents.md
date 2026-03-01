@@ -351,7 +351,7 @@ Each agent has a `skills` allowlist in the configmap that restricts which skills
 
 | Agent | Tier | Assigned Skills |
 |---|---|---|
-| `homelab-admin` | Orchestrator | `homelab-admin`, `gitops`, `secret-management`, `incident-response`, `vikunja`, `daily-briefing`, `weather` |
+| `homelab-admin` | Orchestrator | `homelab-admin`, `gitops`, `secret-management`, `incident-response`, `weather`, `deutsch-tutor` |
 | `cursor-agent` | Senior lead | `cursor-agent`, `gitops`, `software-engineer`, `security-analyst`, `qa-tester` |
 | `devops-sre` | Junior | `devops-sre`, `gitops`, `secret-management`, `incident-response` |
 | `software-engineer` | Junior | `software-engineer`, `gitops` |
@@ -398,8 +398,7 @@ Skills provide domain-specific knowledge and commands to agents. They live in `s
 | `incident-response` | Incident triage, rollback procedures, pre-merge validation, post-incident documentation |
 | `secret-management` | Infisical → ESO → K8s pipeline operations |
 | `cursor-agent` | Cursor CLI bridge: installation, automation, handoff protocol, code generation workflows |
-| `vikunja` | Vikunja task management API — CRUD tasks, Discord notifications, daily routine (project 2), journal (project 3) with check-ins/reflections, schedule-aware task management |
-| `daily-briefing` | AI morning briefing — weather, tasks, journal-driven advice, owner health profile, weekly schedule with nutrition targets |
+| `deutsch-tutor` | AI German language tutor — spaced repetition (FSRS), flashcard decks (A1/A2/B1), grammar lessons, conversation practice, Vietnamese explanations |
 | `weather` | Real-time weather via Open-Meteo and wttr.in (no API key required) |
 
 ### Skill Format

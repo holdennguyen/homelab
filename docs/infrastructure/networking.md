@@ -48,9 +48,6 @@ flowchart TD
             subgraph trivyDashNs["trivy-dashboard namespace"]
                 TrivyDashSvc["trivy-dashboard\nNodePort 30448"]
             end
-            subgraph vikunjaNs["vikunja namespace"]
-                VikunjaSvc["vikunja\nNodePort 30888"]
-            end
         end
 
         TLS443 -- "http://localhost:30500" --> AuthentikSvc
@@ -58,7 +55,6 @@ flowchart TD
         TLS8444 -- "http://localhost:30090" --> GrafanaSvc
             TLS8445["HTTPS :8445"] -- "http://localhost:30445" --> InfisicalSvc
             TLS8448["HTTPS :8448"] -- "http://localhost:30448" --> TrivyDashSvc
-            TLS8449["HTTPS :8449"] -- "http://localhost:30888" --> VikunjaSvc
     end
 
     iPhone -- "https://holdens-mac-mini\n.story-larch.ts.net" --> TLS443
@@ -111,7 +107,6 @@ sequenceDiagram
 | Infisical | 8080 | 30445 | `http://localhost:30445` |
 | Trivy Dashboard | 8900 | 30448 | `http://localhost:30448` |
 | OpenClaw | 18789 | 30789 | `http://localhost:30789` |
-| Vikunja | 3456 | 30888 | `http://localhost:30888` |
 
 ## Layer 2: Tailscale Serve
 
@@ -140,9 +135,6 @@ tailscale serve --bg --https 8448 http://localhost:30448
 
 # OpenClaw — custom HTTPS port (8447)
 tailscale serve --bg --https 8447 http://localhost:30789
-
-# Vikunja — custom HTTPS port (8449)
-tailscale serve --bg --https 8449 http://localhost:30888
 ```
 
 The `--bg` flag runs the proxy as a persistent background service that survives terminal sessions.
@@ -226,9 +218,6 @@ tailscale serve --https=8448 off
 # Stop OpenClaw proxy
 tailscale serve --https=8447 off
 
-# Stop Vikunja proxy
-tailscale serve --https=8449 off
-
 # Reset all serve config
 tailscale serve reset
 ```
@@ -256,7 +245,6 @@ Tailscale's MagicDNS automatically resolves `<hostname>.story-larch.ts.net` to t
 | LaunchFast | `https://holdens-mac-mini.story-larch.ts.net:8446` | 8446 | SSO portal bookmark |
 | OpenClaw | `https://holdens-mac-mini.story-larch.ts.net:8447` | 8447 | SSO portal bookmark |
 | Trivy Dashboard | `https://holdens-mac-mini.story-larch.ts.net:8448` | 8448 | SSO portal bookmark |
-| Vikunja | `https://holdens-mac-mini.story-larch.ts.net:8449` | 8449 | SSO via Authentik |
 
 ### Tailscale Serve vs Funnel
 
@@ -311,9 +299,6 @@ flowchart TD
                 subgraph openclaw_ns["openclaw ns"]
                     OpenClawSvc["openclaw\nNodePort 30789"]
                 end
-                subgraph vikunja_ns["vikunja ns"]
-                    VikunjaSvc2["vikunja\nNodePort 30888"]
-                end
             end
 
             TS -- "localhost:30500" --> AuthentikSvc2
@@ -322,7 +307,6 @@ flowchart TD
             TS -- "localhost:30445" --> InfisicalSvc2
             TS -- "localhost:30448" --> TrivyDashSvc2
             TS -- "localhost:30789" --> OpenClawSvc
-            TS -- "localhost:30888" --> VikunjaSvc2
             ArgoCtrl -- "poll" --> GitHub
             LetsEncrypt -. "auto cert" .-> TS
         end
@@ -365,7 +349,6 @@ Additionally, namespace-specific rules enable required connectivity:
 - **Internet Egress**: The `argocd` and `openclaw` namespaces are allowed to egress to the internet on ports 443 (HTTPS) and 22 (SSH) to facilitate Git operations and external API calls.
 - **External Secrets**: The `external-secrets` namespace can egress to the Infisical API (`infisical` namespace, port 8080); conversely, `infisical` has an ingress rule allowing traffic from `external-secrets` on that port.
 
-Additionally, the `vikunja` namespace follows the same pattern with deny-all, allow-same-namespace, allow-dns, and Tailscale ingress on port 3456. Cross-namespace communication is enabled between `openclaw` and `vikunja`: the `openclaw` namespace has an egress rule allowing traffic to the `vikunja` namespace on port 3456, and `vikunja` has a corresponding ingress rule accepting traffic from `openclaw` on the same port. This enables the OpenClaw AI agent to manage Vikunja tasks via the REST API.
 
 The complete set of policies is stored in `k8s/apps/networking-policies/`.
 

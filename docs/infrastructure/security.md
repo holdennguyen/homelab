@@ -78,10 +78,9 @@ Every application namespace has a `default-deny-all` NetworkPolicy that blocks a
 | `argocd` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:8080), API server egress (:6443), internet egress (:443, :22) |
 | `monitoring` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:3000), API server egress (:6443), internet egress (:443) |
 | `authentik` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:9000, :9443) |
-| `openclaw` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:18789), API server egress (:6443), internet egress (:443), Vikunja egress (:3456) |
+| `openclaw` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:18789), API server egress (:6443), internet egress (:443) |
 | `external-secrets` | deny-all, allow-same-ns, allow-dns | API server egress (:6443), Infisical egress (:8080) |
 | `infisical` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:8080), ingress from `external-secrets` (:8080) |
-| `vikunja` | deny-all, allow-same-ns, allow-dns | Tailscale ingress (:3456), ingress from `openclaw` (:3456) |
 
 Tailscale ingress rules are locked to the CGNAT range `100.64.0.0/10`, ensuring only tailnet devices can reach services.
 
@@ -100,7 +99,6 @@ Namespaces are labeled with Kubernetes Pod Security Standards (PSS) to control w
 | `authentik` | `baseline` | `restricted` | server/worker containers run as root, missing seccompProfile |
 | `infisical` | `baseline` | `restricted` | standalone + ingress-nginx run as root, missing seccompProfile |
 | `openclaw` | — | — | Excluded: uses hostPath volumes disallowed by the restricted profile |
-| `vikunja` | `baseline` | `restricted` | Vikunja runs as UID 1000; PostgreSQL runs as UID 70 |
 
 Namespaces at `baseline` enforce + `restricted` audit/warn log violations without blocking pods, surfacing non-compliant workloads in audit logs for future remediation.
 
@@ -149,10 +147,9 @@ flowchart LR
 
 | ExternalSecret | Namespace | Keys |
 |---|---|---|
-| `openclaw-secret` | `openclaw` | `OPENCLAW_GATEWAY_TOKEN`, `OPENROUTER_API_KEY`, `GEMINI_API_KEY`, `GITHUB_TOKEN`, `DISCORD_BOT_TOKEN`, `VIKUNJA_API_TOKEN`, `DISCORD_WEBHOOK_VIKUNJA`, `CURSOR_API_KEY` |
+| `openclaw-secret` | `openclaw` | `OPENCLAW_GATEWAY_TOKEN`, `OPENROUTER_API_KEY`, `GEMINI_API_KEY`, `GITHUB_TOKEN`, `DISCORD_BOT_TOKEN`, `DISCORD_WEBHOOK_DEUTSCH`, `DISCORD_WEBHOOK_ALERTS`, `CURSOR_API_KEY` |
 | `authentik-secret` | `authentik` | `AUTHENTIK_SECRET_KEY`, `AUTHENTIK_BOOTSTRAP_PASSWORD`, `AUTHENTIK_BOOTSTRAP_TOKEN`, `AUTHENTIK_POSTGRES_PASSWORD` |
 | `grafana-secret` | `monitoring` | `GRAFANA_ADMIN_PASSWORD`, `GRAFANA_OAUTH_CLIENT_SECRET` |
-| `vikunja-db-secret` | `vikunja` | `VIKUNJA_POSTGRES_USER`, `VIKUNJA_POSTGRES_PASSWORD`, `VIKUNJA_POSTGRES_DB`, `VIKUNJA_OIDC_CLIENT_SECRET` |
 
 ## Container Security
 
@@ -165,7 +162,6 @@ flowchart LR
 | ESO | Helm-managed | `true` | `true` | Restricted PSS compliant |
 | Infisical | root | no | no | Upstream Helm default; hardening tracked in roadmap |
 | Authentik | root | no | no | Upstream Helm default; hardening tracked in roadmap |
-| Vikunja | 1000 | `true` | no | Runs as non-root; PostgreSQL runs as UID 70 |
 
 ### Image Provenance
 
@@ -176,7 +172,6 @@ flowchart LR
 | ESO | `ghcr.io/external-secrets/external-secrets` | Official upstream (Helm chart) | Chart version pinned |
 | Prometheus/Grafana | kube-prometheus-stack images | Official upstream (Helm chart) | Chart version pinned |
 | Trivy | `aquasecurity/trivy` | Official upstream (Helm chart) | Chart version pinned |
-| Vikunja | `vikunja/vikunja:1.1.0` | Official upstream (Docker Hub) | Tag pinned |
 
 ## Supply Chain Security
 
@@ -273,8 +268,7 @@ Eight secrets are injected as environment variables into the OpenClaw container:
 | `GEMINI_API_KEY` | LLM inference via Google Gemini (fallback) | Google AI Studio account |
 | `GITHUB_TOKEN` | GitHub API access for the agent git workflow | **Fine-grained PAT scoped to `holdennguyen/homelab` only**: read access to metadata; read and write access to code, issues, and pull requests |
 | `DISCORD_BOT_TOKEN` | Discord bot for chat-based agent interaction | Discord application bot user |
-| `VIKUNJA_API_TOKEN` | Vikunja task management API access | Vikunja instance (task CRUD) |
-| `DISCORD_WEBHOOK_VIKUNJA` | Discord webhook for Vikunja task notifications | Single Discord channel |
+| `DISCORD_WEBHOOK_DEUTSCH` | Discord webhook for German learning reminders | Single Discord channel |
 | `CURSOR_API_KEY` | Cursor CLI authentication for headless code generation | Cursor account (AI-assisted coding) |
 
 The `GITHUB_TOKEN` is the most sensitive credential from a blast-radius perspective. Its scope is intentionally narrow:
@@ -342,7 +336,7 @@ The gateway starts with `--allow-unconfigured`, which permits connections from a
 - Allow ingress from Tailscale CIDR (`100.64.0.0/10`) on port 18789
 - Allow egress to Kubernetes API server on port 6443
 - Allow egress to internet on port 443 (HTTPS — required for LLM API calls and GitHub)
-- Allow egress to `vikunja` namespace on port 3456 (Vikunja REST API)
+
 
 ### Agent Capabilities
 
@@ -350,7 +344,7 @@ OpenClaw runs six agents in a two-tier orchestrator pattern (1 orchestrator, 1 s
 
 | Agent | Skills | Can Delegate To |
 |---|---|---|
-| `homelab-admin` (orchestrator) | homelab-admin, gitops, secret-management, incident-response, vikunja | cursor-agent, devops-sre, software-engineer, security-analyst, qa-tester |
+| `homelab-admin` (orchestrator) | homelab-admin, gitops, secret-management, incident-response, weather, deutsch-tutor | cursor-agent, devops-sre, software-engineer, security-analyst, qa-tester, deutsch-tutor |
 | `cursor-agent` (senior lead) | cursor-agent, gitops, software-engineer, security-analyst, qa-tester | devops-sre, software-engineer, security-analyst, qa-tester |
 | `devops-sre` (junior) | devops-sre, gitops, secret-management, incident-response | — |
 | `software-engineer` (junior) | software-engineer, gitops | — |
@@ -463,7 +457,7 @@ flowchart TD
 | **hostPath scope** | Two host directories are mounted — both read-only, both containing only Markdown files | Can read `agents/workspaces/*.md` and `skills/*.md`. Cannot write to them. Cannot mount additional host paths without changing the deployment manifest (which requires a PR + human review) |
 | **Non-root execution** | Pod runs as UID 1000 with `runAsNonRoot: true` | Cannot escalate to root inside the container, cannot modify system binaries, cannot change container network config |
 | **Targeted RBAC (no cluster-admin)** | ClusterRole grants cluster-wide read + scoped operational writes (restart, scale, annotate). Namespace Role grants secrets read + pods/exec in `openclaw` only | Cannot create or delete deployments, services, or namespaces. Cannot read secrets outside `openclaw`. Cannot modify ClusterRoles, NetworkPolicies, or RBAC resources. Cannot exec into pods in other namespaces |
-| **Network policies** | Default-deny with explicit allowlist: DNS, K8s API (:6443), Tailscale ingress (:18789), internet egress (:443), Vikunja egress (:3456) | Cannot reach other namespaces' pods over the network except Vikunja (declarative intent — enforcement depends on CNI). Cannot open arbitrary ports. Cannot reach macOS services on the host network (except through the K8s API server) |
+| **Network policies** | Default-deny with explicit allowlist: DNS, K8s API (:6443), Tailscale ingress (:18789), internet egress (:443) | Cannot reach other namespaces' pods over the network (declarative intent — enforcement depends on CNI). Cannot open arbitrary ports. Cannot reach macOS services on the host network (except through the K8s API server) |
 | **Secret scoping** | Only `openclaw-secret` is injected (8 keys). Infisical stores all other secrets in separate ExternalSecrets per namespace | Cannot read Authentik passwords, Grafana credentials, PostgreSQL passwords, or any secret outside its namespace |
 | **GitHub token scope** | Fine-grained PAT: only `holdennguyen/homelab`, only code/issues/PRs | Cannot access other repos, cannot modify repo settings/webhooks, cannot access GitHub account settings, cannot read private repos beyond `homelab` |
 | **Git workflow guardrails** | Branch protection on `main` requires PR + human review | Cannot push directly to `main`, cannot merge without human approval, cannot bypass branch protection |

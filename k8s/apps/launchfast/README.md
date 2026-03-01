@@ -99,7 +99,7 @@ Grafana dashboards, Prometheus metrics, and structured logging integrated into t
 
 LaunchFast is registered as a **bookmark** in the Authentik SSO portal under the **Development** group. This provides single-click access from the portal alongside all other homelab services.
 
-The bookmark is managed via the Authentik Blueprint in `k8s/apps/authentik/blueprints-configmap.yaml`. When LaunchFast gains a backend API (Phase 3), the bookmark will be upgraded to a full OIDC provider with its own client credentials — same pattern as Grafana, ArgoCD, and Vikunja.
+The bookmark is managed via the Authentik Blueprint in `k8s/apps/authentik/blueprints-configmap.yaml`. When LaunchFast gains a backend API (Phase 3), the bookmark will be upgraded to a full OIDC provider with its own client credentials — same pattern as Grafana and ArgoCD.
 
 ## Accessing the Landing Page
 
