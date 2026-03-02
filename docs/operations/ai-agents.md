@@ -351,7 +351,7 @@ Each agent has a `skills` allowlist in the configmap that restricts which skills
 
 | Agent | Tier | Assigned Skills |
 |---|---|---|
-| `homelab-admin` | Orchestrator | `homelab-admin`, `gitops`, `secret-management`, `incident-response`, `weather`, `deutsch-tutor` |
+| `homelab-admin` | Orchestrator | `homelab-admin`, `gitops`, `secret-management`, `incident-response`, `weather`, `deutsch-tutor`, `english-tutor` |
 | `cursor-agent` | Senior lead | `cursor-agent`, `gitops`, `software-engineer`, `security-analyst`, `qa-tester` |
 | `devops-sre` | Junior | `devops-sre`, `gitops`, `secret-management`, `incident-response` |
 | `software-engineer` | Junior | `software-engineer`, `gitops` |
@@ -399,6 +399,7 @@ Skills provide domain-specific knowledge and commands to agents. They live in `s
 | `secret-management` | Infisical → ESO → K8s pipeline operations |
 | `cursor-agent` | Cursor CLI bridge: installation, automation, handoff protocol, code generation workflows |
 | `deutsch-tutor` | AI German language tutor — spaced repetition (FSRS), flashcard decks (A1/A2/B1), grammar lessons, conversation practice, Vietnamese explanations |
+| `english-tutor` | AI IELTS 8.0 coach — spaced repetition (FSRS), advanced grammar, academic vocabulary, collocations, writing workshop, speaking simulation, reading/listening strategies |
 | `weather` | Real-time weather via Open-Meteo and wttr.in (no API key required) |
 
 ### Skill Format

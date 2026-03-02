@@ -147,7 +147,7 @@ flowchart LR
 
 | ExternalSecret | Namespace | Keys |
 |---|---|---|
-| `openclaw-secret` | `openclaw` | `OPENCLAW_GATEWAY_TOKEN`, `OPENROUTER_API_KEY`, `GEMINI_API_KEY`, `GITHUB_TOKEN`, `DISCORD_BOT_TOKEN`, `DISCORD_WEBHOOK_DEUTSCH`, `DISCORD_WEBHOOK_ALERTS`, `CURSOR_API_KEY` |
+| `openclaw-secret` | `openclaw` | `OPENCLAW_GATEWAY_TOKEN`, `OPENROUTER_API_KEY`, `GEMINI_API_KEY`, `GITHUB_TOKEN`, `DISCORD_BOT_TOKEN`, `DISCORD_WEBHOOK_DEUTSCH`, `DISCORD_WEBHOOK_ENGLISH`, `DISCORD_WEBHOOK_ALERTS`, `CURSOR_API_KEY` |
 | `authentik-secret` | `authentik` | `AUTHENTIK_SECRET_KEY`, `AUTHENTIK_BOOTSTRAP_PASSWORD`, `AUTHENTIK_BOOTSTRAP_TOKEN`, `AUTHENTIK_POSTGRES_PASSWORD` |
 | `grafana-secret` | `monitoring` | `GRAFANA_ADMIN_PASSWORD`, `GRAFANA_OAUTH_CLIENT_SECRET` |
 
@@ -269,6 +269,7 @@ Eight secrets are injected as environment variables into the OpenClaw container:
 | `GITHUB_TOKEN` | GitHub API access for the agent git workflow | **Fine-grained PAT scoped to `holdennguyen/homelab` only**: read access to metadata; read and write access to code, issues, and pull requests |
 | `DISCORD_BOT_TOKEN` | Discord bot for chat-based agent interaction | Discord application bot user |
 | `DISCORD_WEBHOOK_DEUTSCH` | Discord webhook for German learning reminders | Single Discord channel |
+| `DISCORD_WEBHOOK_ENGLISH` | Discord webhook for IELTS learning reminders | Single Discord channel |
 | `CURSOR_API_KEY` | Cursor CLI authentication for headless code generation | Cursor account (AI-assisted coding) |
 
 The `GITHUB_TOKEN` is the most sensitive credential from a blast-radius perspective. Its scope is intentionally narrow:
@@ -344,7 +345,7 @@ OpenClaw runs six agents in a two-tier orchestrator pattern (1 orchestrator, 1 s
 
 | Agent | Skills | Can Delegate To |
 |---|---|---|
-| `homelab-admin` (orchestrator) | homelab-admin, gitops, secret-management, incident-response, weather, deutsch-tutor | cursor-agent, devops-sre, software-engineer, security-analyst, qa-tester, deutsch-tutor |
+| `homelab-admin` (orchestrator) | homelab-admin, gitops, secret-management, incident-response, weather, deutsch-tutor, english-tutor | cursor-agent, devops-sre, software-engineer, security-analyst, qa-tester, deutsch-tutor, english-tutor |
 | `cursor-agent` (senior lead) | cursor-agent, gitops, software-engineer, security-analyst, qa-tester | devops-sre, software-engineer, security-analyst, qa-tester |
 | `devops-sre` (junior) | devops-sre, gitops, secret-management, incident-response | — |
 | `software-engineer` (junior) | software-engineer, gitops | — |

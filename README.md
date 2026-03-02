@@ -303,3 +303,5 @@ When adding a new service or documentation file, add an entry to `.doc-manifest.
 > **Completed in v1.6.0:** Vikunja todo list application (later decommissioned in favor of Deutsch Tutor agent).
 
 > **Completed in v1.7.0:** Decommissioned Vikunja; introduced Deutsch Tutor — an AI-enhanced German learning system via Discord using spaced repetition (FSRS), flashcard decks in repeater-compatible Markdown, and a dedicated OpenClaw agent for Vietnamese→German instruction.
+
+> **Completed in v1.9.0:** English Tutor — an AI-powered IELTS 8.0 preparation coach via Discord using the same FSRS spaced repetition system. 6 flashcard decks covering advanced grammar, academic vocabulary, collocations, writing Task 2, speaking Parts 2-3, and reading/listening strategies. Tailored for a Vietnamese speaker with SRE and filmmaking background.

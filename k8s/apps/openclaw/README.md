@@ -28,7 +28,7 @@ flowchart TD
     end
 
     subgraph infisical["Infisical (homelab / prod)"]
-        InfisicalSecrets["OPENCLAW_GATEWAY_TOKEN\nOPENROUTER_API_KEY\nGEMINI_API_KEY\nGITHUB_TOKEN\nDISCORD_BOT_TOKEN\nDISCORD_WEBHOOK_DEUTSCH\nDISCORD_WEBHOOK_ALERTS\nCURSOR_API_KEY"]
+        InfisicalSecrets["OPENCLAW_GATEWAY_TOKEN\nOPENROUTER_API_KEY\nGEMINI_API_KEY\nGITHUB_TOKEN\nDISCORD_BOT_TOKEN\nDISCORD_WEBHOOK_DEUTSCH\nDISCORD_WEBHOOK_ENGLISH\nDISCORD_WEBHOOK_ALERTS\nCURSOR_API_KEY"]
     end
 
     subgraph providers["AI Model Providers"]
@@ -234,6 +234,7 @@ Add the following secrets to Infisical under **homelab / prod**:
 | `GITHUB_TOKEN` | GitHub PAT (Fine-grained) with repo scope for `holdennguyen/homelab` | Yes (for git workflow) |
 | `DISCORD_BOT_TOKEN` | From [Discord Developer Portal](https://discord.com/developers/applications) → Bot → Reset Token | Yes (for Discord chat channel) |
 | `DISCORD_WEBHOOK_DEUTSCH` | From Discord `#deutsch` channel → Integrations → Webhooks | Yes (for German learning reminders + progress updates) |
+| `DISCORD_WEBHOOK_ENGLISH` | From Discord `#english` channel → Integrations → Webhooks | Yes (for IELTS learning reminders + progress updates) |
 | `DISCORD_WEBHOOK_ALERTS` | From Discord `#alerts` channel → Integrations → Webhooks | Yes (for cluster health alerts + incident notifications) |
 | `CURSOR_API_KEY` | From Cursor account settings (API key for headless CLI auth) | Yes (for cursor-agent code generation) |
 
@@ -392,6 +393,7 @@ flowchart TD
 |---|---|---|---|
 | `#general` | Full homelab admin — cluster ops, GitOps, troubleshooting, general chat | `homelab-admin`, `gitops`, `secret-management`, `incident-response`, `weather` | — |
 | `#deutsch` | AI-powered German language tutor — spaced repetition drills, grammar lessons, conversation practice, writing exercises | `deutsch-tutor`, `discord` | `DISCORD_WEBHOOK_DEUTSCH` |
+| `#english` | AI-powered IELTS 8.0 coach — grammar precision, academic vocabulary, essay feedback, speaking simulation | `english-tutor`, `discord` | `DISCORD_WEBHOOK_ENGLISH` |
 | `#alerts` | Cluster health — incident alerts, pod failures, ArgoCD sync issues | `homelab-admin`, `incident-response` | `DISCORD_WEBHOOK_ALERTS` |
 
 Each channel has a system prompt that constrains the agent's behavior to the channel's purpose. The `groupPolicy` is set to `allowlist` so the bot only responds in explicitly configured channels. The `#deutsch` channel routes to the dedicated `deutsch-tutor` agent instead of `homelab-admin`.
@@ -734,7 +736,7 @@ The `openclaw.json` config (in `configmap.yaml`) contains these key settings:
 
 ## Multi-Agent & Skills Architecture
 
-OpenClaw runs seven agents in a multi-tier hierarchy: a `homelab-admin` orchestrator, a `cursor-agent` senior lead (with PR review authority and sub-agent spawning), and four junior specialist agents.
+OpenClaw runs eight agents in a multi-tier hierarchy: a `homelab-admin` orchestrator, a `cursor-agent` senior lead (with PR review authority and sub-agent spawning), and four junior specialist agents.
 
 ```mermaid
 flowchart TD
@@ -789,7 +791,7 @@ Each agent has a `skills` allowlist in the configmap that restricts which skills
 
 | Agent | Tier | Assigned Skills |
 |---|---|---|
-| `homelab-admin` | Orchestrator | `homelab-admin`, `gitops`, `secret-management`, `incident-response`, `weather`, `deutsch-tutor` |
+| `homelab-admin` | Orchestrator | `homelab-admin`, `gitops`, `secret-management`, `incident-response`, `weather`, `deutsch-tutor`, `english-tutor` |
 | `cursor-agent` | Senior lead | `cursor-agent`, `gitops`, `software-engineer`, `security-analyst`, `qa-tester` |
 | `devops-sre` | Junior | `devops-sre`, `gitops`, `secret-management`, `incident-response` |
 | `software-engineer` | Junior | `software-engineer`, `gitops` |
@@ -807,6 +809,7 @@ Each agent has a `skills` allowlist in the configmap that restricts which skills
 | `security-analyst` | Junior | Security audits, vulnerability assessment, hardening | `/data/workspaces/security-analyst` |
 | `qa-tester` | Junior | Deployment validation, service health testing, regression checks | `/data/workspaces/qa-tester` |
 | `deutsch-tutor` | Specialist | AI German language tutor — spaced repetition, grammar, conversation | `/data/workspaces/deutsch-tutor` |
+| `english-tutor` | Specialist | AI IELTS 8.0 coach — grammar precision, academic vocabulary, essay feedback, speaking practice | `/data/workspaces/english-tutor` |
 
 Every agent has an explicit object-form `model` in the configmap (see [Model config convention](#model-config-convention-important)):
 
@@ -837,6 +840,7 @@ Homelab-specific skills live in `skills/` at the repo root and are mounted into 
 | `secret-management` | Infisical → ESO → K8s pipeline operations |
 | `cursor-agent` | Cursor CLI bridge: installation, automation, handoff protocol, code generation workflows |
 | `deutsch-tutor` | AI German language tutor — spaced repetition (FSRS), flashcard decks (A1/A2/B1), grammar lessons, conversation practice, Vietnamese explanations |
+| `english-tutor` | AI IELTS 8.0 coach — spaced repetition (FSRS), advanced grammar, academic vocabulary, collocations, writing workshop, speaking simulation, reading/listening strategies |
 | `weather` | Real-time weather via Open-Meteo and wttr.in (no API key required) |
 | `common/Documentation` | Standardized documentation generation |
 

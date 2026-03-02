@@ -48,6 +48,7 @@ documents:
     sources:
       - k8s/apps/openclaw/
       - skills/deutsch-tutor/
+      - skills/english-tutor/
       - skills/incident-response/
 
   - doc: k8s/apps/trivy-operator/README.md
