@@ -21,9 +21,9 @@ data:
             "default": true,
             "workspace": "/data/workspaces/homelab-admin",
             "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
-            "skills": ["homelab-admin", "gitops", "secret-management", "incident-response", "weather", "deutsch-tutor", "english-tutor"],
+            "skills": ["homelab-admin", "gitops", "secret-management", "incident-response", "weather", "deutsch-tutor", "english-tutor", "daily-routine"],
             "subagents": {
-              "allowAgents": ["cursor-agent", "devops-sre", "software-engineer", "security-analyst", "qa-tester", "deutsch-tutor", "english-tutor"]
+              "allowAgents": ["cursor-agent", "devops-sre", "software-engineer", "security-analyst", "qa-tester", "deutsch-tutor", "english-tutor", "daily-routine"]
             }
           },
           {
@@ -95,6 +95,16 @@ data:
             "subagents": {
               "allowAgents": []
             }
+          },
+          {
+            "id": "daily-routine",
+            "name": "Daily Routine Coach",
+            "workspace": "/data/workspaces/daily-routine",
+            "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
+            "skills": ["daily-routine", "weather", "discord"],
+            "subagents": {
+              "allowAgents": []
+            }
           }
         ],
         "defaults": {
@@ -157,7 +167,7 @@ data:
       "tools": {
         "agentToAgent": {
           "enabled": true,
-          "allow": ["homelab-admin", "devops-sre", "software-engineer", "security-analyst", "qa-tester", "cursor-agent", "deutsch-tutor", "english-tutor"]
+          "allow": ["homelab-admin", "devops-sre", "software-engineer", "security-analyst", "qa-tester", "cursor-agent", "deutsch-tutor", "english-tutor", "daily-routine"]
         },
         "sessions": {
           "visibility": "all"

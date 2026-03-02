@@ -204,6 +204,8 @@ Once ArgoCD deploys Infisical (check: `kubectl get pods -n infisical`), open the
 | `GEMINI_API_KEY` | Google Gemini API key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey) |
 | `GITHUB_TOKEN` | GitHub personal access token for OpenClaw agent git operations |
 | `DISCORD_WEBHOOK_DEUTSCH` | *(optional)* Discord webhook URL for Deutsch Tutor learning reminders |
+| `DISCORD_WEBHOOK_ENGLISH` | *(optional)* Discord webhook URL for English Tutor learning reminders |
+| `DISCORD_WEBHOOK_DAILY` | *(optional)* Discord webhook URL for Daily Routine Coach reminders |
 
 Then create a Machine Identity in Infisical (`Settings → Machine Identities → Universal Auth`), grant it **Member** access to the `homelab` project, update `terraform/terraform.tfvars` with the new `clientId` / `clientSecret`, and re-run `terraform apply` to update the credential. See [docs/getting-started/bootstrap.md](docs/getting-started/bootstrap.md) for the full step-by-step.
 
