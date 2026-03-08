@@ -92,7 +92,7 @@ autoAttach:
 
 ## OpenClaw Agents
 
-OpenClaw runs six agents in a two-tier orchestrator pattern. The `homelab-admin` agent is the only directly accessible agent — it receives all user requests and delegates to sub-agents via `sessions_spawn`. The `cursor-agent` serves as a **senior lead** that can both execute complex tasks and direct junior agents.
+OpenClaw runs nine agents in total: six core agents in a two-tier orchestrator pattern, and three specialist agents for domain-specific tasks. The `homelab-admin` agent is the only directly accessible agent — it receives all user requests and delegates to sub-agents via `sessions_spawn`. The `cursor-agent` serves as a **senior lead** that can both execute complex tasks and direct junior agents.
 
 | Agent | Tier | Role | Workspace |
 |---|---|---|---|
@@ -102,6 +102,9 @@ OpenClaw runs six agents in a two-tier orchestrator pattern. The `homelab-admin`
 | `software-engineer` | Junior | Code development, testing | `/data/workspaces/software-engineer` |
 | `security-analyst` | Junior | Security audits, hardening | `/data/workspaces/security-analyst` |
 | `qa-tester` | Junior | Deployment validation, service health testing, regression checks | `/data/workspaces/qa-tester` |
+| `deutsch-tutor` | Specialist | AI German language tutor — spaced repetition, grammar, conversation | `/data/workspaces/deutsch-tutor` |
+| `english-tutor` | Specialist | AI IELTS 8.0 coach — grammar precision, academic vocabulary, essay feedback, speaking simulation | `/data/workspaces/english-tutor` |
+| `daily-routine` | Specialist | Proactive health & schedule coach — morning briefing, meal reminders, training sessions, hydration, wind-down | `/data/workspaces/daily-routine` |
 
 Every agent has an explicit object-form `model` with `{ primary, fallbacks }` in the configmap:
 
