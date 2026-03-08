@@ -34,6 +34,9 @@ flowchart TD
 
 The operator is deployed with tuned settings to balance scanning coverage with resource stability on a single-node homelab:
 
+**Resource Optimization Notes:**
+- Infra assessment (node-collector) is disabled (`operator.infraAssessmentScannerEnabled: false`) because its hostPath volume requirements violate the monitoring namespace's PodSecurity baseline and it's unnecessary for single-node OrbStack.
+
 - Runs in **ClientServer mode** with a built-in trivy-server (eliminates cache lock contention)
 - **On-change vulnerability scanning is disabled** to reduce resource usage; a scheduled daily scan is performed via a `VulnerabilityScanner` custom resource.
 - Scans images of running pods on a schedule and generates reports.
@@ -60,7 +63,7 @@ Overrides are set in the Application CR's `spec.source.helm.valuesObject`:
 | `operator.scannerReportTTL` | `72h` | Keep vulnerability reports for 3 days |
 | `compliance.cron` | `0 0 * * *` | Daily config audit scans at midnight |
 | `resources.limits.memory` | `512Mi` | Operator deployment — prevents OOM |
-| `trivy.resources.limits.memory` | `512Mi` | Scan job container memory |
+| `trivy.resources.limits.memory` | `1Gi` | Scan job container memory (increased to prevent OOM) |
 | `trivy.server.resources.limits.memory` | `512Mi` | Trivy server memory |
 | `excludeNamespaces` | `openclaw` | Skip namespaces with local-only images |
 
