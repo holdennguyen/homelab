@@ -731,6 +731,7 @@ The `openclaw.json` config (in `configmap.yaml`) contains these key settings:
 | `tools.agentToAgent` | `enabled` / `allow` | All 6 agents | Enables inter-agent communication |
 | `tools.sessions` | `visibility` | `"all"` | Allows the orchestrator to view sub-agent session history for debugging |
 | `agents.defaults.subagents` | `maxSpawnDepth` | `2` | Orchestrator → sub-agent → leaf worker |
+| `agents.defaults` | `userTimezone` | `"Asia/Ho_Chi_Minh"` | Default timezone for all agents' time formatting (affects daily briefing and any time displays) |
 | `agents.list[].subagents` | `allowAgents` | Per-agent list | Controls which agents each agent can spawn — only the orchestrator has non-empty lists |
 | `channels.discord` | `enabled` | `true` | Connect to Discord on startup using `DISCORD_BOT_TOKEN` env var |
 | `channels.discord` | `groupPolicy` | `"allowlist"` | Only respond in explicitly configured channels |

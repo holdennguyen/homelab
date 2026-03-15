@@ -1,6 +1,6 @@
 # Security
 
-**Last reviewed:** March 8, 2025 — security documentation is current; no policy changes pending.
+**Last reviewed:** March 11, 2026 — security documentation is current; no policy changes pending.
 
 This document is the consolidated security report for the homelab. It covers the overall security posture, per-layer controls, and a dedicated section on LLM/AI agent (OpenClaw) permissions. This report is tracked by the doc-freshness system and should be reviewed and updated with every release.
 
