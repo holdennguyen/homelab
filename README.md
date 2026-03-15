@@ -153,6 +153,7 @@ sequenceDiagram
 | Trivy Operator | Helm chart via ArgoCD | `monitoring` | internal only (CRs: `kubectl get vulnerabilityreports -A`) |
 | Trivy Dashboard | Kustomize via ArgoCD | `trivy-dashboard` | `https://holdens-mac-mini.story-larch.ts.net:8448` |
 | OpenClaw | Kustomize via ArgoCD | `openclaw` | `https://holdens-mac-mini.story-larch.ts.net:8447` |
+| LaunchFast | Kustomize via ArgoCD | `launchfast` | `https://holdens-mac-mini.story-larch.ts.net:8446` |
 | Namespace Security | Kustomize via ArgoCD | `argocd` | cluster-wide Pod Security Standard labels |
 | Network Policies | Kustomize via ArgoCD | `argocd` | default-deny ingress/egress per namespace |
 
@@ -307,3 +308,9 @@ When adding a new service or documentation file, add an entry to `.doc-manifest.
 > **Completed in v1.7.0:** Decommissioned Vikunja; introduced Deutsch Tutor — an AI-enhanced German learning system via Discord using spaced repetition (FSRS), flashcard decks in repeater-compatible Markdown, and a dedicated OpenClaw agent for Vietnamese→German instruction.
 
 > **Completed in v1.9.0:** English Tutor — an AI-powered IELTS 8.0 preparation coach via Discord using the same FSRS spaced repetition system. 6 flashcard decks covering advanced grammar, academic vocabulary, collocations, writing Task 2, speaking Parts 2-3, and reading/listening strategies. Tailored for a Vietnamese speaker with SRE and filmmaking background.
+
+> **Completed in v1.10.0:** Daily Routine Coach — proactive health and schedule assistant via Discord, providing morning briefings (weather, schedule, meal plan), meal reminders with Vietnamese meal prep suggestions, training plans (home workout), hydration and recovery nudges, and wind-down reminders. Supports lean bulk program (181cm/56kg → 72kg target) with calorie/macro tracking.
+
+> **Completed in v1.10.1:** Timezone configuration support — added default `userTimezone` setting (Asia/Ho_Chi_Minh) to ensure daily briefing and all agent-displayed times align with local time (ICT/UTC+7).
+
+> **Completed in v1.10.2:** Daily briefing date fix — corrected date formatting to use user timezone, preventing off-by-one-day errors in morning alerts.

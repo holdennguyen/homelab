@@ -1,6 +1,6 @@
 # Architecture
 
-**Last reviewed:** March 8, 2025 — no changes required; architecture remains current.
+**Last reviewed:** March 11, 2026 — architecture remains current; updated LaunchFast entry.
 
 This document describes the full architecture of the homelab: how the three infrastructure layers relate to each other, how services are deployed and connected, and how all configuration flows from code to running pods.
 
@@ -68,7 +68,7 @@ Applications are organized into three **AppProjects** that scope which repos, na
 |---|---|---|
 | `secrets` | Secret management infrastructure | `infisical`, `external-secrets`, `external-secrets-config` |
 | `data` | Databases and data stores | (reserved for future use) |
-| `apps` | User-facing applications | `monitoring`, `authentik`, `openclaw`, `trivy-operator`, `trivy-operator-vulnerability-scanner`, `trivy-dashboard`, `namespace-security`, `networking-policies` |
+| `apps` | User-facing applications | `monitoring`, `authentik`, `openclaw`, `trivy-operator`, `trivy-operator-vulnerability-scanner`, `trivy-dashboard`, `launchfast`, `namespace-security`, `networking-policies` |
 | `default` | Bootstrap only | `argocd-apps` (root) |
 
 ```mermaid
@@ -79,6 +79,7 @@ flowchart LR
         ESDir["k8s/apps/external-secrets/"]
         MonDir["k8s/apps/argocd/applications/\nmonitoring-app.yaml (Helm)"]
         OCDir["k8s/apps/openclaw/"]
+        LFDir["k8s/apps/launchfast/"]
     end
 
     subgraph argocd["ArgoCD (argocd namespace)"]
@@ -100,6 +101,7 @@ flowchart LR
             OCApp["openclaw"]
             TrivyApp["trivy-operator"]
             TrivyDashApp["trivy-dashboard"]
+            LFApp["launchfast"]
             NSApp["namespace-security"]
             NPApp["networking-policies"]
         end
@@ -114,6 +116,7 @@ flowchart LR
     ESCApp -- "syncs" --> ESDir
     MonApp -- "syncs Helm chart" --> MonChart["prometheus-community\nHelm repo"]
     OCApp -- "syncs" --> OCDir
+    LFApp -- "syncs" --> LFDir
     InfisicalApp -- "syncs Helm chart" --> InfisicalChart["cloudsmith Helm repo"]
 ```
 

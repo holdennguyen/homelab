@@ -2,7 +2,7 @@
 
 GitOps continuous delivery controller for the homelab Kubernetes cluster. ArgoCD watches the GitHub repository and automatically synchronizes cluster state to match the manifests in `main`.
 
-**Last reviewed:** March 8, 2025 — documentation is up-to-date with current cluster state.
+**Last reviewed:** March 11, 2026 — documentation is up-to-date with current cluster state.
 
 ## How It Works
 
