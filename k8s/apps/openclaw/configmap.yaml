@@ -117,7 +117,8 @@ data:
             "maxConcurrent": 4,
             "maxChildrenPerAgent": 3,
             "archiveAfterMinutes": 120
-          }
+          },
+          "userTimezone": "Asia/Ho_Chi_Minh"
         }
       },
       "channels": {
