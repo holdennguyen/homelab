@@ -65,6 +65,9 @@ spec:
           enabled: false
         k8sServiceHost: kubernetes.default.svc
         k8sServicePort: 6443
+        # Disable TLS features that create extra namespace/resources
+        tls:
+          enabled: false
   destination:
     server: https://kubernetes.default.svc
     namespace: cilium
