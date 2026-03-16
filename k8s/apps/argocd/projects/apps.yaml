@@ -36,6 +36,8 @@ spec:
       namespace: infisical
     - server: https://kubernetes.default.svc
       namespace: cilium
+    - server: https://kubernetes.default.svc
+      namespace: cilium-secrets
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
