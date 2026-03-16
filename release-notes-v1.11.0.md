@@ -22,11 +22,13 @@ Release v1.11.0 introduces network stack modernization with eBPF-based Cilium CN
 
 Relevant: #130
 
-### feat(network): monitoring egress to kubelet (10250)
+### feat(network): monitoring cross-namespace scrape rules
 
-- Added `allow-egress-kubelet` policy in `monitoring` namespace
-- Enables Prometheus to scrape node metrics via kubelet API
-- NetworkPolicy now supports full monitoring stack functionality
+- Added `allow-egress-kubelet` policy in `monitoring` namespace (ports 10250, 9153)
+  - Port 10250: kubelet metrics
+  - Port 9153: coredns metrics
+- Enables Prometheus to scrape core infrastructure from `kube-system`
+- Completes cross-namespace scrape requirements referenced in #38
 
 Part of PR #129
 
