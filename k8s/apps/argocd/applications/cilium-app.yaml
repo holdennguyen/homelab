@@ -38,12 +38,14 @@ spec:
           enabled: true
         hubble:
           enabled: true
-          listenAddress: :4244
+          relay:
+            enabled: true
           ui:
             enabled: true
             service:
               type: NodePort
               nodePort: 30912
+          listenAddress: :4244
           metrics:
             enabled:
               - "dns:1;delay=5s"
