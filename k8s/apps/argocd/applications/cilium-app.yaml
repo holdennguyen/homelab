@@ -22,7 +22,7 @@ spec:
         hostPID: true
         ebpf:
           enabled: true
-        kubeProxyReplacement: disabled
+        kubeProxyReplacement: false
         identityAllocationMode: crd
         ipam:
           mode: kubernetes
