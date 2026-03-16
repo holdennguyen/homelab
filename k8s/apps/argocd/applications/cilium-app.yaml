@@ -16,10 +16,9 @@ spec:
     targetRevision: 1.17.0
     helm:
       valuesObject:
-        # Agent is enabled by default; set security context for privileged mode
+        # Agent is enabled by default; use securityContext for privileged mode
         securityContext:
           privileged: true
-        # Host network and PID for Cilium agent
         hostNetwork: true
         hostPID: true
         # eBPF dataplane
@@ -77,11 +76,9 @@ spec:
         # NodePort
         nodePort:
           enabled: true
-        # Containerd integration
-        containerRuntime:
-          integration:
-            containerd:
-              enabled: true
+        # BGP (disabled)
+        bgp:
+          enabled: false
         # K8s API server
         k8sServiceHost: kubernetes.default.svc
         k8sServicePort: 6443
