@@ -204,9 +204,9 @@ spec:
         matchLabels:
           kubernetes.io/metadata.name: kube-system
     ports:
-    - protocol: HTTPS
+    - protocol: TCP
       port: 10250
-    - protocol: HTTP
+    - protocol: TCP
       port: 9153
 ---
 apiVersion: networking.k8s.io/v1
