@@ -16,40 +16,26 @@ spec:
     targetRevision: 1.17.0
     helm:
       valuesObject:
-        # Agent is enabled by default; use securityContext for privileged mode
         securityContext:
           privileged: true
         hostNetwork: true
         hostPID: true
-        # eBPF dataplane
         ebpf:
           enabled: true
-        # Keep kube-proxy initially; can switch to strict later
         kubeProxyReplacement: disabled
-        # Identity allocation
         identityAllocationMode: crd
-        # IPAM
         ipam:
           mode: kubernetes
-        # Cluster metadata
         cluster:
           name: homelab
           id: 1
-        # Tunnel mode
-        tunnel: vxlan
-        # IP pool
         ipPools:
           - cidr: "10.42.0.0/16"
             enabled: true
-            ipRotation: false
-            tunnel: vxlan
-        # Disable Envoy
         envoy:
           enabled: false
-        # Operator
         operator:
           enabled: true
-        # Hubble
         hubble:
           enabled: true
           listenAddress: :4244
@@ -65,21 +51,16 @@ spec:
               - "tcp:1;delay=5s"
               - "flow:1;delay=5s"
               - "port-distribution:1;delay=5s"
-        # Prometheus metrics
         prometheus:
           enabled: true
           serviceMonitor:
             enabled: false
-        # DNS
         dns:
           maxDelay: 5s
-        # NodePort
         nodePort:
           enabled: true
-        # BGP (disabled)
         bgp:
           enabled: false
-        # K8s API server
         k8sServiceHost: kubernetes.default.svc
         k8sServicePort: 6443
   destination:
