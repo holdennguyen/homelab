@@ -68,7 +68,7 @@ Applications are organized into three **AppProjects** that scope which repos, na
 |---|---|---|
 | `secrets` | Secret management infrastructure | `infisical`, `external-secrets`, `external-secrets-config` |
 | `data` | Databases and data stores | (reserved for future use) |
-| `apps` | User-facing applications | `monitoring`, `authentik`, `openclaw`, `trivy-operator`, `trivy-operator-vulnerability-scanner`, `trivy-dashboard`, `launchfast`, `namespace-security`, `networking-policies` |
+| `apps` | User-facing applications | `monitoring`, `authentik`, `openclaw`, `trivy-operator`, `trivy-operator-vulnerability-scanner`, `trivy-dashboard`, `launchfast`, `namespace-security`, `networking-policies`, `cilium` |
 | `default` | Bootstrap only | `argocd-apps` (root) |
 
 ```mermaid
@@ -80,6 +80,7 @@ flowchart LR
         MonDir["k8s/apps/argocd/applications/\nmonitoring-app.yaml (Helm)"]
         OCDir["k8s/apps/openclaw/"]
         LFDir["k8s/apps/launchfast/"]
+        CilDir["k8s/apps/cilium/"]
     end
 
     subgraph argocd["ArgoCD (argocd namespace)"]
@@ -104,6 +105,7 @@ flowchart LR
             LFApp["launchfast"]
             NSApp["namespace-security"]
             NPApp["networking-policies"]
+            CiliumApp["cilium"]
         end
     end
 
@@ -117,6 +119,7 @@ flowchart LR
     MonApp -- "syncs Helm chart" --> MonChart["prometheus-community\nHelm repo"]
     OCApp -- "syncs" --> OCDir
     LFApp -- "syncs" --> LFDir
+    CiliumApp -- "syncs Helm chart" --> CiliumChart["helm.cilium.io"]
     InfisicalApp -- "syncs Helm chart" --> InfisicalChart["cloudsmith Helm repo"]
 ```
 

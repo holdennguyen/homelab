@@ -1,0 +1,117 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cilium
+  namespace: argocd
+  labels:
+    app.kubernetes.io/name: cilium
+    app.kubernetes.io/part-of: homelab
+    app.kubernetes.io/component: networking
+    app.kubernetes.io/managed-by: argocd
+spec:
+  project: apps
+  source:
+    repoURL: https://helm.cilium.io/
+    chart: cilium
+    targetRevision: 1.17.0
+    helm:
+      valuesObject:
+        # Enable Cilium agent and operator
+        agent:
+          enabled: true
+          # Run as privileged for eBPF and host networking
+          privileged: true
+        operator:
+          enabled: true
+        # eBPF-based dataplane
+        ebpf:
+          enabled: true
+        # Keep kube-proxy initially; can switch to strict later
+        kubeProxyReplacement: disabled
+        # Identity allocation mode
+        identityAllocationMode: crd
+        # IPAM: use Kubernetes pool allocation
+        ipam:
+          mode: kubernetes
+        # Cluster metadata
+        cluster:
+          name: homelab
+          id: 1
+        # Disable Envoy (not using L7 proxy features yet)
+        envoy:
+          enabled: false
+        # Enable Prometheus metrics
+        prometheus:
+          enabled: true
+          serviceMonitor:
+            enabled: false  # We'll monitor Cilium via its own metrics; disabled to avoid extra config
+        # Hubble observability
+        hubble:
+          enabled: true
+          ui:
+            enabled: true
+            service:
+              type: NodePort
+              nodePort: 30912
+          listenAddress: ":4244"
+          metrics:
+            enabled:
+              - "dns:1;delay=5s"
+              - "drop:1;delay=5s"
+              - "tcp:1;delay=5s"
+              - "flow:1;delay=5s"
+              - "port-distribution:1;delay=5s"
+        # Cilium daemon sets security context
+        securityContext:
+          runAsUser: 0
+          runAsGroup: 0
+          privileged: true
+        # Host network and PID for Cilium agent
+        hostNetwork: true
+        hostPID: true
+        # Set the MTU to match OrbStack's network (may need adjustment)
+        # auto: use underlying MTU
+        # For OrbStack, typical MTU is 1500 or lower; leaving default
+        # tunnel: vxlan, geneve, etc.
+        tunnel: vxlan
+        # Enable BGP if needed? Not needed.
+        bgp:
+          enabled: false
+        # K8s API server service account token projection
+        k8sServiceHost: "kubernetes.default.svc"
+        k8sServicePort: 6443
+        # Enable socket LB for NodePort services? Possibly helpful but not required
+        # socketLB:
+        #   enabled: false
+        # Set DNS timeout to match cluster DNS
+        dns:
+          maxDelay: 5s
+        # IP pool: use cluster CIDR allocation
+        ipPools:
+          - cidr: "10.42.0.0/16"
+            enabled: true
+            ipRotation: false
+            tunnel: vxlan
+        # NodePort configuration: Cilium will manage NodePort mapping
+        nodePort:
+          enabled: true
+          # Range: 30000-32767; Cilium will auto-allocate
+        # Enable service topologies? Not needed.
+        # Enable container support? We are using pod
+        containerRuntime:
+          integration:
+            containerd:
+              enabled: true
+        # Enable Istio? No
+        istio:
+          enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cilium
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
