@@ -100,7 +100,9 @@ Namespaces are labeled with Kubernetes Pod Security Standards (PSS) to control w
 | `monitoring` | `baseline` | `restricted` | node-exporter requires host namespaces and hostPort |
 | `authentik` | `baseline` | `restricted` | server/worker containers run as root, missing seccompProfile |
 | `infisical` | `baseline` | `restricted` | standalone + ingress-nginx run as root, missing seccompProfile |
+| `launchfast` | `restricted` | `restricted` | nginx-unprivileged runs as non-root (UID 101), read-only rootfs |
 | `openclaw` | — | — | Excluded: uses hostPath volumes disallowed by the restricted profile |
+| `cilium` | `privileged` | `privileged` | CNI agent requires privileged access, host network, hostPID |
 
 Namespaces at `baseline` enforce + `restricted` audit/warn log violations without blocking pods, surfacing non-compliant workloads in audit logs for future remediation.
 
