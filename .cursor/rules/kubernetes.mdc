@@ -82,6 +82,12 @@ flowchart TD
 
 Never rely solely on `kubectl rollout undo` — ArgoCD will overwrite it. Use the `/incident-response` skill for the full procedure.
 
+## OrbStack Networking
+
+This cluster runs on OrbStack, which uses a custom integrated bridge and CNI to handle host-to-VM and pod-to-pod networking on macOS.
+**CRITICAL:** Never attempt to replace the CNI (e.g., do not install Cilium, Calico, or Flannel). Replacing the CNI destroys OrbStack's network integration, causing all internal DNS resolution and intra-cluster communication to fail.
+Because of this architecture, `NetworkPolicy` objects are treated as API documentation and defense-in-depth metadata, but they are **not strictly enforced** by the network layer.
+
 ## Documentation
 
 Every `k8s/apps/<service>/` directory **must** have a `README.md`. This README is the single source of truth for that service's documentation — `docs/<service>.md` is just a thin `include-markdown` wrapper. See `homelab.mdc` for the full documentation rule and README structure template.

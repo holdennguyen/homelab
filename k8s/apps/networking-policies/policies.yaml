@@ -206,6 +206,26 @@ spec:
     - protocol: TCP
       port: 443
 ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-scrape
+  namespace: monitoring
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - namespaceSelector: {}
+  - to:
+    - ipBlock:
+        cidr: 192.168.0.0/16
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/8
+
+---
 # AUTHENTIK NAMESPACE
 ---
 apiVersion: networking.k8s.io/v1
@@ -274,6 +294,25 @@ spec:
       port: 9000
     - protocol: TCP
       port: 9443
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-internet
+  namespace: authentik
+spec:
+  podSelector: {}
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - ipBlock:
+        cidr: 0.0.0.0/0
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 80
 
 ---
 # OPENCLAW NAMESPACE
