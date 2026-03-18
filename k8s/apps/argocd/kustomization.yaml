@@ -23,4 +23,3 @@ resources:
   - applications/trivy-operator-app.yaml
   - applications/trivy-dashboard-app.yaml
   - applications/launchfast-app.yaml
-  - applications/cilium-app.yaml
