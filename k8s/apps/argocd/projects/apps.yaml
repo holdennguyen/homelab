@@ -12,6 +12,7 @@ spec:
     - https://prometheus-community.github.io/helm-charts
     - https://charts.goauthentik.io
     - https://aquasecurity.github.io/helm-charts
+    - https://helm.cilium.io/
   destinations:
     - server: https://kubernetes.default.svc
       namespace: monitoring
@@ -25,6 +26,18 @@ spec:
       namespace: trivy-dashboard
     - server: https://kubernetes.default.svc
       namespace: launchfast
+    - server: https://kubernetes.default.svc
+      namespace: hello-world
+    - server: https://kubernetes.default.svc
+      namespace: argocd
+    - server: https://kubernetes.default.svc
+      namespace: external-secrets
+    - server: https://kubernetes.default.svc
+      namespace: infisical
+    - server: https://kubernetes.default.svc
+      namespace: cilium
+    - server: https://kubernetes.default.svc
+      namespace: cilium-secrets
   clusterResourceWhitelist:
     - group: ""
       kind: Namespace
@@ -41,4 +54,6 @@ spec:
     - group: admissionregistration.k8s.io
       kind: ValidatingWebhookConfiguration
     - group: aquasecurity.github.io
+      kind: "*"
+    - group: cilium.io
       kind: "*"

@@ -31,7 +31,7 @@ spec:
             - sh
             - -c
             - |
-              for agent in homelab-admin devops-sre software-engineer security-analyst qa-tester cursor-agent deutsch-tutor english-tutor; do
+              for agent in homelab-admin devops-sre software-engineer security-analyst qa-tester cursor-agent deutsch-tutor english-tutor daily-routine; do
                 dir="/data/workspaces/${agent}"
                 mkdir -p "${dir}"
                 src="/workspace-src/${agent}/AGENTS.md"
@@ -111,6 +111,11 @@ spec:
                 secretKeyRef:
                   name: openclaw-secret
                   key: DISCORD_WEBHOOK_ALERTS
+            - name: DISCORD_WEBHOOK_DAILY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-secret
+                  key: DISCORD_WEBHOOK_DAILY
             - name: CURSOR_API_KEY
               valueFrom:
                 secretKeyRef:

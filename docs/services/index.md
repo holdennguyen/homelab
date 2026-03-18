@@ -4,6 +4,8 @@ title: Services
 
 # Services
 
+**Last reviewed:** March 11, 2026 — services index is current.
+
 Per-service documentation for every deployed application. Each page includes the service README from `k8s/apps/<service>/`.
 
 | Service | Namespace | Description |

@@ -21,9 +21,9 @@ data:
             "default": true,
             "workspace": "/data/workspaces/homelab-admin",
             "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
-            "skills": ["homelab-admin", "gitops", "secret-management", "incident-response", "weather", "deutsch-tutor", "english-tutor"],
+            "skills": ["homelab-admin", "gitops", "secret-management", "incident-response", "weather", "deutsch-tutor", "english-tutor", "daily-routine"],
             "subagents": {
-              "allowAgents": ["cursor-agent", "devops-sre", "software-engineer", "security-analyst", "qa-tester", "deutsch-tutor", "english-tutor"]
+              "allowAgents": ["cursor-agent", "devops-sre", "software-engineer", "security-analyst", "qa-tester", "deutsch-tutor", "english-tutor", "daily-routine"]
             }
           },
           {
@@ -95,6 +95,16 @@ data:
             "subagents": {
               "allowAgents": []
             }
+          },
+          {
+            "id": "daily-routine",
+            "name": "Daily Routine Coach",
+            "workspace": "/data/workspaces/daily-routine",
+            "model": { "primary": "openrouter/stepfun/step-3.5-flash:free", "fallbacks": ["google/gemini-2.5-pro"] },
+            "skills": ["daily-routine", "weather", "discord"],
+            "subagents": {
+              "allowAgents": []
+            }
           }
         ],
         "defaults": {
@@ -107,7 +117,8 @@ data:
             "maxConcurrent": 4,
             "maxChildrenPerAgent": 3,
             "archiveAfterMinutes": 120
-          }
+          },
+          "userTimezone": "Asia/Ho_Chi_Minh"
         }
       },
       "channels": {
@@ -134,6 +145,11 @@ data:
                   "systemPrompt": "This is the #english channel — Holden's AI-powered IELTS 8.0 preparation coach.\n\nYou are a direct, motivating IELTS coach for a Vietnamese speaker who is a Senior SRE and filmmaker. Current level: intermediate. Target: IELTS 8.0.\n\n**Core capabilities:**\n- **Spaced repetition drills**: Present flashcards from the deck files (Q/A and cloze format, repeater-compatible). Track accuracy and schedule reviews using FSRS principles (target 90% recall).\n- **Grammar precision**: Teach advanced structures — conditionals, passive voice, relative clauses, nominalization, inversion. Always relate to IELTS band descriptors.\n- **Academic vocabulary**: Build formal register. Replace Band 5-6 words with Band 7-8 alternatives. Drill collocations and phrasal verbs.\n- **Writing Workshop**: Practice IELTS Writing Task 2. Score against the 4 criteria (TR, CC, LR, GRA). Provide band-level feedback with rewritten examples.\n- **Speaking simulation**: Practice Parts 2-3. Evaluate fluency, lexical resource, grammar. Give discourse markers and extension techniques.\n- **Reading/Listening strategies**: Teach paraphrase recognition, inference, T/F/NG, connected speech patterns.\n- **Progress tracking**: Track per-skill accuracy, estimate band scores, highlight weak areas.\n\n**Session flow:**\n1. Greet and show today's card count\n2. Due review cards first, then new cards\n3. Practice exercise (writing prompt, speaking cue card, or reading passage)\n4. Summary: accuracy, band estimate, weak areas\n\n**Interaction style:**\n- Professional, encouraging, coach-like tone\n- Use English primarily; Vietnamese for grammar explanations and mnemonics\n- Leverage the learner's SRE background for technical examples\n- Leverage the learner's filmmaking background for vivid descriptions\n- Frame ALL corrections in band terms: 'This is Band 6; here's the Band 8 version'\n- Keep messages Discord-friendly (structured, concise)\n\n**Do NOT** discuss cluster operations, infrastructure, or non-language topics here.",
                   "skills": ["english-tutor", "discord"]
                 },
+                "1476238467510829148": {
+                  "allow": true,
+                  "systemPrompt": "This is the #daily-briefing channel — Hùng's proactive daily routine coach.\n\nYou are a warm, motivating health and schedule assistant for a 181cm/56kg individual on a lean bulk program targeting 72kg. You speak Vietnamese.\n\n**Core responsibilities:**\n- Morning briefing: weather, full day schedule, meal plan, training preview\n- Meal reminders with specific portions and Vietnamese meal prep suggestions\n- Training session plans with exercises, sets, and reps (Mon/Tue/Thu/Fri)\n- Pre/post-workout nutrition guidance\n- Hydration nudges (target: 2.5L/day)\n- Wind-down reminders with tomorrow's preview\n\n**Nutrition targets:** 2,650-2,750 kcal/day | 165g protein | 330g carbs | 75g fats\n\n**Do NOT** discuss infrastructure, language learning, or cluster operations here.",
+                  "skills": ["daily-routine", "weather", "discord"]
+                },
                 "1476238496799789118": {
                   "allow": true,
                   "systemPrompt": "This is the #alerts channel. Focus exclusively on cluster health monitoring, incident response, and operational alerts. Be concise and action-oriented. Only discuss infrastructure issues, pod health, ArgoCD sync problems, and service degradation.",
@@ -157,7 +173,7 @@ data:
       "tools": {
         "agentToAgent": {
           "enabled": true,
-          "allow": ["homelab-admin", "devops-sre", "software-engineer", "security-analyst", "qa-tester", "cursor-agent", "deutsch-tutor", "english-tutor"]
+          "allow": ["homelab-admin", "devops-sre", "software-engineer", "security-analyst", "qa-tester", "cursor-agent", "deutsch-tutor", "english-tutor", "daily-routine"]
         },
         "sessions": {
           "visibility": "all"

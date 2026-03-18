@@ -1,5 +1,7 @@
 # Bootstrap Guide
 
+**Last reviewed:** March 8, 2025 — bootstrap procedure up-to-date.
+
 This guide walks a new maintainer through setting up the homelab from a completely fresh Kubernetes cluster to a fully operational GitOps-managed environment.
 
 ## Prerequisites

@@ -27,6 +27,7 @@ spec:
           scannerReportTTL: "72h"
           builtInTrivyServer: true
           replicaCount: 0
+          infraAssessmentScannerEnabled: false
         compliance:
           cron: "0 0 * * *"
         trivy:
@@ -35,10 +36,10 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 100M
+              memory: 256Mi
             limits:
               cpu: 500m
-              memory: 512Mi
+              memory: 1Gi
           server:
             resources:
               requests:

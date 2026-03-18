@@ -2,6 +2,8 @@
 
 GitOps continuous delivery controller for the homelab Kubernetes cluster. ArgoCD watches the GitHub repository and automatically synchronizes cluster state to match the manifests in `main`.
 
+**Last reviewed:** March 11, 2026 — documentation is up-to-date with current cluster state.
+
 ## How It Works
 
 ArgoCD is bootstrapped by Terraform (not by `kubectl apply -k`). Terraform installs the ArgoCD Helm chart and creates the root `Application` CR (`argocd-apps`) that triggers the App of Apps pattern. From that point on, git pushes automatically deploy to the cluster.

@@ -4,6 +4,8 @@ title: Git Workflow
 
 # Git Workflow
 
+**Last reviewed:** March 8, 2025 — workflow procedures are up-to-date.
+
 The `main` branch is **protected**. No agent — Cursor, OpenClaw, or human — pushes directly to `main`. All changes require a feature branch and a pull request with at least one approving review.
 
 This page documents the unified git workflow that both Cursor (local IDE) and OpenClaw (autonomous K8s agents) follow.

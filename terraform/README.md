@@ -2,6 +2,8 @@
 
 This directory contains the Terraform configuration that bootstraps the homelab cluster. It runs **once** to install ArgoCD and create all initial Kubernetes Secrets. After that, ArgoCD takes over GitOps management — including security enforcement (non-root execution, Pod Security Standards, network policies), which is managed per-service in `k8s/apps/` rather than at the Terraform bootstrap layer.
 
+**Last reviewed:** March 8, 2025 — documentation is up-to-date with current Terraform outputs and variables.
+
 ## What Terraform Manages
 
 ```mermaid
