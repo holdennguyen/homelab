@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <!-- OrbStack Kubernetes Nightly Startup -->
-    <!-- Starts the Kubernetes cluster at 06:30 (6:30 AM) daily -->
+    <!-- Starts the Kubernetes cluster at 04:59 (4:59 AM) daily -->
     <!-- Install with: cp com.homelab.orbstart.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.homelab.orbstart.plist -->
 
     <key>Label</key>
@@ -21,9 +21,9 @@
     <key>StartCalendarInterval</key>
     <dict>
         <key>Hour</key>
-        <integer>6</integer>
+        <integer>4</integer>
         <key>Minute</key>
-        <integer>30</integer>
+        <integer>59</integer>
     </dict>
 
     <!-- Standard output and error go to log files -->

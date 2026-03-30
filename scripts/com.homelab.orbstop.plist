@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
     <!-- OrbStack Kubernetes Nightly Shutdown -->
-    <!-- Stops the Kubernetes cluster at 23:30 (11:30 PM) daily -->
+    <!-- Stops the Kubernetes cluster at 23:59 (11:59 PM) daily -->
     <!-- Install with: cp com.homelab.orbstop.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.homelab.orbstop.plist -->
 
     <key>Label</key>
@@ -23,7 +23,7 @@
         <key>Hour</key>
         <integer>23</integer>
         <key>Minute</key>
-        <integer>30</integer>
+        <integer>59</integer>
     </dict>
 
     <!-- Standard output and error go to log files -->

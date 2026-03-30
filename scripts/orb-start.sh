@@ -3,7 +3,7 @@
 # OrbStack Kubernetes nightly startup script
 # Starts the OrbStack Kubernetes cluster and waits for health
 #
-# This script is intended to be run via macOS launchd at 06:30 daily.
+# This script is intended to be run via macOS launchd at 04:59 daily.
 # Launchd redirects stdout/stderr to ~/Library/Logs/homelab/startup.log,
 # so this script writes to stdout only (no tee).
 #
