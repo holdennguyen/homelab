@@ -4,7 +4,7 @@ This page documents the automated nightly shutdown and startup of the OrbStack K
 
 ## Overview
 
-To save power and reduce wear on the host Mac mini M4, the homelab cluster automatically stops every night at 11:30 PM and restarts at 6:30 AM. This is implemented as host-level automation using macOS launchd, not as a Kubernetes resource.
+To save power and reduce wear on the host Mac mini M4, the homelab cluster automatically stops every night at 11:59 PM and restarts at 4:59 AM. This is implemented as host-level automation using macOS launchd, not as a Kubernetes resource.
 
 **Note:** This is a temporary/quick solution. Future improvements may use more robust approaches.
 
@@ -60,7 +60,7 @@ Two launchd plist files are provided:
 
 ### `com.homelab.orbstop.plist`
 
-Runs daily at **23:30** (11:30 PM).
+Runs daily at **23:59** (11:59 PM).
 
 ```xml
 <key>StartCalendarInterval</key>
@@ -68,21 +68,21 @@ Runs daily at **23:30** (11:30 PM).
     <key>Hour</key>
     <integer>23</integer>
     <key>Minute</key>
-    <integer>30</integer>
+    <integer>59</integer>
 </dict>
 ```
 
 ### `com.homelab.orbstart.plist`
 
-Runs daily at **06:30** (6:30 AM).
+Runs daily at **04:59** (4:59 AM).
 
 ```xml
 <key>StartCalendarInterval</key>
 <dict>
     <key>Hour</key>
-    <integer>6</integer>
+    <integer>4</integer>
     <key>Minute</key>
-    <integer>30</integer>
+    <integer>59</integer>
 </dict>
 ```
 
@@ -121,7 +121,7 @@ To change the schedule, edit the `<dict>` section in each plist:
     <key>Hour</key>
     <integer>23</integer>   <!-- Change hour (0-23) -->
     <key>Minute</key>
-    <integer>30</integer>   <!-- Change minute (0-59) -->
+    <integer>59</integer>   <!-- Change minute (0-59) -->
 </dict>
 ```
 
@@ -155,9 +155,9 @@ Launchd's `StartCalendarInterval` triggers when the Mac wakes from sleep if the 
 
 ### Missed Jobs
 
-- **Shutdown missed** (e.g., Mac was off at 23:30): The shutdown will simply not occur that night. The cluster will remain running overnight. The next night's shutdown at 23:30 will proceed normally.
+- **Shutdown missed** (e.g., Mac was off at 23:59): The shutdown will simply not occur that night. The cluster will remain running overnight. The next night's shutdown at 23:59 will proceed normally.
 
-- **Startup missed** (e.g., Mac was off at 06:30): The startup will not occur automatically. The cluster will remain stopped. You must start it manually with `orb start k8s` or wait until the next morning's scheduled startup.
+- **Startup missed** (e.g., Mac was off at 04:59): The startup will not occur automatically. The cluster will remain stopped. You must start it manually with `orb start k8s` or wait until the next scheduled startup.
 
 ### Idempotency
 

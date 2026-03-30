@@ -314,3 +314,5 @@ When adding a new service or documentation file, add an entry to `.doc-manifest.
 > **Completed in v1.10.1:** Timezone configuration support — added default `userTimezone` setting (Asia/Ho_Chi_Minh) to ensure daily briefing and all agent-displayed times align with local time (ICT/UTC+7).
 
 > **Completed in v1.10.2:** Daily briefing date fix — corrected date formatting to use user timezone, preventing off-by-one-day errors in morning alerts.
+
+> **Completed in v1.11.0:** NetworkPolicy egress and ArgoCD project alignment; Cilium reverted for OrbStack CNI compatibility; nightly OrbStack shutdown/startup window set to 23:59 / 04:59 (host launchd); documentation updated.

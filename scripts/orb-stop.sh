@@ -3,7 +3,7 @@
 # OrbStack Kubernetes nightly shutdown script
 # Safely stops the OrbStack Kubernetes cluster with logging and state checks
 #
-# This script is intended to be run via macOS launchd at 23:30 daily.
+# This script is intended to be run via macOS launchd at 23:59 daily.
 # Launchd redirects stdout/stderr to ~/Library/Logs/homelab/shutdown.log,
 # so this script writes to stdout only (no tee).
 #

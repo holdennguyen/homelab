@@ -172,7 +172,7 @@ For the full secret management reference, see [docs/secret-management.md](../inf
 
 Some operational tasks are managed outside of Kubernetes using macOS launchd:
 
-- **Nightly shutdown/startup**: The OrbStack Kubernetes cluster automatically stops at 23:30 and starts at 06:30 daily to save power and reduce host wear. This is implemented with wrapper scripts (`scripts/orb-stop.sh`, `scripts/orb-start.sh`) and launchd plists (`scripts/com.homelab.orbstop.plist`, `scripts/com.homelab.orbstart.plist`). See [Nightly Shutdown Documentation](../operations/nightly-shutdown.md) for full details.
+- **Nightly shutdown/startup**: The OrbStack Kubernetes cluster automatically stops at 23:59 and starts at 04:59 daily to save power and reduce host wear. This is implemented with wrapper scripts (`scripts/orb-stop.sh`, `scripts/orb-start.sh`) and launchd plists (`scripts/com.homelab.orbstop.plist`, `scripts/com.homelab.orbstart.plist`). See [Nightly Shutdown Documentation](../operations/nightly-shutdown.md) for full details.
 
 These components run on the host macOS and are not managed by ArgoCD (since ArgoCD itself runs inside the cluster that gets shut down).
 
