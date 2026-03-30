@@ -1,0 +1,2445 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://holdennguyen.github.io/homelab/services/monitoring/">
+      
+      
+        <link rel="prev" href="../launchfast/">
+      
+      
+        <link rel="next" href="../openclaw/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Monitoring - Homelab Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#monitoring" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Homelab Docs" class="md-header__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Homelab Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Monitoring
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../infrastructure/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Infrastructure
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Services
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../operations/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Operations
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Homelab Docs" class="md-nav__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Homelab Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../infrastructure/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/secret-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Secret Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../argocd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ArgoCD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authentik/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentik
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../external-secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    External Secrets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../infisical/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infisical
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../launchfast/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LaunchFast
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#directory-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Directory Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-included" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Included
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What&#39;s Included">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-built-dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-built Dashboards
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-dashboards-and-alerting-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Dashboards and Alerting Rules
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Dashboards and Alerting Rules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#directory-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Directory Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-priority-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard Priority System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-provisioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard Provisioning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prometheus Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Dashboard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-alerting-or-recording-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Alerting or Recording Rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-alerting-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Alerting Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notes-for-openclaw-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes for OpenClaw Agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#secrets-in-infisical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secrets in Infisical
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modifying-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modifying Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrading-the-chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrading the Chart
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-specific-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard-Specific Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alert-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alert Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../openclaw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenClaw
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trivy-operator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Operator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trivy-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../operations/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/git-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/ai-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/nightly-shutdown/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nightly Shutdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#directory-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Directory Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#whats-included" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What's Included
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="What&#39;s Included">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-built-dashboards" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-built Dashboards
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-dashboards-and-alerting-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Custom Dashboards and Alerting Rules
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Dashboards and Alerting Rules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#directory-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Directory Structure
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-priority-system" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard Priority System
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitoring-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Monitoring Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-provisioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard Provisioning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prometheus-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prometheus Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-dashboard" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Dashboard
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-alerting-or-recording-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Alerting or Recording Rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#testing-alerting-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Testing Alerting Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#notes-for-openclaw-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Notes for OpenClaw Agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#secrets-in-infisical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secrets in Infisical
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#modifying-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Modifying Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrading-the-chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrading the Chart
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Troubleshooting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#dashboard-specific-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dashboard-Specific Issues
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#alert-testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Alert Testing
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Services
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="monitoring">Monitoring</h1>
+<p>The homelab uses <strong>kube-prometheus-stack</strong> for cluster monitoring: Prometheus for metrics collection and alerting, Grafana for dashboards and visualization, plus node-exporter and kube-state-metrics for comprehensive cluster observability.</p>
+<h2 id="architecture">Architecture</h2>
+<pre class="mermaid"><code>flowchart TD
+    subgraph tailnet["Tailscale Network"]
+        Clients["Devices on tailnet"]
+        TServe["tailscale serve\nHTTPS :8444 → localhost:30090"]
+    end
+
+    subgraph orb["OrbStack Kubernetes"]
+        subgraph monNs["monitoring namespace"]
+            Grafana["Grafana\nNodePort :30090\nDashboards + Visualization"]
+            Prom["Prometheus\n15d retention, 10Gi storage\nMetrics + Alerting"]
+            AM["Alertmanager\n2Gi storage"]
+            NE["node-exporter\nHost metrics"]
+            KSM["kube-state-metrics\nK8s object metrics"]
+            PromOp["Prometheus Operator\nManages CRDs"]
+        end
+
+        subgraph targets["Scrape Targets"]
+            Kubelet["kubelet"]
+            CoreDNS["CoreDNS"]
+            APIServer["API Server"]
+        end
+    end
+
+    Clients -- "WireGuard" --&gt; TServe
+    TServe --&gt; Grafana
+    Grafana --&gt; Prom
+    Prom --&gt; NE &amp; KSM &amp; Kubelet &amp; CoreDNS &amp; APIServer
+    Prom --&gt; AM</code></pre>
+<h2 id="access">Access</h2>
+<table>
+<thead>
+<tr>
+<th>Interface</th>
+<th>URL</th>
+<th>Auth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Grafana</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8444</code></td>
+<td>SSO via Authentik (auto-redirects)</td>
+</tr>
+<tr>
+<td>Grafana (local)</td>
+<td><code>http://localhost:30090</code></td>
+<td>SSO via Authentik</td>
+</tr>
+</tbody>
+</table>
+<p>Grafana is configured with SSO-only access — the local login form is disabled and users are auto-redirected to Authentik. The admin password in <code>grafana-secret</code> is retained for API and break-glass access.</p>
+<h2 id="directory-contents">Directory Contents</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kustomization.yaml</code></td>
+<td>Lists resources for Kustomize/ArgoCD rendering</td>
+</tr>
+<tr>
+<td><code>external-secret.yaml</code></td>
+<td><code>ExternalSecret</code> that pulls Grafana admin password and OAuth secret from Infisical → <code>grafana-secret</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note:</strong> The monitoring stack is deployed via the <strong>Helm chart source</strong> defined in <code>k8s/apps/argocd/applications/monitoring-app.yaml</code>. This directory only contains the ExternalSecret that provides credentials to the Helm release. The <code>monitoring-config</code> ArgoCD Application syncs this directory, while the <code>monitoring</code> Application syncs the upstream Helm chart.</p>
+</blockquote>
+<h2 id="security">Security</h2>
+<p>The monitoring stack components are configured to run as non-root users:</p>
+<ul>
+<li><strong>Grafana</strong>: runs as UID 472 (fsGroup 472).</li>
+<li><strong>Prometheus</strong>: runs as UID 65534 (nobody) with fsGroup 65534.</li>
+<li><strong>Alertmanager</strong>: runs as UID 1000 and GID 2000 with fsGroup 2000.</li>
+<li><strong>node-exporter</strong> and <strong>kube-state-metrics</strong> run as non-root by default in the upstream chart.</li>
+</ul>
+<p>The <code>monitoring</code> namespace enforces the <code>baseline</code> Pod Security Standard (with <code>restricted</code> audit/warn) because node-exporter requires host namespaces and hostPort.</p>
+<h2 id="whats-included">What's Included</h2>
+<p>The kube-prometheus-stack Helm chart deploys:</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prometheus</strong></td>
+<td>Time-series metrics collection, PromQL queries, alerting rules</td>
+</tr>
+<tr>
+<td><strong>Grafana</strong></td>
+<td>Dashboards and visualization with 30+ pre-built K8s dashboards</td>
+</tr>
+<tr>
+<td><strong>Alertmanager</strong></td>
+<td>Alert routing and notification</td>
+</tr>
+<tr>
+<td><strong>node-exporter</strong></td>
+<td>Host-level metrics (CPU, memory, disk, network)</td>
+</tr>
+<tr>
+<td><strong>kube-state-metrics</strong></td>
+<td>Kubernetes object state metrics (pods, deployments, nodes)</td>
+</tr>
+<tr>
+<td><strong>Prometheus Operator</strong></td>
+<td>Manages Prometheus/Alertmanager CRDs declaratively</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pre-built-dashboards">Pre-built Dashboards</h3>
+<p>Grafana ships with dashboards for:
+- Cluster overview (CPU, memory, network, disk)
+- Node metrics
+- Pod/container resource usage
+- Namespace resource quotas
+- Persistent volume usage
+- CoreDNS performance
+- API server request rates and latency</p>
+<h2 id="custom-dashboards-and-alerting-rules">Custom Dashboards and Alerting Rules</h2>
+<p>This directory (<code>k8s/apps/monitoring/</code>) contains custom dashboards and alerting rules managed as GitOps resources.</p>
+<h3 id="directory-structure">Directory Structure</h3>
+<div class="highlight"><pre><span></span><code>k8s/apps/monitoring/
+├── kustomization.yaml
+├── external-secret.yaml
+├── dashboards/
+│   ├── dashboard-homelab-overview.yaml    # 🔴 Critical - Main monitoring view
+│   ├── dashboard-node-health.yaml         # 🔴 Critical - Infrastructure health
+│   ├── dashboard-network.yaml             # 🟡 Important - Network monitoring
+│   ├── dashboard-argocd.yaml              # 🟡 Important - GitOps monitoring
+│   ├── dashboard-authentik.yaml           # 🟢 Service - Authentication
+│   └── dashboard-infisical.yaml           # 🟢 Service - Secrets management
+└── rules/
+    ├── recording-namespace.yaml           # Recording rules for fast queries
+    ├── recording-requests.yaml            # HTTP request rate recording
+    ├── alerts-pods.yaml                   # Pod crash/OOM alerts
+    ├── alerts-pvc.yaml                    # Storage usage alerts
+    ├── alerts-nodes.yaml                  # Node resource alerts
+    ├── alerts-prometheus.yaml             # Prometheus health alerts
+    ├── alerts-certificates.yaml           # Certificate expiry alerts
+    └── alerts-argocd.yaml                 # GitOps sync alerts
+</code></pre></div>
+<h3 id="dashboard-priority-system">Dashboard Priority System</h3>
+<p><strong>🔴 Critical Dashboards (Daily Monitoring):</strong>
+- <strong>Homelab Overview</strong>: Single-pane view of cluster health, resource usage, and active alerts
+- <strong>Node Health</strong>: M4 Mac mini infrastructure monitoring (CPU, memory, disk, temperature)</p>
+<p><strong>🟡 Important Dashboards (Weekly/As-Needed):</strong>
+- <strong>Network</strong>: Traffic patterns, policy rules, potential network issues
+- <strong>ArgoCD</strong>: GitOps sync status, deployment operations</p>
+<p><strong>🟢 Service Dashboards (On-Demand):</strong>
+- <strong>Authentik</strong>: SSO service health, authentication flows, user metrics
+- <strong>Infisical</strong>: Secrets management service health, API usage</p>
+<h3 id="monitoring-workflow">Monitoring Workflow</h3>
+<ol>
+<li><strong>Daily Check</strong>: Start with <strong>Homelab Overview</strong> for cluster status</li>
+<li><strong>Infrastructure</strong>: Check <strong>Node Health</strong> for hardware issues</li>
+<li><strong>Investigate</strong>: Use specific dashboards when alerts trigger or issues arise</li>
+<li><strong>Trends</strong>: Review <strong>Network</strong> dashboard for traffic patterns and policy effectiveness</li>
+</ol>
+<h3 id="dashboard-provisioning">Dashboard Provisioning</h3>
+<p>Custom dashboards are deployed as ConfigMaps with the label <code>grafana_dashboard: "1"</code>. The Grafana sidecar (configured in the Helm chart) automatically picks up these ConfigMaps and loads them into Grafana without requiring manual UI changes.</p>
+<p>Each dashboard is a separate ConfigMap file in <code>dashboards/</code>, following the naming convention:</p>
+<div class="highlight"><pre><span></span><code>dashboard-&lt;name&gt;.yaml
+</code></pre></div>
+<p>The file contains a ConfigMap with the dashboard JSON in <code>data.dashboard.json</code>. Dashboard UIDs should be unique across all dashboards.</p>
+<h3 id="prometheus-rules">Prometheus Rules</h3>
+<p>Prometheus recording and alerting rules are defined as <code>PrometheusRule</code> CRDs in <code>rules/</code>. These are picked up by the Prometheus Operator automatically.</p>
+<p>Two types of rules:</p>
+<ol>
+<li><strong>Recording rules</strong> (<code>recording-*.yaml</code>) — pre-compute expensive queries for faster dashboard rendering</li>
+<li><strong>Alerting rules</strong> (<code>alerts-*.yaml</code>) — generate alerts when conditions match</li>
+</ol>
+<p>Naming conventions:</p>
+<div class="highlight"><pre><span></span><code>recording-&lt;domain&gt;.yaml   # e.g., recording-namespace.yaml, recording-requests.yaml
+alerts-&lt;domain&gt;.yaml      # e.g., alerts-pods.yaml, alerts-nodes.yaml
+</code></pre></div>
+<h3 id="adding-a-new-dashboard">Adding a New Dashboard</h3>
+<ol>
+<li>Create the dashboard JSON in Grafana (export as JSON)</li>
+<li>Create a new file <code>dashboards/dashboard-&lt;name&gt;.yaml</code>:
+   <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dashboard-&lt;name&gt;</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">grafana_dashboard</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1&quot;</span>
+<span class="w">    </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring</span>
+<span class="w">    </span><span class="nt">app.kubernetes.io/instance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">dashboard.json</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">{ ... }</span>
+</code></pre></div></li>
+<li>Commit and push — ArgoCD will sync automatically; the sidecar will load the dashboard.</li>
+</ol>
+<h3 id="adding-a-new-alerting-or-recording-rule">Adding a New Alerting or Recording Rule</h3>
+<ol>
+<li>Create a new file <code>rules/&lt;type&gt;-&lt;domain&gt;.yaml</code>:
+   <div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring.coreos.com/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PrometheusRule</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;name&gt;</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">prometheus</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kube-prometheus</span>
+<span class="w">    </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alert-rules</span>
+<span class="w">    </span><span class="nt">app.kubernetes.io/name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring</span>
+<span class="w">    </span><span class="nt">app.kubernetes.io/instance</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">monitoring</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">groups</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;group-name&gt;</span>
+<span class="w">      </span><span class="nt">rules</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">alert</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;alert-name&gt;</span>
+<span class="w">          </span><span class="nt">expr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;promql expression&gt;</span>
+<span class="w">          </span><span class="nt">for</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;duration&gt;</span>
+<span class="w">          </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">severity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;severity&gt;</span>
+<span class="w">          </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">            </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;...&quot;</span>
+<span class="w">            </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;...&quot;</span>
+</code></pre></div></li>
+<li>Commit and push — the Prometheus Operator will reload rules automatically.</li>
+</ol>
+<h3 id="testing-alerting-rules">Testing Alerting Rules</h3>
+<p>To verify alert rules work correctly:</p>
+<ol>
+<li>Generate a synthetic condition (e.g., kill a pod repeatedly to trigger <code>PodCrashLooping</code>, fill a PVC to trigger <code>PVCUsageTooHigh</code>)</li>
+<li>Check alerts in Grafana or via Prometheus API:
+   <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>monitoring<span class="w"> </span>svc/monitoring-kube-prometheus-prometheus<span class="w"> </span><span class="m">9090</span>:9090
+<span class="c1"># Open http://localhost:9090/alerts</span>
+</code></pre></div></li>
+<li>Verify Alertmanager receives the alert:
+   <div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>monitoring<span class="w"> </span>svc/monitoring-kube-prometheus-alertmanager<span class="w"> </span><span class="m">9093</span>:9093
+<span class="c1"># Open http://localhost:9093/</span>
+</code></pre></div></li>
+<li>Silence or resolve the condition, ensure the alert clears.</li>
+</ol>
+<h3 id="notes-for-openclaw-agents">Notes for OpenClaw Agents</h3>
+<ul>
+<li>All metrics are scraped by the Prometheus instance deployed with the <code>kube-prometheus-stack</code> Helm chart.</li>
+<li>Service-specific metrics (e.g., <code>http_requests_total</code>) come from the Prometheus instrumentation of those services. Ensure the services are correctly instrumented.</li>
+<li>For metrics not currently available (e.g., PostgreSQL-specific metrics), consider adding a PostgreSQL exporter or instrumenting the application.</li>
+<li>Dashboard UIDs should remain stable across updates. Changing a dashboard's UID will create a new dashboard in Grafana instead of updating the existing one.</li>
+<li>To modify an existing dashboard, edit the JSON in place and keep the same UID.</li>
+</ul>
+<h2 id="configuration">Configuration</h2>
+<p>The monitoring stack is deployed via ArgoCD using the Helm chart source directly (no local manifests). All configuration is in the Application CR at <code>k8s/apps/argocd/applications/monitoring-app.yaml</code>.</p>
+<p>Key settings:
+- <strong>Prometheus retention:</strong> 15 days
+- <strong>Prometheus storage:</strong> 10Gi PVC
+- <strong>Scrape interval:</strong> 60s (explicitly configured)
+- <strong>Evaluation interval:</strong> 60s (explicitly configured)
+- <strong>Alertmanager storage:</strong> 2Gi PVC
+- <strong>Grafana storage:</strong> 2Gi PVC (dashboard persistence)
+- <strong>Disabled scrapers:</strong> kubeProxy, kubeEtcd, kubeScheduler, kubeControllerManager (not applicable to OrbStack single-node)</p>
+<h3 id="secrets-in-infisical">Secrets in Infisical</h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GRAFANA_ADMIN_PASSWORD</code></td>
+<td>Break-glass admin access (SSO is primary auth)</td>
+</tr>
+<tr>
+<td><code>GRAFANA_OAUTH_CLIENT_SECRET</code></td>
+<td>OIDC client secret for Authentik SSO integration</td>
+</tr>
+</tbody>
+</table>
+<h3 id="modifying-configuration">Modifying Configuration</h3>
+<p>Edit the <code>helm.valuesObject</code> in <code>k8s/apps/argocd/applications/monitoring-app.yaml</code>, then push to <code>main</code>. ArgoCD will sync the changes.</p>
+<h3 id="upgrading-the-chart">Upgrading the Chart</h3>
+<p>Update <code>targetRevision</code> in the Application CR to the desired chart version, then push to <code>main</code>.</p>
+<h2 id="networking">Networking</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Grafana container port</td>
+<td>3000</td>
+</tr>
+<tr>
+<td>NodePort</td>
+<td>30090</td>
+</tr>
+<tr>
+<td>Tailscale HTTPS</td>
+<td>8444</td>
+</tr>
+<tr>
+<td>URL</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8444</code></td>
+</tr>
+</tbody>
+</table>
+<p>One-time Tailscale Serve setup:</p>
+<div class="highlight"><pre><span></span><code>tailscale<span class="w"> </span>serve<span class="w"> </span>--bg<span class="w"> </span>--https<span class="w"> </span><span class="m">8444</span><span class="w"> </span>http://localhost:30090
+</code></pre></div>
+<h2 id="operational-commands">Operational Commands</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check monitoring pods</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>monitoring
+
+<span class="c1"># Check Prometheus targets</span>
+kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>monitoring<span class="w"> </span>svc/monitoring-kube-prometheus-prometheus<span class="w"> </span><span class="m">9090</span>:9090
+<span class="c1"># Then open http://localhost:9090/targets</span>
+
+<span class="c1"># Check Alertmanager</span>
+kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>monitoring<span class="w"> </span>svc/monitoring-kube-prometheus-alertmanager<span class="w"> </span><span class="m">9093</span>:9093
+
+<span class="c1"># View Prometheus storage usage</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>monitoring<span class="w"> </span>prometheus-monitoring-kube-prometheus-prometheus-0<span class="w"> </span>--<span class="w"> </span>df<span class="w"> </span>-h<span class="w"> </span>/prometheus
+
+<span class="c1"># Check PVCs</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pvc<span class="w"> </span>-n<span class="w"> </span>monitoring
+
+<span class="c1"># Check ExternalSecret status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>externalsecret<span class="w"> </span>-n<span class="w"> </span>monitoring
+
+<span class="c1"># Force secret re-sync</span>
+kubectl<span class="w"> </span>annotate<span class="w"> </span>externalsecret<span class="w"> </span>grafana-secret<span class="w"> </span>-n<span class="w"> </span>monitoring<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>force-sync<span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%s<span class="k">)</span><span class="w"> </span>--overwrite
+
+<span class="c1"># Check ArgoCD application status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>application<span class="w"> </span>monitoring<span class="w"> </span>monitoring-config<span class="w"> </span>-n<span class="w"> </span>argocd
+</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Grafana login fails</td>
+<td>SSO misconfigured</td>
+<td>Check Authentik OIDC provider has <code>openid</code>, <code>email</code>, <code>profile</code> scope mappings; verify <code>api_url</code> has no trailing slash</td>
+</tr>
+<tr>
+<td>No metrics in dashboards</td>
+<td>Prometheus targets down</td>
+<td>Check <code>kubectl get pods -n monitoring</code>; verify targets via port-forward</td>
+</tr>
+<tr>
+<td>Dashboard panels show "No data"</td>
+<td>Service decommissioned or metrics not available</td>
+<td>Check if service is running: <code>kubectl get deployments -A</code>; verify metrics exist in Prometheus</td>
+</tr>
+<tr>
+<td>High memory usage</td>
+<td>Retention too long or too many metrics</td>
+<td>Reduce <code>retention</code> or add <code>retentionSize</code> limit in Prometheus spec</td>
+</tr>
+<tr>
+<td>PVC pending</td>
+<td>No storage provisioner</td>
+<td>Verify <code>local-path</code> provisioner is running in <code>kube-system</code></td>
+</tr>
+<tr>
+<td>Grafana unreachable via Tailscale</td>
+<td>Serve not configured</td>
+<td><code>tailscale serve --bg --https 8444 http://localhost:30090</code></td>
+</tr>
+<tr>
+<td>Grafana 404 on <code>/userinfo/emails</code></td>
+<td>Authentik provider missing scope mappings</td>
+<td>Assign <code>openid</code>, <code>email</code>, <code>profile</code> scope mappings to the Grafana provider</td>
+</tr>
+<tr>
+<td>Dashboard not appearing</td>
+<td>ArgoCD sync issue</td>
+<td>Check <code>kubectl get application monitoring-config -n argocd</code>; force refresh if needed</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dashboard-specific-issues">Dashboard-Specific Issues</h3>
+<p><strong>Homelab Overview:</strong>
+- "No data" on pod counts: Ensure <code>kube-state-metrics</code> is running
+- Missing network metrics: Check <code>node-exporter</code> pod status</p>
+<p><strong>Node Health:</strong>
+- Temperature data missing: May not be available on all systems
+- Disk I/O shows no data: Check node-exporter configuration</p>
+<p><strong>Network Dashboard:</strong>
+- "Pod Network via Cilium" empty: Cilium metrics not enabled (expected)
+- Packet drops show no data: Normal if no network issues</p>
+<p><strong>Service Dashboards (Authentik/Infisical):</strong>
+- Metrics missing: Check if service is running and exposing metrics
+- HTTP request data empty: Verify Prometheus is scraping service endpoints</p>
+<h3 id="alert-testing">Alert Testing</h3>
+<p>To test alerting rules work correctly:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Test PodCrashLooping alert</span>
+kubectl<span class="w"> </span>run<span class="w"> </span>test-crash<span class="w"> </span>--image<span class="o">=</span>busybox<span class="w"> </span>--restart<span class="o">=</span>Always<span class="w"> </span>--<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;sleep 10 &amp;&amp; exit 1&quot;</span>
+
+<span class="c1"># Check alerts in Prometheus</span>
+kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>monitoring<span class="w"> </span>svc/monitoring-kube-prometheus-prometheus<span class="w"> </span><span class="m">9090</span>:9090
+<span class="c1"># Visit http://localhost:9090/alerts</span>
+
+<span class="c1"># Clean up test pod</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span>test-crash
+</code></pre></div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.expand", "navigation.top", "navigation.path", "content.code.copy", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

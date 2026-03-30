@@ -1,0 +1,2459 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://holdennguyen.github.io/homelab/services/authentik/">
+      
+      
+        <link rel="prev" href="../argocd/">
+      
+      
+        <link rel="next" href="../external-secrets/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Authentik - Homelab Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#authentik-sso-identity-provider" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Homelab Docs" class="md-header__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Homelab Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Authentik
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../infrastructure/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Infrastructure
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Services
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../operations/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Operations
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Homelab Docs" class="md-nav__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Homelab Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../infrastructure/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/secret-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Secret Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../argocd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ArgoCD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentik
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentik
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#directory-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Directory Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#oidc-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OIDC Providers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication Model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#secrets-in-infisical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secrets in Infisical
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oidc-integration-per-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OIDC integration per service
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#application-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application Inventory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-bookmark-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a new Bookmark Application
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-oidc-protected-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a new OIDC-protected service
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding a new OIDC-protected service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-by-step-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-step checklist
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-step checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-generate-and-store-the-client-secret-in-infisical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Generate and store the client secret in Infisical
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-add-the-application-bookmark-to-the-blueprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Add the application bookmark to the blueprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-add-the-secret-to-the-services-externalsecret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Add the secret to the service's ExternalSecret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-create-the-oauth2-provider-via-authentik-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Create the OAuth2 provider via Authentik API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-configure-the-service-to-use-oidc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Configure the service to use OIDC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-update-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Update documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-restart-and-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Restart and verify
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../external-secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    External Secrets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../infisical/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infisical
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../launchfast/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LaunchFast
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../openclaw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenClaw
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trivy-operator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Operator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trivy-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../operations/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/git-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/ai-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/nightly-shutdown/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nightly Shutdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#directory-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Directory Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#oidc-providers" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OIDC Providers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication Model
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#secrets-in-infisical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secrets in Infisical
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#oidc-integration-per-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OIDC integration per service
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#application-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Application Inventory
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-bookmark-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a new Bookmark Application
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-a-new-oidc-protected-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a new OIDC-protected service
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Adding a new OIDC-protected service">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-by-step-checklist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-step checklist
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Step-by-step checklist">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-generate-and-store-the-client-secret-in-infisical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Generate and store the client secret in Infisical
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-add-the-application-bookmark-to-the-blueprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Add the application bookmark to the blueprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-add-the-secret-to-the-services-externalsecret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Add the secret to the service's ExternalSecret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#4-create-the-oauth2-provider-via-authentik-api" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. Create the OAuth2 provider via Authentik API
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#5-configure-the-service-to-use-oidc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. Configure the service to use OIDC
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#6-update-documentation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. Update documentation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#7-restart-and-verify" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. Restart and verify
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Services
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="authentik-sso-identity-provider">Authentik (SSO / Identity Provider)</h1>
+<p>Authentik provides <strong>Single Sign-On (SSO)</strong> for the homelab via <strong>OpenID Connect (OIDC)</strong>. One login, one password for Grafana and ArgoCD.</p>
+<h2 id="access">Access</h2>
+<table>
+<thead>
+<tr>
+<th>Interface</th>
+<th>URL</th>
+<th>Credentials</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Authentik Admin</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net</code></td>
+<td>akadmin / <code>AUTHENTIK_BOOTSTRAP_PASSWORD</code> from Infisical</td>
+</tr>
+<tr>
+<td>Authentik (local)</td>
+<td><code>http://localhost:30500</code></td>
+<td>same</td>
+</tr>
+</tbody>
+</table>
+<h2 id="architecture">Architecture</h2>
+<pre class="mermaid"><code>flowchart TD
+    subgraph authentik["authentik namespace"]
+        Server["authentik-server\nNodePort :30500"]
+        Worker["authentik-worker"]
+        PG["PostgreSQL\n(embedded subchart)"]
+        Server --&gt; PG
+        Worker --&gt; PG
+    end
+
+    subgraph services["Service OIDC integration"]
+        Grafana["Grafana\nauth.generic_oauth"]
+        ArgoCD["ArgoCD\noidc.config"]
+    end
+
+    User["User"] -- "login" --&gt; Server
+    Server -- "OIDC token" --&gt; Grafana
+    Server -- "OIDC token" --&gt; ArgoCD</code></pre>
+<h2 id="directory-contents">Directory Contents</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kustomization.yaml</code></td>
+<td>Lists resources for Kustomize/ArgoCD rendering</td>
+</tr>
+<tr>
+<td><code>external-secret.yaml</code></td>
+<td><code>ExternalSecret</code> that pulls Authentik secrets from Infisical → <code>authentik-secret</code></td>
+</tr>
+<tr>
+<td><code>blueprints-configmap.yaml</code></td>
+<td>Authentik Blueprint: application entries for the portal (bookmarks + metadata)</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Note:</strong> Authentik is deployed via the <strong>Helm chart source</strong> defined in <code>k8s/apps/argocd/applications/authentik-app.yaml</code>. This directory only contains the ExternalSecret that provides credentials to the Helm release. The <code>authentik-config</code> ArgoCD Application syncs this directory, while the <code>authentik</code> Application syncs the upstream Helm chart.</p>
+</blockquote>
+<h2 id="security">Security</h2>
+<p>Authentik's server and worker pods run as non-root users. The pod-level securityContext is configured with:</p>
+<ul>
+<li><code>runAsUser: 1000</code></li>
+<li><code>runAsGroup: 1000</code></li>
+<li><code>runAsNonRoot: true</code></li>
+<li><code>fsGroup: 1000</code></li>
+</ul>
+<p>These settings ensure compliance with the cluster's restricted Pod Security Standard. The embedded PostgreSQL instance also runs as a non-root user (UID 999).</p>
+<h2 id="oidc-providers">OIDC Providers</h2>
+<p>Each service has a dedicated OIDC provider in Authentik with its own client ID and secret:</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Client ID</th>
+<th>Redirect URI</th>
+<th>Secret location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Grafana</td>
+<td><code>grafana</code></td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8444/login/generic_oauth</code></td>
+<td>Infisical: <code>GRAFANA_OAUTH_CLIENT_SECRET</code></td>
+</tr>
+<tr>
+<td>ArgoCD</td>
+<td><code>argocd</code></td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8443/auth/callback</code></td>
+<td>Terraform: <code>argocd_oidc_client_secret</code></td>
+</tr>
+</tbody>
+</table>
+<p>All providers use <strong>RS256</strong> signing (asymmetric keys). Scope mappings assigned: <code>openid</code>, <code>email</code>, <code>profile</code>.</p>
+<h2 id="authentication-model">Authentication Model</h2>
+<p>All services enforce SSO-only access — local login forms are disabled:</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>How SSO is enforced</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ArgoCD</td>
+<td><code>configs.cm.admin.enabled: false</code> — admin login disabled, RBAC default <code>role:admin</code> for all SSO users</td>
+</tr>
+<tr>
+<td>Grafana</td>
+<td><code>auth.disable_login_form: true</code>, <code>auto_login: true</code> — auto-redirects to Authentik</td>
+</tr>
+</tbody>
+</table>
+<h2 id="configuration">Configuration</h2>
+<p>Authentik is deployed via ArgoCD using the Helm chart source. All configuration is in <code>k8s/apps/argocd/applications/authentik-app.yaml</code>.</p>
+<p>Key settings:</p>
+<ul>
+<li><strong>Helm chart:</strong> <code>authentik/authentik</code> v2025.12.4</li>
+<li><strong>PostgreSQL:</strong> Embedded subchart with 2Gi PVC</li>
+<li><strong>Secrets:</strong> All sensitive values (secret key, bootstrap password/token, PG password) come from Infisical via ExternalSecret</li>
+<li><strong>NodePort:</strong> 30500 (HTTP), 30501 (HTTPS)</li>
+<li><strong>Tailscale Serve:</strong> Default HTTPS port (443)</li>
+</ul>
+<h3 id="secrets-in-infisical">Secrets in Infisical</h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Purpose</th>
+<th>Consumed by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AUTHENTIK_SECRET_KEY</code></td>
+<td>Cookie signing and unique user IDs (never change after first install)</td>
+<td>Authentik server/worker</td>
+</tr>
+<tr>
+<td><code>AUTHENTIK_BOOTSTRAP_PASSWORD</code></td>
+<td>Initial admin password</td>
+<td>Authentik server</td>
+</tr>
+<tr>
+<td><code>AUTHENTIK_BOOTSTRAP_TOKEN</code></td>
+<td>API token for automation</td>
+<td>Authentik server</td>
+</tr>
+<tr>
+<td><code>AUTHENTIK_POSTGRES_PASSWORD</code></td>
+<td>Embedded PostgreSQL password</td>
+<td>Authentik server + PostgreSQL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="oidc-integration-per-service">OIDC integration per service</h3>
+<p>All OIDC providers are created via the Authentik API using the bootstrap token. The blueprint manages only application metadata (name, icon, group, launch URL). Provider linking is done via API after creation.</p>
+<p><strong>Grafana</strong> — Client-side configured in Helm values (<code>monitoring-app.yaml</code>) via <code>grafana.ini.auth.generic_oauth</code>. Client secret mounted from <code>grafana-secret</code> ExternalSecret.</p>
+<p><strong>ArgoCD</strong> — Client-side configured in Terraform (<code>argocd.tf</code>) via <code>configs.cm.oidc.config</code>. Client secret stored in <code>argocd-secret</code> via Terraform <code>set_sensitive</code>. Requires <code>terraform apply</code> to update.</p>
+<h2 id="networking">Networking</h2>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Container port</td>
+<td>9000 (HTTP), 9443 (HTTPS)</td>
+</tr>
+<tr>
+<td>NodePort</td>
+<td>30500 (HTTP), 30501 (HTTPS)</td>
+</tr>
+<tr>
+<td>Tailscale HTTPS</td>
+<td>443 (default)</td>
+</tr>
+<tr>
+<td>URL</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net</code></td>
+</tr>
+</tbody>
+</table>
+<p>One-time Tailscale Serve setup:</p>
+<div class="highlight"><pre><span></span><code>tailscale<span class="w"> </span>serve<span class="w"> </span>--bg<span class="w"> </span>http://localhost:30500
+</code></pre></div>
+<h2 id="application-inventory">Application Inventory</h2>
+<table>
+<thead>
+<tr>
+<th>Application</th>
+<th>Integration</th>
+<th>URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Grafana</td>
+<td><code>auth.generic_oauth</code></td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8444</code></td>
+</tr>
+<tr>
+<td>ArgoCD</td>
+<td><code>oidc.config</code></td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8443</code></td>
+</tr>
+<tr>
+<td>Infisical</td>
+<td>Bookmark</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8445</code></td>
+</tr>
+<tr>
+<td>OpenClaw</td>
+<td>Bookmark</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8447</code></td>
+</tr>
+<tr>
+<td>Trivy Dashboard</td>
+<td>Bookmark</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8448</code></td>
+</tr>
+<tr>
+<td>LaunchFast</td>
+<td>Bookmark</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8446</code></td>
+</tr>
+<tr>
+<td>Homelab Docs</td>
+<td>Bookmark</td>
+<td><code>https://holdennguyen.github.io/homelab</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="adding-a-new-bookmark-application">Adding a new Bookmark Application</h2>
+<p>For services without native OIDC support, you can add them to the Authentik portal as a Bookmark Application using the Blueprint system.</p>
+<ol>
+<li>Edit <code>k8s/apps/authentik/blueprints-configmap.yaml</code></li>
+<li>Add a new entry to the <code>entries</code> list under the <code>bookmarks.yaml</code> key:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">authentik_core.application</span>
+<span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app-my-service</span>
+<span class="w">        </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">        </span><span class="nt">identifiers</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">slug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-service</span>
+<span class="w">        </span><span class="nt">attrs</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My Service</span>
+<span class="w">          </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Development</span><span class="w"> </span><span class="c1"># Or whatever logical group makes sense</span>
+<span class="w">          </span><span class="nt">meta_launch_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://url-to-service</span>
+<span class="w">          </span><span class="nt">meta_icon</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://url-to-icon.png</span>
+<span class="w">          </span><span class="nt">meta_description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Short description of the service</span>
+<span class="w">          </span><span class="nt">meta_publisher</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Homelab</span>
+</code></pre></div>
+<ol>
+<li>Commit and push the changes. ArgoCD will sync the new ConfigMap, and Authentik will automatically discover and apply the Blueprint, making the bookmark appear in the portal.</li>
+</ol>
+<h2 id="adding-a-new-oidc-protected-service">Adding a new OIDC-protected service</h2>
+<p>OIDC providers are created via the <strong>Authentik API</strong> using the bootstrap token — same one-time bootstrap pattern for all services. The blueprint manages only application metadata (name, icon, group). The client secret is stored once in Infisical and delivered to the service via ExternalSecret.</p>
+<h3 id="how-it-works">How it works</h3>
+<pre class="mermaid"><code>flowchart LR
+    Infisical["Infisical\nMY_SERVICE_OIDC_CLIENT_SECRET"]
+    ServiceES["Service ExternalSecret"]
+    ServicePod["Service Pod\nclient secret via env/file"]
+    API["Authentik API\nOAuth2 Provider\n(bootstrap token + same secret)"]
+    Blueprint["Blueprint\nApplication metadata only"]
+
+    Infisical --&gt; ServiceES --&gt; ServicePod
+    API -- "provider linked to app" --&gt; Blueprint</code></pre>
+<h3 id="step-by-step-checklist">Step-by-step checklist</h3>
+<h4 id="1-generate-and-store-the-client-secret-in-infisical">1. Generate and store the client secret in Infisical</h4>
+<p>Generate a random secret and add it to Infisical under <code>homelab / prod /</code> (root path):</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MY_SERVICE_OIDC_CLIENT_SECRET</code></td>
+<td>(random 64-char alphanumeric string)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2-add-the-application-bookmark-to-the-blueprint">2. Add the application bookmark to the blueprint</h4>
+<p>Edit <code>k8s/apps/authentik/blueprints-configmap.yaml</code> and add an entry (see <a href="#adding-a-new-bookmark-application">Adding a new Bookmark Application</a>). Commit and merge so the application exists before linking.</p>
+<h4 id="3-add-the-secret-to-the-services-externalsecret">3. Add the secret to the service's ExternalSecret</h4>
+<p>In the service's own <code>external-secret.yaml</code>, add a mapping for the Infisical key:</p>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OIDC_CLIENT_SECRET</span>
+<span class="w">      </span><span class="nt">remoteRef</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MY_SERVICE_OIDC_CLIENT_SECRET</span>
+</code></pre></div>
+<h4 id="4-create-the-oauth2-provider-via-authentik-api">4. Create the OAuth2 provider via Authentik API</h4>
+<p>Run the following on the Mac mini after the service ExternalSecret has synced:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">BOOTSTRAP_TOKEN</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>authentik-secret<span class="w"> </span>-n<span class="w"> </span>authentik<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.AUTHENTIK_BOOTSTRAP_TOKEN}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="k">)</span>
+
+<span class="nv">OIDC_SECRET</span><span class="o">=</span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>&lt;service-secret&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;namespace&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.OIDC_CLIENT_SECRET}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d<span class="k">)</span>
+
+<span class="nv">AUTH_FLOW</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-sk<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$BOOTSTRAP_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;https://holdens-mac-mini.story-larch.ts.net/api/v3/flows/instances/?slug=default-provider-authorization-implicit-consent&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import json,sys; print(json.load(sys.stdin)[&#39;results&#39;][0][&#39;pk&#39;])&quot;</span><span class="k">)</span>
+
+<span class="nv">INVAL_FLOW</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-sk<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$BOOTSTRAP_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;https://holdens-mac-mini.story-larch.ts.net/api/v3/flows/instances/?slug=default-provider-invalidation-flow&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import json,sys; print(json.load(sys.stdin)[&#39;results&#39;][0][&#39;pk&#39;])&quot;</span><span class="k">)</span>
+
+<span class="nv">SIGNING_KEY</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-sk<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$BOOTSTRAP_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;https://holdens-mac-mini.story-larch.ts.net/api/v3/crypto/certificatekeypairs/?name=authentik+Self-signed+Certificate&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import json,sys; print(json.load(sys.stdin)[&#39;results&#39;][0][&#39;pk&#39;])&quot;</span><span class="k">)</span>
+
+<span class="nv">SCOPE_OPENID</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-sk<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$BOOTSTRAP_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;https://holdens-mac-mini.story-larch.ts.net/api/v3/propertymappings/provider/scope/?scope_name=openid&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import json,sys; print(json.load(sys.stdin)[&#39;results&#39;][0][&#39;pk&#39;])&quot;</span><span class="k">)</span>
+<span class="nv">SCOPE_EMAIL</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-sk<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$BOOTSTRAP_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;https://holdens-mac-mini.story-larch.ts.net/api/v3/propertymappings/provider/scope/?scope_name=email&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import json,sys; print(json.load(sys.stdin)[&#39;results&#39;][0][&#39;pk&#39;])&quot;</span><span class="k">)</span>
+<span class="nv">SCOPE_PROFILE</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-sk<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$BOOTSTRAP_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;https://holdens-mac-mini.story-larch.ts.net/api/v3/propertymappings/provider/scope/?scope_name=profile&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import json,sys; print(json.load(sys.stdin)[&#39;results&#39;][0][&#39;pk&#39;])&quot;</span><span class="k">)</span>
+
+<span class="nv">PROVIDER_PK</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-sk<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$BOOTSTRAP_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;https://holdens-mac-mini.story-larch.ts.net/api/v3/providers/oauth2/&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;{</span>
+<span class="s2">    \&quot;name\&quot;: \&quot;&lt;service-slug&gt;\&quot;,</span>
+<span class="s2">    \&quot;authorization_flow\&quot;: \&quot;</span><span class="nv">$AUTH_FLOW</span><span class="s2">\&quot;,</span>
+<span class="s2">    \&quot;invalidation_flow\&quot;: \&quot;</span><span class="nv">$INVAL_FLOW</span><span class="s2">\&quot;,</span>
+<span class="s2">    \&quot;client_type\&quot;: \&quot;confidential\&quot;,</span>
+<span class="s2">    \&quot;client_id\&quot;: \&quot;&lt;service-slug&gt;\&quot;,</span>
+<span class="s2">    \&quot;client_secret\&quot;: \&quot;</span><span class="nv">$OIDC_SECRET</span><span class="s2">\&quot;,</span>
+<span class="s2">    \&quot;redirect_uris\&quot;: [{\&quot;matching_mode\&quot;: \&quot;strict\&quot;, \&quot;url\&quot;: \&quot;https://holdens-mac-mini.story-larch.ts.net:&lt;port&gt;/auth/callback\&quot;}],</span>
+<span class="s2">    \&quot;signing_key\&quot;: \&quot;</span><span class="nv">$SIGNING_KEY</span><span class="s2">\&quot;,</span>
+<span class="s2">    \&quot;property_mappings\&quot;: [\&quot;</span><span class="nv">$SCOPE_OPENID</span><span class="s2">\&quot;, \&quot;</span><span class="nv">$SCOPE_EMAIL</span><span class="s2">\&quot;, \&quot;</span><span class="nv">$SCOPE_PROFILE</span><span class="s2">\&quot;]</span>
+<span class="s2">  }&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import json,sys; print(json.load(sys.stdin)[&#39;pk&#39;])&quot;</span><span class="k">)</span>
+
+curl<span class="w"> </span>-sk<span class="w"> </span>-X<span class="w"> </span>PATCH<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer </span><span class="nv">$BOOTSTRAP_TOKEN</span><span class="s2">&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="s2">&quot;https://holdens-mac-mini.story-larch.ts.net/api/v3/core/applications/&lt;service-slug&gt;/&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s2">&quot;{\&quot;provider\&quot;: </span><span class="nv">$PROVIDER_PK</span><span class="s2">}&quot;</span>
+</code></pre></div>
+<p>Replace <code>&lt;service-slug&gt;</code>, <code>&lt;service-secret&gt;</code>, <code>&lt;namespace&gt;</code>, and <code>&lt;port&gt;</code> with actual values.</p>
+<h4 id="5-configure-the-service-to-use-oidc">5. Configure the service to use OIDC</h4>
+<p>Mount the secret as a file or env var and configure the service's OIDC settings. Authentik endpoints are auto-discovered from:</p>
+<div class="highlight"><pre><span></span><code>https://holdens-mac-mini.story-larch.ts.net/application/o/&lt;slug&gt;/.well-known/openid-configuration
+</code></pre></div>
+<p>Standard Authentik endpoints:
+- <strong>Authorize:</strong> <code>https://holdens-mac-mini.story-larch.ts.net/application/o/authorize/</code>
+- <strong>Token:</strong> <code>https://holdens-mac-mini.story-larch.ts.net/application/o/token/</code>
+- <strong>Userinfo:</strong> <code>https://holdens-mac-mini.story-larch.ts.net/application/o/userinfo/</code>
+- <strong>OIDC Discovery:</strong> <code>https://holdens-mac-mini.story-larch.ts.net/application/o/&lt;slug&gt;/.well-known/openid-configuration</code></p>
+<h4 id="6-update-documentation">6. Update documentation</h4>
+<ul>
+<li>Add the service to the <a href="#oidc-providers">OIDC Providers</a> table</li>
+<li>Add the service to the <a href="#authentication-model">Authentication Model</a> table</li>
+<li>Add the service to the <a href="#application-inventory">Application Inventory</a> table</li>
+<li>Update the service's own README with OIDC setup notes</li>
+<li>Update <code>k8s/apps/external-secrets/README.md</code> with the new secret key</li>
+</ul>
+<h4 id="7-restart-and-verify">7. Restart and verify</h4>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment<span class="w"> </span>&lt;service&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;namespace&gt;
+
+<span class="c1"># Verify OIDC discovery</span>
+curl<span class="w"> </span>-sk<span class="w"> </span><span class="s2">&quot;https://holdens-mac-mini.story-larch.ts.net/application/o/&lt;slug&gt;/.well-known/openid-configuration&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>json.tool
+
+<span class="c1"># Test login via the service&#39;s OIDC button</span>
+</code></pre></div>
+<h2 id="operational-commands">Operational Commands</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check pod status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>authentik
+
+<span class="c1"># View server logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>authentik<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/component<span class="o">=</span>server<span class="w"> </span>--tail<span class="o">=</span><span class="m">50</span>
+
+<span class="c1"># View worker logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>authentik<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/component<span class="o">=</span>worker<span class="w"> </span>--tail<span class="o">=</span><span class="m">50</span>
+
+<span class="c1"># Check ExternalSecret status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>externalsecret<span class="w"> </span>-n<span class="w"> </span>authentik
+
+<span class="c1"># Force secret re-sync</span>
+kubectl<span class="w"> </span>annotate<span class="w"> </span>externalsecret<span class="w"> </span>authentik-secret<span class="w"> </span>-n<span class="w"> </span>authentik<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>force-sync<span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%s<span class="k">)</span><span class="w"> </span>--overwrite
+
+<span class="c1"># Check ArgoCD application status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>application<span class="w"> </span>authentik<span class="w"> </span>authentik-config<span class="w"> </span>-n<span class="w"> </span>argocd
+</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"Login failed" on Grafana/ArgoCD</td>
+<td>Redirect URI mismatch</td>
+<td>Check the redirect URI in Authentik matches exactly (scheme, host, port, path)</td>
+</tr>
+<tr>
+<td>Authentik returns 502</td>
+<td>Server pod not ready</td>
+<td><code>kubectl get pods -n authentik</code></td>
+</tr>
+<tr>
+<td>"Invalid client" error</td>
+<td>Wrong client_id or secret</td>
+<td>Verify the secret in Infisical matches what's in Authentik provider</td>
+</tr>
+<tr>
+<td>OIDC login button not showing</td>
+<td>Config not applied</td>
+<td>For ArgoCD: run <code>terraform apply</code>; for Grafana: wait for ArgoCD sync</td>
+</tr>
+<tr>
+<td>403 <code>insufficient_scope</code> on userinfo</td>
+<td>Provider missing scope mappings</td>
+<td>Assign <code>openid</code>, <code>email</code>, <code>profile</code> scope mappings to the provider in Authentik</td>
+</tr>
+<tr>
+<td>ArgoCD <code>malformed jwt: unexpected algorithm HS256</code></td>
+<td>Provider using HS256 instead of RS256</td>
+<td>Update the provider's signing key to an RS256 keypair in Authentik</td>
+</tr>
+<tr>
+<td>ArgoCD shows no applications after SSO login</td>
+<td>RBAC policy.default is empty</td>
+<td>Set <code>configs.rbac.policy.default: role:admin</code> in Terraform</td>
+</tr>
+<tr>
+<td>Service OIDC shows empty providers</td>
+<td>Provider exists but service hasn't re-discovered</td>
+<td>Restart the service deployment: <code>kubectl rollout restart deployment &lt;service&gt; -n &lt;namespace&gt;</code></td>
+</tr>
+<tr>
+<td>Provider client_secret mismatch</td>
+<td>Infisical value doesn't match what was passed to API</td>
+<td>Re-create the provider via API with the current secret value; restart service pod</td>
+</tr>
+<tr>
+<td>OIDC discovery returns 404</td>
+<td>Provider not created or not linked to app</td>
+<td>Run the API bootstrap script to create provider and link it to the application</td>
+</tr>
+<tr>
+<td>Blueprint not applying after ConfigMap change</td>
+<td>Worker hasn't picked up the new ConfigMap</td>
+<td>Restart the Authentik worker: <code>kubectl rollout restart deployment authentik-worker -n authentik</code></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.expand", "navigation.top", "navigation.path", "content.code.copy", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

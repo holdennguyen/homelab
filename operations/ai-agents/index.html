@@ -1,0 +1,2796 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://holdennguyen.github.io/homelab/operations/ai-agents/">
+      
+      
+        <link rel="prev" href="../git-workflow/">
+      
+      
+        <link rel="next" href="../nightly-shutdown/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>AI Agents - Homelab Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#ai-agents" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Homelab Docs" class="md-header__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Homelab Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              AI Agents
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../infrastructure/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Infrastructure
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../services/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Services
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Operations
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Homelab Docs" class="md-nav__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Homelab Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../infrastructure/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/secret-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Secret Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../services/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/argocd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ArgoCD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/authentik/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentik
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/external-secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    External Secrets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/infisical/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infisical
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/launchfast/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LaunchFast
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/openclaw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenClaw
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/trivy-operator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Operator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/trivy-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../git-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Agents
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-which" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Use Which
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cursor-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cursor Rules
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cursor Rules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-cursor-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a Cursor Rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openclaw-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenClaw Agents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenClaw Agents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-the-orchestrator-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the Orchestrator Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cursor-agent-senior-lead-handoff-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cursor Agent — Senior Lead &amp; Handoff Protocol
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mandatory-git-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mandatory Git Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#github-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Labels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-footprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Footprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semantic-versioning-releases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Semantic Versioning &amp; Releases
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#incident-response-rollback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Incident Response &amp; Rollback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-agent-skill-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Agent Skill Assignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Agent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sub-agent-spawning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sub-agent Spawning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openclaw-skills" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenClaw Skills
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenClaw Skills">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#skill-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skill Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-skill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Skill
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-maintenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation Maintenance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documentation Maintenance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-to-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to update
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-adding-a-new-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When adding a new service
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#single-source-of-truth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single Source of Truth
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nightly-shutdown/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nightly Shutdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-use-which" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Use Which
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cursor-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cursor Rules
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cursor Rules">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-cursor-rule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a Cursor Rule
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openclaw-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenClaw Agents
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenClaw Agents">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-the-orchestrator-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the Orchestrator Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cursor-agent-senior-lead-handoff-protocol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cursor Agent — Senior Lead &amp; Handoff Protocol
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mandatory-git-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mandatory Git Workflow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#github-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Labels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-footprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Footprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#semantic-versioning-releases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Semantic Versioning &amp; Releases
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#incident-response-rollback" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Incident Response &amp; Rollback
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Configuration
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#per-agent-skill-assignment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Per-Agent Skill Assignment
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Agent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sub-agent-spawning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sub-agent Spawning
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openclaw-skills" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenClaw Skills
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenClaw Skills">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#skill-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skill Format
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-skill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Skill
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-maintenance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation Maintenance
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documentation Maintenance">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        For agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-to-update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What to update
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-adding-a-new-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When adding a new service
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#single-source-of-truth" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single Source of Truth
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Operations
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="ai-agents">AI Agents</h1>
+<p>The homelab uses two complementary AI agent systems: <strong>Cursor</strong> for interactive development and <strong>OpenClaw</strong> for autonomous multi-agent operations.</p>
+<h2 id="architecture">Architecture</h2>
+<pre class="mermaid"><code>flowchart TD
+    subgraph source ["Single Source of Truth (git)"]
+        CursorRules[".cursor/rules/*.mdc"]
+        Skills["skills/*/SKILL.md"]
+        AgentsMD["agents/workspaces/*/AGENTS.md"]
+    end
+
+    subgraph cursor ["Cursor IDE (local)"]
+        CursorAgent["Cursor Agent\n(interactive, single-agent)"]
+        CursorAgent --&gt;|"alwaysApply + autoAttach"| CursorRules
+        CursorAgent --&gt;|"read on demand"| Skills
+    end
+
+    subgraph openclaw ["OpenClaw (K8s pod)"]
+        HA["homelab-admin\n(orchestrator)"]
+        CA["cursor-agent\n(senior lead)"]
+        DS["devops-sre\n(junior)"]
+        SE["software-engineer\n(junior)"]
+        SA["security-analyst\n(junior)"]
+        QA["qa-tester\n(junior)"]
+        HA --&gt;|"sessions_spawn"| CA
+        HA --&gt;|"sessions_spawn"| DS
+        HA --&gt;|"sessions_spawn"| SE
+        HA --&gt;|"sessions_spawn"| SA
+        HA --&gt;|"sessions_spawn"| QA
+        CA --&gt;|"sessions_spawn\n+ review"| DS
+        CA --&gt;|"sessions_spawn\n+ review"| SE
+        CA --&gt;|"sessions_spawn\n+ review"| SA
+        CA --&gt;|"sessions_spawn\n+ review"| QA
+    end
+
+    subgraph models ["Model Providers"]
+        OpenRouterM["OpenRouter\nstepfun/step-3.5-flash:free\n(primary)"]
+        GeminiM["Google Gemini\ngemini-2.5-pro\n(fallback)"]
+    end
+
+    openclaw --&gt; OpenRouterM
+    OpenRouterM -.-&gt;|"fallback"| GeminiM
+
+    Skills --&gt;|"hostPath /skills"| openclaw
+    AgentsMD --&gt;|"hostPath → init container"| openclaw</code></pre>
+<h2 id="when-to-use-which">When to Use Which</h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>System</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interactive coding, file editing, git ops</td>
+<td>Cursor</td>
+<td>Direct filesystem access, IDE integration, fast iteration</td>
+</tr>
+<tr>
+<td>Planning, architecture review, Q&amp;A</td>
+<td>Cursor (Ask/Plan mode)</td>
+<td>Context-aware with <code>.cursor/rules/</code></td>
+</tr>
+<tr>
+<td>Autonomous infra tasks (deploy, rotate secrets, incident response)</td>
+<td>OpenClaw</td>
+<td>Spawns sub-agents, runs kubectl, accessible from any device</td>
+</tr>
+<tr>
+<td>Security audit, code review</td>
+<td>OpenClaw (security-analyst, software-engineer)</td>
+<td>Dedicated workspace, parallel execution</td>
+</tr>
+<tr>
+<td>Quick kubectl check from phone/tablet</td>
+<td>OpenClaw</td>
+<td>Multi-device access via Tailscale</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cursor-rules">Cursor Rules</h2>
+<p>Cursor rules live in <code>.cursor/rules/*.mdc</code> with YAML frontmatter. They inject context into every Cursor conversation.</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Scope</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>homelab.mdc</code></td>
+<td><code>alwaysApply: true</code></td>
+<td>Global homelab context, architecture layers, core rules (GitOps, no secrets in git, ArgoCD labeling)</td>
+</tr>
+<tr>
+<td><code>kubernetes.mdc</code></td>
+<td><code>autoAttach: k8s/**</code></td>
+<td>Kustomize conventions, ArgoCD Application CR template, sync waves, namespace rules</td>
+</tr>
+<tr>
+<td><code>terraform.mdc</code></td>
+<td><code>autoAttach: terraform/**</code></td>
+<td>Layer 0 bootstrap rules, variable naming, secret handling</td>
+</tr>
+<tr>
+<td><code>openclaw.mdc</code></td>
+<td><code>autoAttach: k8s/apps/openclaw/**, skills/**, agents/**</code></td>
+<td>Agent/skill conventions, how to add agents and skills</td>
+</tr>
+</tbody>
+</table>
+<h3 id="adding-a-cursor-rule">Adding a Cursor Rule</h3>
+<ol>
+<li>Create <code>.cursor/rules/&lt;name&gt;.mdc</code> with frontmatter:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Short description</span>
+<span class="nt">alwaysApply</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w">          </span><span class="c1"># injected into every conversation</span>
+<span class="c1"># OR</span>
+<span class="nt">autoAttach</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;path/glob/**&quot;</span><span class="w">         </span><span class="c1"># injected when matching files are open</span>
+<span class="nn">---</span>
+</code></pre></div>
+<ol>
+<li>Write the rule content in markdown below the frontmatter.</li>
+<li>Commit and push. The rule takes effect immediately in new Cursor sessions.</li>
+</ol>
+<h2 id="openclaw-agents">OpenClaw Agents</h2>
+<p>OpenClaw runs nine agents in total: six core agents in a two-tier orchestrator pattern, and three specialist agents for domain-specific tasks. The <code>homelab-admin</code> agent is the only directly accessible agent — it receives all user requests and delegates to sub-agents via <code>sessions_spawn</code>. The <code>cursor-agent</code> serves as a <strong>senior lead</strong> that can both execute complex tasks and direct junior agents.</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Tier</th>
+<th>Role</th>
+<th>Workspace</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>homelab-admin</code></td>
+<td>Orchestrator</td>
+<td>Default entry point, delegates to all agents</td>
+<td><code>/data/workspaces/homelab-admin</code></td>
+</tr>
+<tr>
+<td><code>cursor-agent</code></td>
+<td>Senior lead</td>
+<td>AI-assisted code gen via Cursor CLI, PR review authority, technical direction</td>
+<td><code>/data/workspaces/cursor-agent</code></td>
+</tr>
+<tr>
+<td><code>devops-sre</code></td>
+<td>Junior</td>
+<td>Infrastructure, K8s, Terraform</td>
+<td><code>/data/workspaces/devops-sre</code></td>
+</tr>
+<tr>
+<td><code>software-engineer</code></td>
+<td>Junior</td>
+<td>Code development, testing</td>
+<td><code>/data/workspaces/software-engineer</code></td>
+</tr>
+<tr>
+<td><code>security-analyst</code></td>
+<td>Junior</td>
+<td>Security audits, hardening</td>
+<td><code>/data/workspaces/security-analyst</code></td>
+</tr>
+<tr>
+<td><code>qa-tester</code></td>
+<td>Junior</td>
+<td>Deployment validation, service health testing, regression checks</td>
+<td><code>/data/workspaces/qa-tester</code></td>
+</tr>
+<tr>
+<td><code>deutsch-tutor</code></td>
+<td>Specialist</td>
+<td>AI German language tutor — spaced repetition, grammar, conversation</td>
+<td><code>/data/workspaces/deutsch-tutor</code></td>
+</tr>
+<tr>
+<td><code>english-tutor</code></td>
+<td>Specialist</td>
+<td>AI IELTS 8.0 coach — grammar precision, academic vocabulary, essay feedback, speaking simulation</td>
+<td><code>/data/workspaces/english-tutor</code></td>
+</tr>
+<tr>
+<td><code>daily-routine</code></td>
+<td>Specialist</td>
+<td>Proactive health &amp; schedule coach — morning briefing, meal reminders, training sessions, hydration, wind-down</td>
+<td><code>/data/workspaces/daily-routine</code></td>
+</tr>
+</tbody>
+</table>
+<p>Every agent has an explicit object-form <code>model</code> with <code>{ primary, fallbacks }</code> in the configmap:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Primary</td>
+<td><code>openrouter/stepfun/step-3.5-flash:free</code></td>
+</tr>
+<tr>
+<td>Fallback</td>
+<td><code>google/gemini-2.5-pro</code></td>
+</tr>
+</tbody>
+</table>
+<p>When the primary fails or hits rate limits, OpenClaw falls through to Gemini. Auth is via <code>OPENROUTER_API_KEY</code> and <code>GEMINI_API_KEY</code> env vars (synced from Infisical).</p>
+<p><strong>Convention:</strong> Per-agent <code>model</code> must always use the object form <code>{ "primary": "...", "fallbacks": ["..."] }</code>. A plain string discards fallbacks. See the <a href="../k8s/apps/openclaw/README.md#model-config-convention-important">OpenClaw README</a> for details.</p>
+<h3 id="how-the-orchestrator-works">How the Orchestrator Works</h3>
+<p>Users interact only with <code>homelab-admin</code> in the OpenClaw Control UI. It is the sole agent with <code>"default": true</code> in the config. The other five agents are sub-agents — they don't appear in the UI dropdown and can only be spawned by the orchestrator.</p>
+<p><strong>Delegation rules:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Request type</th>
+<th>Delegated to</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Complex code generation, multi-file refactors</td>
+<td><code>cursor-agent</code> (senior)</td>
+<td>"Generate a Python script that validates YAML files"</td>
+</tr>
+<tr>
+<td>Multi-agent coordinated tasks</td>
+<td><code>cursor-agent</code> (senior, decomposes + directs)</td>
+<td>"Refactor the monitoring stack and update all docs"</td>
+</tr>
+<tr>
+<td>PR review for junior agent output</td>
+<td><code>cursor-agent</code> (senior)</td>
+<td>"Review the devops-sre PR for the new NetworkPolicy"</td>
+</tr>
+<tr>
+<td>Infrastructure changes, Terraform, K8s ops, monitoring</td>
+<td><code>devops-sre</code> (junior)</td>
+<td>"Add a NodePort to the monitoring stack"</td>
+</tr>
+<tr>
+<td>Code changes, feature development, testing</td>
+<td><code>software-engineer</code> (junior)</td>
+<td>"Update the Dockerfile to add a new tool"</td>
+</tr>
+<tr>
+<td>Security audits, vulnerability assessment, hardening</td>
+<td><code>security-analyst</code> (junior)</td>
+<td>"Audit the RBAC configuration"</td>
+</tr>
+<tr>
+<td>Deployment validation, regression testing, health checks</td>
+<td><code>qa-tester</code> (junior)</td>
+<td>"Verify all services are healthy after the merge"</td>
+</tr>
+<tr>
+<td>Read-only checks, status queries, simple answers</td>
+<td><code>homelab-admin</code> (handles directly)</td>
+<td>"What pods are running?"</td>
+</tr>
+</tbody>
+</table>
+<p>When delegating, <code>homelab-admin</code> uses <code>sessions_spawn</code> and provides:
+1. Clear task description and expected outcome
+2. Relevant file paths or service names
+3. Any context from prior conversation
+4. Label instructions (agent, type, area, priority)</p>
+<p>The spawned sub-agent session appears in the UI sidebar. Sub-agents report results back via <code>sessions_announce</code>.</p>
+<h3 id="cursor-agent-senior-lead-handoff-protocol">Cursor Agent — Senior Lead &amp; Handoff Protocol</h3>
+<p>The <code>cursor-agent</code> is the <strong>senior lead</strong> in the agent hierarchy. It has three responsibilities: (1) AI-assisted code generation via the Cursor CLI, (2) PR review authority for junior agent output, and (3) technical direction on multi-agent tasks. It can spawn and direct junior agents (<code>devops-sre</code>, <code>software-engineer</code>, <code>security-analyst</code>, <code>qa-tester</code>) independently.</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant HA as homelab-admin&lt;br/&gt;(Orchestrator)
+    participant CA as cursor-agent&lt;br/&gt;(OpenClaw sub-agent)
+    participant CLI as Cursor CLI&lt;br/&gt;(agent command)
+    participant GH as GitHub
+
+    HA-&gt;&gt;CA: sessions_spawn with task context&lt;br/&gt;(description, repo, files, constraints)
+    CA-&gt;&gt;CA: Clone/update repo, create branch,&lt;br/&gt;set git identity
+    CA-&gt;&gt;CLI: agent -p 'prompt' --force&lt;br/&gt;(or tmux session for complex tasks)
+    CLI--&gt;&gt;CA: Generated code changes
+    CA-&gt;&gt;CA: Review diff: no secrets,&lt;br/&gt;style check, test coverage
+    alt Quality OK
+        CA-&gt;&gt;GH: git commit + push + gh pr create
+        GH--&gt;&gt;CA: PR URL
+        CA--&gt;&gt;HA: sessions_announce: PR URL + summary
+    else Quality concerns
+        CA--&gt;&gt;HA: Report issues, request guidance
+    end</code></pre>
+<p><strong>Execution modes</strong> (selected by task complexity):</p>
+<table>
+<thead>
+<tr>
+<th>Complexity</th>
+<th>Mode</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simple, single-file</td>
+<td>Non-interactive</td>
+<td><code>agent -p '&lt;prompt&gt;' --force</code></td>
+</tr>
+<tr>
+<td>Multi-file, needs context</td>
+<td>Non-interactive with <code>@file</code> refs</td>
+<td><code>agent -p '&lt;prompt&gt;' --force</code></td>
+</tr>
+<tr>
+<td>Iterative, needs refinement</td>
+<td>tmux automation</td>
+<td><code>tmux</code> session with interactive <code>agent</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Prerequisites</strong> (included in the Docker image):</p>
+<ul>
+<li>Cursor CLI (<code>agent</code> command) — installed via install script in <code>Dockerfile.openclaw</code></li>
+<li><code>tmux</code> — installed for complex task execution</li>
+<li><code>CURSOR_API_KEY</code> — synced from Infisical via ESO into <code>openclaw-secret</code></li>
+</ul>
+<p>See the <code>cursor-agent</code> skill (<code>skills/cursor-agent/SKILL.md</code>) for the full CLI reference, tmux automation patterns, and troubleshooting guide.</p>
+<h3 id="mandatory-git-workflow">Mandatory Git Workflow</h3>
+<p>ALL agents enforce a mandatory git workflow for any change to the homelab repository. No agent — including the orchestrator — pushes directly to <code>main</code>. Branch protection is enforced on <code>main</code>: PRs require at least one approving review, force pushes are blocked, and linear history is required.</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant User
+    participant HA as homelab-admin&lt;br/&gt;(Orchestrator)
+    participant SA as Sub-agent&lt;br/&gt;(devops-sre / software-engineer /&lt;br/&gt;security-analyst / qa-tester / cursor-agent)
+    participant GH as GitHub
+    participant Argo as ArgoCD
+
+    User-&gt;&gt;HA: "Add resource X to service Y"
+    HA-&gt;&gt;HA: Analyze request, pick agent
+    HA-&gt;&gt;SA: sessions_spawn with task context
+
+    SA-&gt;&gt;SA: Clone repo + set git identity
+    SA-&gt;&gt;GH: gh issue create (with agent footer)
+    GH--&gt;&gt;SA: Issue #42
+    SA-&gt;&gt;SA: git checkout -b agent-id/feat/42-add-resource-x
+    SA-&gt;&gt;SA: Edit manifests + docs
+    SA-&gt;&gt;SA: git commit (with agent tag in message)
+    SA-&gt;&gt;GH: git push + gh pr create (with agent footer)
+    GH--&gt;&gt;SA: PR URL
+
+    SA--&gt;&gt;HA: Report PR URL
+    HA--&gt;&gt;User: PR created, ArgoCD syncs in ~3min
+
+    User-&gt;&gt;GH: Review &amp; merge PR
+    GH-&gt;&gt;Argo: Push to main triggers sync
+    Argo-&gt;&gt;Argo: Auto-sync within ~3 minutes</code></pre>
+<p><strong>Step-by-step process (every agent follows this):</strong></p>
+<ol>
+<li><strong>Clone the repo</strong> into the agent's workspace and <strong>set git identity</strong> (<code>git config user.name "&lt;agent-id&gt;[bot]"</code>, <code>git config user.email "&lt;agent-id&gt;@openclaw.homelab"</code>)</li>
+<li><strong>Create a labeled GitHub issue</strong> via <code>gh issue create</code> with <code>--assignee holdennguyen --label "agent:&lt;id&gt;,type:&lt;type&gt;,area:&lt;area&gt;,priority:&lt;priority&gt;" --milestone "&lt;current-milestone&gt;"</code> — body ends with <code>Agent: &lt;agent-id&gt; | OpenClaw Homelab</code> footer. If no open milestone exists, ask the orchestrator (or user) to create one.</li>
+<li><strong>Create a branch</strong> from main: <code>&lt;agent-id&gt;/&lt;type&gt;/&lt;issue-number&gt;-&lt;short-description&gt;</code> (prefixes: <code>feat/</code>, <code>fix/</code>, <code>chore/</code>, <code>docs/</code>, <code>refactor/</code>)</li>
+<li><strong>Make changes</strong> to manifests, config, docs</li>
+<li><strong>Commit</strong> with a message referencing the issue and agent: <code>&lt;type&gt;: &lt;description&gt; (#&lt;issue-number&gt;) [&lt;agent-id&gt;]</code></li>
+<li><strong>Keep branch up to date</strong> — before every push, run <code>git fetch origin main &amp;&amp; git merge origin/main --no-edit</code> to incorporate any changes merged to <code>main</code> since the branch was created. Resolve conflicts if needed; never force-push.</li>
+<li><strong>Push</strong> and <strong>create a labeled PR</strong> via <code>gh pr create</code> with the same labels and <code>--milestone "&lt;current-milestone&gt;"</code> — body ends with <code>Agent: &lt;agent-id&gt; | OpenClaw Homelab</code> footer</li>
+<li><strong>Report</strong> the PR URL back to the orchestrator or user</li>
+</ol>
+<h3 id="github-labels">GitHub Labels</h3>
+<p>Every issue and PR created by agents MUST be labeled. Labels serve as the tracking and filtering mechanism since agents are not GitHub users.</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Labels</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent</strong></td>
+<td><code>agent:homelab-admin</code>, <code>agent:devops-sre</code>, <code>agent:software-engineer</code>, <code>agent:security-analyst</code>, <code>agent:qa-tester</code>, <code>agent:cursor-agent</code></td>
+<td>Exactly one — who is working on this</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>type:feat</code>, <code>type:fix</code>, <code>type:chore</code>, <code>type:docs</code>, <code>type:refactor</code>, <code>type:security</code></td>
+<td>Exactly one — what kind of change</td>
+</tr>
+<tr>
+<td><strong>Area</strong></td>
+<td><code>area:k8s</code>, <code>area:terraform</code>, <code>area:argocd</code>, <code>area:secrets</code>, <code>area:monitoring</code>, <code>area:networking</code>, <code>area:openclaw</code>, <code>area:auth</code></td>
+<td>One or more — what part of the homelab</td>
+</tr>
+<tr>
+<td><strong>Priority</strong></td>
+<td><code>priority:critical</code>, <code>priority:high</code>, <code>priority:medium</code>, <code>priority:low</code></td>
+<td>Exactly one — urgency</td>
+</tr>
+<tr>
+<td><strong>Semver</strong></td>
+<td><code>semver:breaking</code></td>
+<td>Only when a change has breaking impact regardless of type (most PRs don't need this)</td>
+</tr>
+</tbody>
+</table>
+<p>All issues and PRs are assigned to <code>holdennguyen</code> (repo owner) since agents are not GitHub collaborators. The <code>agent:*</code> label identifies which agent is responsible. Every issue and PR MUST also be assigned to a milestone (see <a href="#semantic-versioning--releases">Semantic Versioning &amp; Releases</a>).</p>
+<h3 id="agent-footprint">Agent Footprint</h3>
+<p>Every agent action is traceable via a mandatory footprint convention. This ensures that any commit, issue, PR, or branch can be attributed to the specific agent that performed it.</p>
+<table>
+<thead>
+<tr>
+<th>Artifact</th>
+<th>Footprint</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Git commit author</td>
+<td><code>&lt;agent-id&gt;[bot] &lt;&lt;agent-id&gt;@openclaw.homelab&gt;</code></td>
+<td><code>devops-sre[bot] &lt;devops-sre@openclaw.homelab&gt;</code></td>
+</tr>
+<tr>
+<td>Commit message</td>
+<td><code>... [&lt;agent-id&gt;]</code> suffix</td>
+<td><code>feat: add redis (#42) [devops-sre]</code></td>
+</tr>
+<tr>
+<td>Branch name</td>
+<td><code>&lt;agent-id&gt;/...</code> prefix</td>
+<td><code>devops-sre/feat/42-redis-caching</code></td>
+</tr>
+<tr>
+<td>Issue labels</td>
+<td><code>agent:&lt;agent-id&gt;</code></td>
+<td><code>agent:devops-sre</code></td>
+</tr>
+<tr>
+<td>Issue body</td>
+<td>Footer: <code>Agent: &lt;agent-id&gt; \| OpenClaw Homelab</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>PR labels</td>
+<td><code>agent:&lt;agent-id&gt;</code></td>
+<td><code>agent:devops-sre</code></td>
+</tr>
+<tr>
+<td>PR body</td>
+<td>Footer: <code>Agent: &lt;agent-id&gt; \| OpenClaw Homelab</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>Each agent sets its git identity during workspace setup using <code>git config user.name</code> and <code>git config user.email</code> in the cloned repo. There is no shared global git identity — every commit is attributable to the exact agent that authored it.</p>
+<p><strong>After the PR is merged:</strong></p>
+<ul>
+<li><strong>Layer 1 changes</strong> (k8s manifests): ArgoCD auto-syncs within ~3 minutes</li>
+<li><strong>Layer 0 changes</strong> (Terraform): Requires manual <code>terraform apply</code> on the host</li>
+<li><strong>Docker image changes</strong>: Requires <code>./scripts/build-openclaw.sh</code> + pod restart on the host</li>
+</ul>
+<p><strong>What enables this:</strong></p>
+<ul>
+<li><code>git</code> and <code>gh</code> CLI are baked into the container image (<code>Dockerfile.openclaw</code>)</li>
+<li><code>GITHUB_TOKEN</code> from Infisical provides authentication for <code>gh</code> CLI</li>
+<li>Per-agent git identity is set via <code>git config</code> in each cloned repo (no shared global identity)</li>
+</ul>
+<h3 id="semantic-versioning-releases">Semantic Versioning &amp; Releases</h3>
+<p>The homelab repository follows <a href="https://semver.org/">Semantic Versioning 2.0.0</a> (<code>vMAJOR.MINOR.PATCH</code>). Releases group work that has been merged to <code>main</code> into versioned, tagged milestones.</p>
+<p><strong>Version bump rules</strong> — the highest-impact change in a milestone determines the version:</p>
+<table>
+<thead>
+<tr>
+<th>Condition</th>
+<th>Bump</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Any PR has <code>semver:breaking</code></td>
+<td><strong>MAJOR</strong></td>
+<td>Terraform state migration, removed service</td>
+</tr>
+<tr>
+<td>At least one <code>type:feat</code> (no breaking)</td>
+<td><strong>MINOR</strong></td>
+<td>New service, new agent, new capability</td>
+</tr>
+<tr>
+<td>Only fixes, chores, docs, refactors, security</td>
+<td><strong>PATCH</strong></td>
+<td>Bug fix, dependency update, doc improvement</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Milestones</strong> group issues and PRs into planned releases:</p>
+<ul>
+<li>Named with the target version (e.g., <code>v0.3.0</code>)</li>
+<li>Every issue and PR MUST be assigned to a milestone</li>
+<li><code>homelab-admin</code> creates milestones and adjusts the version if breaking changes are introduced</li>
+<li>Sub-agents check for the current open milestone before creating issues</li>
+</ul>
+<p><strong>Release process</strong> (owned by <code>homelab-admin</code> or the user — sub-agents never create tags or releases):</p>
+<ol>
+<li>Verify all issues in the milestone are closed</li>
+<li>Determine the version from the highest-impact PR</li>
+<li>Create a git tag and GitHub Release with auto-generated notes (<code>gh release create</code>)</li>
+<li>Close the milestone and create the next one</li>
+</ol>
+<p>GitHub auto-generates release notes from merged PRs, using the existing type and area labels for grouping.</p>
+<h3 id="incident-response-rollback">Incident Response &amp; Rollback</h3>
+<p>Agents follow a structured incident response procedure when deployments cause service degradation. The procedure is codified in the <code>incident-response</code> skill and enforced across agent personalities.</p>
+<p><strong>Roles during an incident:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Agent</th>
+<th>Responsibilities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Incident commander</td>
+<td><code>homelab-admin</code></td>
+<td>Declare severity, decide rollback vs forward-fix, coordinate response, ensure post-incident report</td>
+</tr>
+<tr>
+<td>Rollback executor</td>
+<td><code>devops-sre</code></td>
+<td>Triage cluster state, execute git reverts, recover stuck ArgoCD syncs, verify recovery</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td><code>qa-tester</code></td>
+<td>Pre-merge validation (before PRs), post-rollback verification (after reverts)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Pre-merge validation (prevents incidents):</strong></p>
+<p>All agents that modify cluster resources must verify their changes before submitting PRs:</p>
+<ul>
+<li><strong>Helm value verification</strong> — always confirm key paths exist via <code>helm show values</code> before modifying <code>valuesObject</code>. Charts silently ignore unknown keys.</li>
+<li><strong>SecurityContext compatibility</strong> — verify container images support non-root execution. Some images use init systems (e.g., s6-overlay) that require root at startup.</li>
+<li><strong>Cross-service impact</strong> — ensure changes don't break sync wave dependencies or shared resources.</li>
+</ul>
+<p><strong>Rollback procedure:</strong></p>
+<p>The standard rollback is a git revert pushed to <code>main</code>. ArgoCD auto-syncs the revert within ~3 minutes.</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>revert<span class="w"> </span>&lt;bad-commit-sha&gt;<span class="w"> </span>-m<span class="w"> </span><span class="m">1</span><span class="w"> </span>--no-edit
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
+</code></pre></div>
+<p>For multi-commit rollbacks, restore files to a known-good commit. For stuck ArgoCD syncs, cancel operations and force hard refresh. Full procedures are documented in the <code>incident-response</code> skill.</p>
+<p><strong>Post-incident documentation</strong> is mandatory for SEV-1 through SEV-3 incidents. Reports include timeline, root cause, blast radius, resolution, lessons learned, and action items.</p>
+<h3 id="agent-configuration">Agent Configuration</h3>
+<p>Agent config lives in two places:</p>
+<ul>
+<li><strong>Identity:</strong> <code>k8s/apps/openclaw/configmap.yaml</code> → <code>openclaw.json</code> → <code>agents.list</code> (id, name, model, workspace, skills allowlist, <code>subagents.allowAgents</code>)</li>
+<li><strong>Personality:</strong> <code>agents/workspaces/&lt;id&gt;/AGENTS.md</code> (single source of truth, copied into pod on every restart)</li>
+</ul>
+<p>Key gateway-level settings in <code>openclaw.json</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gateway.mode</code></td>
+<td><code>"local"</code></td>
+<td>Enables full gateway functionality</td>
+</tr>
+<tr>
+<td><code>gateway.trustedProxies</code></td>
+<td>RFC 1918 ranges</td>
+<td>Treats K8s internal traffic as local</td>
+</tr>
+<tr>
+<td><code>tools.sessions.visibility</code></td>
+<td><code>"all"</code></td>
+<td>Orchestrator can view sub-agent session history</td>
+</tr>
+<tr>
+<td><code>tools.agentToAgent.enabled</code></td>
+<td><code>true</code></td>
+<td>Enables cross-agent communication</td>
+</tr>
+</tbody>
+</table>
+<p>The container image (<code>Dockerfile.openclaw</code>) includes ops tools (kubectl, helm, terraform, argocd, jq, git, gh). The pod's ServiceAccount has a namespace-scoped Role in <code>openclaw</code> with read-only access to pods, logs, secrets, configmaps, services, PVCs, and exec into pods — it does NOT have cluster-wide access (the previous <code>cluster-admin</code> binding was removed in v1.1.0).</p>
+<h3 id="per-agent-skill-assignment">Per-Agent Skill Assignment</h3>
+<p>Each agent has a <code>skills</code> allowlist in the configmap that restricts which skills it can see. Omitting the field means all skills; an empty array means none.</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Tier</th>
+<th>Assigned Skills</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>homelab-admin</code></td>
+<td>Orchestrator</td>
+<td><code>homelab-admin</code>, <code>gitops</code>, <code>secret-management</code>, <code>incident-response</code>, <code>weather</code>, <code>deutsch-tutor</code>, <code>english-tutor</code></td>
+</tr>
+<tr>
+<td><code>cursor-agent</code></td>
+<td>Senior lead</td>
+<td><code>cursor-agent</code>, <code>gitops</code>, <code>software-engineer</code>, <code>security-analyst</code>, <code>qa-tester</code></td>
+</tr>
+<tr>
+<td><code>devops-sre</code></td>
+<td>Junior</td>
+<td><code>devops-sre</code>, <code>gitops</code>, <code>secret-management</code>, <code>incident-response</code></td>
+</tr>
+<tr>
+<td><code>software-engineer</code></td>
+<td>Junior</td>
+<td><code>software-engineer</code>, <code>gitops</code></td>
+</tr>
+<tr>
+<td><code>security-analyst</code></td>
+<td>Junior</td>
+<td><code>security-analyst</code>, <code>gitops</code>, <code>secret-management</code></td>
+</tr>
+<tr>
+<td><code>qa-tester</code></td>
+<td>Junior</td>
+<td><code>qa-tester</code>, <code>gitops</code>, <code>secret-management</code>, <code>incident-response</code></td>
+</tr>
+</tbody>
+</table>
+<p>All agents get the <code>gitops</code> skill for the mandatory git workflow. Cross-cutting skills (e.g. <code>secret-management</code>) are shared across agents that need them.</p>
+<h3 id="adding-a-new-agent">Adding a New Agent</h3>
+<ol>
+<li>Add the agent entry to <code>k8s/apps/openclaw/configmap.yaml</code> under <code>agents.list</code> — include a <code>skills</code> array and a <code>subagents.allowAgents</code> list</li>
+<li>Add the new agent ID to the orchestrator's <code>subagents.allowAgents</code> so it can be spawned</li>
+<li>Create <code>agents/workspaces/&lt;id&gt;/AGENTS.md</code> with a lean agent personality (identity, tone, role-specific guidance, rules referencing skills for procedural content)</li>
+<li>Add the agent ID to the init container's <code>for</code> loop in <code>k8s/apps/openclaw/deployment.yaml</code></li>
+<li>Add the agent ID to <code>tools.agentToAgent.allow</code> in the configmap</li>
+<li>Push to <code>main</code> via PR (branch protection requires review) and restart: <code>kubectl rollout restart deployment/openclaw -n openclaw</code></li>
+</ol>
+<h3 id="sub-agent-spawning">Sub-agent Spawning</h3>
+<p>The orchestrator uses <code>maxSpawnDepth: 2</code>:</p>
+<ul>
+<li><strong>Depth 0:</strong> <code>homelab-admin</code> receives user requests</li>
+<li><strong>Depth 1:</strong> Orchestrator spawns specialized sub-agents</li>
+<li><strong>Depth 2:</strong> Sub-agents can spawn leaf workers for parallel tasks</li>
+</ul>
+<p>Limits (configured in <code>configmap.yaml</code>):</p>
+<ul>
+<li><code>maxConcurrent: 4</code> — max parallel sub-agents</li>
+<li><code>maxChildrenPerAgent: 3</code> — max children per agent session</li>
+<li><code>archiveAfterMinutes: 120</code> — auto-cleanup of finished sessions</li>
+</ul>
+<h2 id="openclaw-skills">OpenClaw Skills</h2>
+<p>Skills provide domain-specific knowledge and commands to agents. They live in <code>skills/</code> at the repo root and are mounted into the pod via hostPath at <code>/skills</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>homelab-admin</code></td>
+<td>Cluster operations, service management, GitOps workflow, delegation framework</td>
+</tr>
+<tr>
+<td><code>devops-sre</code></td>
+<td>Infrastructure debugging, Terraform, incident response, SLOs, deployment strategies</td>
+</tr>
+<tr>
+<td><code>software-engineer</code></td>
+<td>Code development, review, testing, K8s manifest conventions, dependency management</td>
+</tr>
+<tr>
+<td><code>security-analyst</code></td>
+<td>Security audits, RBAC review, vulnerability assessment, STRIDE threat modeling, CIS hardening</td>
+</tr>
+<tr>
+<td><code>qa-tester</code></td>
+<td>Deployment validation, service health testing, regression checks, per-service acceptance criteria (ArgoCD, ESO, Infisical, OpenClaw, Monitoring, Authentik)</td>
+</tr>
+<tr>
+<td><code>gitops</code></td>
+<td>ArgoCD App of Apps pattern, sync management, mandatory git workflow reference</td>
+</tr>
+<tr>
+<td><code>incident-response</code></td>
+<td>Incident triage, rollback procedures, pre-merge validation, post-incident documentation</td>
+</tr>
+<tr>
+<td><code>secret-management</code></td>
+<td>Infisical → ESO → K8s pipeline operations</td>
+</tr>
+<tr>
+<td><code>cursor-agent</code></td>
+<td>Cursor CLI bridge: installation, automation, handoff protocol, code generation workflows</td>
+</tr>
+<tr>
+<td><code>deutsch-tutor</code></td>
+<td>AI German language tutor — spaced repetition (FSRS), flashcard decks (A1/A2/B1), grammar lessons, conversation practice, Vietnamese explanations</td>
+</tr>
+<tr>
+<td><code>english-tutor</code></td>
+<td>AI IELTS 8.0 coach — spaced repetition (FSRS), advanced grammar, academic vocabulary, collocations, writing workshop, speaking simulation, reading/listening strategies</td>
+</tr>
+<tr>
+<td><code>weather</code></td>
+<td>Real-time weather via Open-Meteo and wttr.in (no API key required)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="skill-format">Skill Format</h3>
+<div class="highlight"><pre><span></span><code>skills/&lt;name&gt;/SKILL.md
+</code></pre></div>
+<p>With YAML frontmatter:</p>
+<div class="highlight"><pre><span></span><code><span class="nn">---</span>
+<span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;skill-name&gt;</span>
+<span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;one-line description for the agent&gt;</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">openclaw</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">emoji</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&lt;emoji&gt;&quot;</span>
+<span class="w">    </span><span class="nt">requires</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> anyBins</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;kubectl&quot;</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w">  </span><span class="c1"># optional binary requirements</span>
+<span class="nn">---</span>
+</code></pre></div>
+<h3 id="adding-a-new-skill">Adding a New Skill</h3>
+<ol>
+<li>Create <code>skills/&lt;name&gt;/SKILL.md</code> with the frontmatter above</li>
+<li>Write operational knowledge in markdown: commands, troubleshooting tables, workflows</li>
+<li>Add the skill name to the <code>skills</code> array of each agent that should use it in the configmap</li>
+<li>Push to <code>main</code> and restart: <code>kubectl rollout restart deployment/openclaw -n openclaw</code></li>
+</ol>
+<p>Skills auto-load via <code>skills.load.extraDirs: ["/skills"]</code> in the OpenClaw config.</p>
+<h2 id="documentation-maintenance">Documentation Maintenance</h2>
+<p>Both Cursor and OpenClaw agents are expected to keep documentation up-to-date as part of every implementation. The repo includes a <strong>documentation freshness tracking system</strong> to make this verifiable.</p>
+<h3 id="for-agents">For agents</h3>
+<p>Before creating a PR, run the freshness checker to see if your changes require doc updates:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/doc-freshness.py<span class="w"> </span>--check-pr<span class="w">     </span><span class="c1"># Which docs this branch should update</span>
+python<span class="w"> </span>scripts/doc-freshness.py<span class="w"> </span>--stale<span class="w">        </span><span class="c1"># Full staleness report across all docs</span>
+</code></pre></div>
+<p>The tool reads <code>.doc-manifest.yml</code> (which maps every doc to its implementation sources) and compares git commit timestamps. If sources are newer than their mapped doc, the doc is flagged as stale with the number of commits behind.</p>
+<p>The <code>doc-freshness</code> CI workflow runs automatically on every PR to <code>main</code> and will post a warning comment if mapped docs are missing updates. The check is advisory — it does not block merge.</p>
+<h3 id="what-to-update">What to update</h3>
+<p>The <code>.cursor/rules/homelab.mdc</code> file contains the full "What to update" table mapping change areas to docs. The key rule: <strong>every service directory under <code>k8s/apps/</code> must have a <code>README.md</code></strong> that serves as the single source of truth. The corresponding <code>docs/&lt;service&gt;.md</code> is a thin MkDocs wrapper that includes the README.</p>
+<h3 id="when-adding-a-new-service">When adding a new service</h3>
+<p>Add an entry to <code>.doc-manifest.yml</code> mapping the new service's README to its source directory. This ensures the freshness system tracks it going forward. See the full checklist in <code>.cursor/rules/homelab.mdc</code> under "Adding a new service."</p>
+<h2 id="single-source-of-truth">Single Source of Truth</h2>
+<table>
+<thead>
+<tr>
+<th>Content</th>
+<th>Source</th>
+<th>Consumed By</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cursor context rules</td>
+<td><code>.cursor/rules/*.mdc</code></td>
+<td>Cursor IDE</td>
+</tr>
+<tr>
+<td>Agent personalities</td>
+<td><code>agents/workspaces/*/AGENTS.md</code></td>
+<td>OpenClaw (copied into pod workspace by init container)</td>
+</tr>
+<tr>
+<td>Operational skills</td>
+<td><code>skills/*/SKILL.md</code></td>
+<td>OpenClaw (mounted at <code>/skills</code>), Cursor (read on demand)</td>
+</tr>
+<tr>
+<td>Agent roster &amp; config</td>
+<td><code>k8s/apps/openclaw/configmap.yaml</code></td>
+<td>OpenClaw (mounted at <code>/config</code>)</td>
+</tr>
+<tr>
+<td>Doc-to-source mappings</td>
+<td><code>.doc-manifest.yml</code></td>
+<td><code>scripts/doc-freshness.py</code>, <code>doc-freshness</code> CI workflow</td>
+</tr>
+</tbody>
+</table>
+<p>Agent personalities are lean (identity, tone, role-specific guidance) and reference skills for procedural content (git workflow, documentation matrix, labels). This avoids duplication and keeps each piece of content in exactly one source file.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.expand", "navigation.top", "navigation.path", "content.code.copy", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

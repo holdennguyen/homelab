@@ -1,0 +1,3002 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://holdennguyen.github.io/homelab/operations/git-workflow/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../ai-agents/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Git Workflow - Homelab Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#git-workflow" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Homelab Docs" class="md-header__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Homelab Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Git Workflow
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../infrastructure/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Infrastructure
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../services/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Services
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Operations
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Homelab Docs" class="md-nav__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Homelab Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../infrastructure/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/secret-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Secret Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../services/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/argocd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ArgoCD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/authentik/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentik
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/external-secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    External Secrets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/infisical/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infisical
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/launchfast/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LaunchFast
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/openclaw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenClaw
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/trivy-operator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Operator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/trivy-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Workflow
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#branch-protection-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Branch Protection Rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cursor-local-ide-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cursor (Local IDE) Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cursor (Local IDE) Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-by-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-step
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#branch-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Branch naming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commit-message-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commit message format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openclaw-agent-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenClaw Agent Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenClaw Agent Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-by-step_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-step
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-footprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent footprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-git-identities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent git identities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#github-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Labels
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#branch-freshness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Branch Freshness
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-merge-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-Merge Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pre-Merge Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#manifest-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manifest validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#helm-chart-value-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Helm chart value verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service compatibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-service-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-service impact
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-freshness-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation Freshness Checks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documentation Freshness Checks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ci-workflow-doc-freshness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI workflow (doc-freshness)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interpreting-the-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpreting the report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-entry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a new entry
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-merge-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Merge Verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rollback-procedures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rollback Procedures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rollback Procedures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-rollback-git-revert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standard rollback (git revert)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-commit-rollback-file-restore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-commit rollback (file restore)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#argocd-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ArgoCD recovery
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-incident-cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-incident cleanup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantic-versioning-releases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Semantic Versioning &amp; Releases
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Semantic Versioning &amp; Releases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#version-bump-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version bump rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#milestones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Milestones
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#release-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Release process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#milestone-reassessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Milestone reassessment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-not-to-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What NOT to Do
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cursor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cursor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#openclaw-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenClaw agent
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ai-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../nightly-shutdown/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nightly Shutdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#branch-protection-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Branch Protection Rules
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cursor-local-ide-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cursor (Local IDE) Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cursor (Local IDE) Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-by-step" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-step
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#branch-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Branch naming
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commit-message-format" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Commit message format
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#openclaw-agent-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenClaw Agent Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="OpenClaw Agent Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-by-step_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step-by-step
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-footprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent footprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#agent-git-identities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent git identities
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#github-labels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GitHub Labels
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#branch-freshness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Branch Freshness
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-merge-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pre-Merge Validation
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pre-Merge Validation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#manifest-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manifest validation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#helm-chart-value-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Helm chart value verification
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#service-compatibility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service compatibility
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cross-service-impact" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cross-service impact
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#documentation-freshness-checks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Documentation Freshness Checks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Documentation Freshness Checks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How it works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ci-workflow-doc-freshness" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI workflow (doc-freshness)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#local-usage" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Local usage
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#interpreting-the-report" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpreting the report
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-entry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a new entry
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#post-merge-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-Merge Verification
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rollback-procedures" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rollback Procedures
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Rollback Procedures">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#standard-rollback-git-revert" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Standard rollback (git revert)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#multi-commit-rollback-file-restore" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-commit rollback (file restore)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#argocd-recovery" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ArgoCD recovery
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#post-incident-cleanup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Post-incident cleanup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#semantic-versioning-releases" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Semantic Versioning &amp; Releases
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Semantic Versioning &amp; Releases">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#version-bump-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Version bump rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#milestones" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Milestones
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#release-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Release process
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#milestone-reassessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Milestone reassessment
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-not-to-do" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What NOT to Do
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Reference
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Quick Reference">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cursor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cursor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#openclaw-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenClaw agent
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Operations
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="git-workflow">Git Workflow</h1>
+<p><strong>Last reviewed:</strong> March 8, 2025 — workflow procedures are up-to-date.</p>
+<p>The <code>main</code> branch is <strong>protected</strong>. No agent — Cursor, OpenClaw, or human — pushes directly to <code>main</code>. All changes require a feature branch and a pull request with at least one approving review.</p>
+<p>This page documents the unified git workflow that both Cursor (local IDE) and OpenClaw (autonomous K8s agents) follow.</p>
+<h2 id="overview">Overview</h2>
+<pre class="mermaid"><code>flowchart LR
+    subgraph workflow ["Git Workflow"]
+        direction TB
+        Issue["1. Create GitHub Issue\n(labeled + milestoned)"]
+        Branch["2. Create Feature Branch\nfrom latest main"]
+        Changes["3. Make Changes\n+ update docs"]
+        Validate["4. Pre-Merge Validation\n(Helm, YAML, compatibility)"]
+        PR["5. Push + Create PR\n(labeled + milestoned)"]
+        Review["6. Review + Merge"]
+        Verify["7. Post-Merge Verification\n(ArgoCD sync, pod health)"]
+    end
+
+    Issue --&gt; Branch --&gt; Changes --&gt; Validate --&gt; PR --&gt; Review --&gt; Verify</code></pre>
+<h2 id="branch-protection-rules">Branch Protection Rules</h2>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Enforcement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Direct pushes to <code>main</code></td>
+<td>Blocked</td>
+</tr>
+<tr>
+<td>Force pushes to <code>main</code></td>
+<td>Blocked</td>
+</tr>
+<tr>
+<td>PR required for merge</td>
+<td>Yes — at least 1 approving review</td>
+</tr>
+<tr>
+<td>Linear history</td>
+<td>Required</td>
+</tr>
+<tr>
+<td>Branch deletion after merge</td>
+<td>Recommended</td>
+</tr>
+</tbody>
+</table>
+<h2 id="cursor-local-ide-workflow">Cursor (Local IDE) Workflow</h2>
+<p>Cursor operates interactively on the local filesystem. It follows the same protected-branch rules but without the OpenClaw agent footprint conventions.</p>
+<h3 id="step-by-step">Step-by-step</h3>
+<ol>
+<li><strong>Start from latest main:</strong></li>
+</ol>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>checkout<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main
+git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>&lt;type&gt;/&lt;short-description&gt;
+</code></pre></div>
+<ol>
+<li>
+<p><strong>Make changes</strong> to manifests, config, code, and docs.</p>
+</li>
+<li>
+<p><strong>Commit</strong> with conventional messages:</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>&lt;files&gt;
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;&lt;type&gt;: &lt;description&gt;&quot;</span>
+</code></pre></div>
+<ol>
+<li><strong>Keep branch fresh</strong> — before every push:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>fetch<span class="w"> </span>origin<span class="w"> </span>main
+git<span class="w"> </span>merge<span class="w"> </span>origin/main<span class="w"> </span>--no-edit
+</code></pre></div>
+<ol>
+<li><strong>Push and create a PR:</strong></li>
+</ol>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>HEAD
+gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;&lt;type&gt;: &lt;description&gt;&quot;</span><span class="w"> </span>--body<span class="w"> </span><span class="s2">&quot;&lt;summary&gt;&quot;</span>
+</code></pre></div>
+<ol>
+<li><strong>After merge</strong>, verify and clean up:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># ALWAYS verify the PR was actually merged before deleting the branch</span>
+gh<span class="w"> </span>pr<span class="w"> </span>view<span class="w"> </span>&lt;number&gt;<span class="w"> </span>--json<span class="w"> </span>state,mergedAt<span class="w"> </span>--jq<span class="w"> </span><span class="s1">&#39;&quot;state: \(.state), merged: \(.mergedAt // &quot;NOT MERGED&quot;)&quot;&#39;</span>
+
+<span class="c1"># Only proceed if state is MERGED:</span>
+git<span class="w"> </span>checkout<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main
+git<span class="w"> </span>branch<span class="w"> </span>-d<span class="w"> </span>&lt;branch-name&gt;
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>--delete<span class="w"> </span>&lt;branch-name&gt;
+</code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Never delete a branch without confirming merge</p>
+<p>If a PR is closed without merging, the commits exist <strong>only</strong> on that branch. Deleting it loses the work and requires recovery from <code>git reflog</code>. Always check <code>gh pr view</code> first.</p>
+</div>
+<h3 id="branch-naming">Branch naming</h3>
+<table>
+<thead>
+<tr>
+<th>Prefix</th>
+<th>Use for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>feat/</code></td>
+<td>New features, services, resources</td>
+</tr>
+<tr>
+<td><code>fix/</code></td>
+<td>Bug fixes, misconfigurations</td>
+</tr>
+<tr>
+<td><code>chore/</code></td>
+<td>Maintenance, dependency updates, cleanup</td>
+</tr>
+<tr>
+<td><code>docs/</code></td>
+<td>Documentation-only changes</td>
+</tr>
+<tr>
+<td><code>refactor/</code></td>
+<td>Restructuring without behavior change</td>
+</tr>
+<tr>
+<td><code>security/</code></td>
+<td>Security hardening, vulnerability fixes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="commit-message-format">Commit message format</h3>
+<div class="highlight"><pre><span></span><code>&lt;type&gt;: &lt;description&gt;
+</code></pre></div>
+<p>Examples:</p>
+<ul>
+<li><code>feat: add incident response skill and pre-merge validation</code></li>
+<li><code>fix: correct Helm value path for Authentik securityContext</code></li>
+<li><code>docs: update networking table with new Tailscale port</code></li>
+</ul>
+<h2 id="openclaw-agent-workflow">OpenClaw Agent Workflow</h2>
+<p>OpenClaw agents follow the same branch protection rules with additional traceability requirements. Every action must be attributable to the specific agent that performed it.</p>
+<h3 id="step-by-step_1">Step-by-step</h3>
+<ol>
+<li><strong>Workspace setup</strong> (once per session):</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/data/workspaces/&lt;agent-id&gt;
+gh<span class="w"> </span>repo<span class="w"> </span>clone<span class="w"> </span>holdennguyen/homelab<span class="w"> </span>homelab<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span><span class="o">(</span><span class="nb">cd</span><span class="w"> </span>homelab<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>checkout<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main<span class="o">)</span>
+<span class="nb">cd</span><span class="w"> </span>homelab
+git<span class="w"> </span>config<span class="w"> </span>user.name<span class="w"> </span><span class="s2">&quot;&lt;agent-id&gt;[bot]&quot;</span>
+git<span class="w"> </span>config<span class="w"> </span>user.email<span class="w"> </span><span class="s2">&quot;&lt;agent-id&gt;@openclaw.homelab&quot;</span>
+</code></pre></div>
+<ol>
+<li><strong>Create a labeled GitHub issue</strong> assigned to the current milestone:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>gh<span class="w"> </span>issue<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--title<span class="w"> </span><span class="s2">&quot;&lt;type&gt;: &lt;description&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--body<span class="w"> </span><span class="s2">&quot;&lt;details&gt;</span>
+
+<span class="s2">---</span>
+<span class="s2">Agent: &lt;agent-id&gt; | OpenClaw Homelab&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--assignee<span class="w"> </span>holdennguyen<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--label<span class="w"> </span><span class="s2">&quot;agent:&lt;agent-id&gt;,type:&lt;type&gt;,area:&lt;area&gt;,priority:&lt;priority&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--milestone<span class="w"> </span><span class="s2">&quot;&lt;current-milestone&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--repo<span class="w"> </span>holdennguyen/homelab
+</code></pre></div>
+<ol>
+<li><strong>Create a branch</strong> from latest main:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>checkout<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main
+git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>&lt;agent-id&gt;/&lt;type&gt;/&lt;issue-number&gt;-&lt;short-description&gt;
+</code></pre></div>
+<ol>
+<li>
+<p><strong>Make changes</strong> to manifests, config, docs.</p>
+</li>
+<li>
+<p><strong>Commit</strong> with issue reference and agent tag:</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>add<span class="w"> </span>&lt;files&gt;
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;&lt;type&gt;: &lt;description&gt; (#&lt;issue-number&gt;) [&lt;agent-id&gt;]&quot;</span>
+</code></pre></div>
+<ol>
+<li><strong>Keep branch fresh</strong> — before every push:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>fetch<span class="w"> </span>origin<span class="w"> </span>main
+git<span class="w"> </span>merge<span class="w"> </span>origin/main<span class="w"> </span>--no-edit
+</code></pre></div>
+<ol>
+<li><strong>Push and create a labeled PR</strong> assigned to the same milestone:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>HEAD
+gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--title<span class="w"> </span><span class="s2">&quot;&lt;type&gt;: &lt;description&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--assignee<span class="w"> </span>holdennguyen<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--label<span class="w"> </span><span class="s2">&quot;agent:&lt;agent-id&gt;,type:&lt;type&gt;,area:&lt;area&gt;,priority:&lt;priority&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--milestone<span class="w"> </span><span class="s2">&quot;&lt;current-milestone&gt;&quot;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--body<span class="w"> </span><span class="s2">&quot;Closes #&lt;issue-number&gt;</span>
+
+<span class="s2">## Summary</span>
+<span class="s2">- &lt;what changed and why&gt;</span>
+
+<span class="s2">## Test plan</span>
+<span class="s2">- [ ] ArgoCD syncs successfully</span>
+<span class="s2">- [ ] Service health verified</span>
+<span class="s2">- [ ] Documentation updated</span>
+
+<span class="s2">---</span>
+<span class="s2">Agent: &lt;agent-id&gt; | OpenClaw Homelab&quot;</span>
+</code></pre></div>
+<ol>
+<li><strong>Report</strong> the PR URL back to the orchestrator or user.</li>
+</ol>
+<h3 id="agent-footprint">Agent footprint</h3>
+<p>Every OpenClaw agent action is traceable via mandatory conventions:</p>
+<table>
+<thead>
+<tr>
+<th>Artifact</th>
+<th>Format</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Git commit author</td>
+<td><code>&lt;agent-id&gt;[bot] &lt;&lt;agent-id&gt;@openclaw.homelab&gt;</code></td>
+<td><code>devops-sre[bot] &lt;devops-sre@openclaw.homelab&gt;</code></td>
+</tr>
+<tr>
+<td>Commit message</td>
+<td><code>&lt;type&gt;: &lt;desc&gt; (#&lt;issue&gt;) [&lt;agent-id&gt;]</code></td>
+<td><code>feat: add redis (#42) [devops-sre]</code></td>
+</tr>
+<tr>
+<td>Branch name</td>
+<td><code>&lt;agent-id&gt;/&lt;type&gt;/&lt;issue&gt;-&lt;desc&gt;</code></td>
+<td><code>devops-sre/feat/42-redis-caching</code></td>
+</tr>
+<tr>
+<td>Issue/PR labels</td>
+<td><code>agent:&lt;agent-id&gt;</code></td>
+<td><code>agent:devops-sre</code></td>
+</tr>
+<tr>
+<td>Issue/PR body</td>
+<td>Footer: <code>Agent: &lt;id&gt; \| OpenClaw Homelab</code></td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<h3 id="agent-git-identities">Agent git identities</h3>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th><code>user.name</code></th>
+<th><code>user.email</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>homelab-admin</code></td>
+<td><code>homelab-admin[bot]</code></td>
+<td><code>homelab-admin@openclaw.homelab</code></td>
+</tr>
+<tr>
+<td><code>devops-sre</code></td>
+<td><code>devops-sre[bot]</code></td>
+<td><code>devops-sre@openclaw.homelab</code></td>
+</tr>
+<tr>
+<td><code>software-engineer</code></td>
+<td><code>software-engineer[bot]</code></td>
+<td><code>software-engineer@openclaw.homelab</code></td>
+</tr>
+<tr>
+<td><code>security-analyst</code></td>
+<td><code>security-analyst[bot]</code></td>
+<td><code>security-analyst@openclaw.homelab</code></td>
+</tr>
+<tr>
+<td><code>qa-tester</code></td>
+<td><code>qa-tester[bot]</code></td>
+<td><code>qa-tester@openclaw.homelab</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="github-labels">GitHub Labels</h2>
+<p>Every issue and PR MUST be labeled. Labels are the tracking and filtering mechanism for all agents.</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Labels</th>
+<th>Rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Agent</strong></td>
+<td><code>agent:homelab-admin</code>, <code>agent:devops-sre</code>, <code>agent:software-engineer</code>, <code>agent:security-analyst</code>, <code>agent:qa-tester</code></td>
+<td>Exactly one (OpenClaw only)</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td><code>type:feat</code>, <code>type:fix</code>, <code>type:chore</code>, <code>type:docs</code>, <code>type:refactor</code>, <code>type:security</code></td>
+<td>Exactly one</td>
+</tr>
+<tr>
+<td><strong>Area</strong></td>
+<td><code>area:k8s</code>, <code>area:terraform</code>, <code>area:argocd</code>, <code>area:secrets</code>, <code>area:monitoring</code>, <code>area:networking</code>, <code>area:openclaw</code>, <code>area:auth</code></td>
+<td>One or more</td>
+</tr>
+<tr>
+<td><strong>Priority</strong></td>
+<td><code>priority:critical</code>, <code>priority:high</code>, <code>priority:medium</code>, <code>priority:low</code></td>
+<td>Exactly one</td>
+</tr>
+<tr>
+<td><strong>Semver</strong></td>
+<td><code>semver:breaking</code></td>
+<td>Only when a change has breaking impact regardless of type</td>
+</tr>
+<tr>
+<td><strong>Status</strong></td>
+<td><code>status:reverted</code></td>
+<td>Applied to PRs that were merged then reverted</td>
+</tr>
+</tbody>
+</table>
+<h2 id="branch-freshness">Branch Freshness</h2>
+<p>Feature branches MUST stay current with <code>main</code>. Stale branches cause merge conflicts and block ArgoCD sync after merge.</p>
+<p><strong>Before every push:</strong></p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>fetch<span class="w"> </span>origin<span class="w"> </span>main
+git<span class="w"> </span>merge<span class="w"> </span>origin/main<span class="w"> </span>--no-edit
+</code></pre></div>
+<p><strong>If the merge has conflicts:</strong></p>
+<ol>
+<li>Do NOT force-push or reset</li>
+<li>Resolve conflicts in every affected file</li>
+<li><code>git add &lt;resolved-files&gt; &amp;&amp; git merge --continue</code></li>
+<li>If conflicts are too complex, report to the orchestrator (or user) with the list of conflicting files</li>
+</ol>
+<p><strong>When to run this:</strong></p>
+<ul>
+<li>Before your first commit on a new branch (right after <code>git checkout -b</code>)</li>
+<li>Before every <code>git push</code></li>
+<li>When <code>main</code> has been updated while your branch/PR is open</li>
+</ul>
+<h2 id="pre-merge-validation">Pre-Merge Validation</h2>
+<p>Run these checks before merging any PR that modifies cluster resources.</p>
+<h3 id="manifest-validation">Manifest validation</h3>
+<ul>
+<li>[ ] YAML is valid: <code>kubectl apply --dry-run=client -f &lt;file&gt;</code></li>
+<li>[ ] Labels follow <code>app.kubernetes.io/*</code> conventions</li>
+<li>[ ] Namespace exists or <code>CreateNamespace=true</code> is set</li>
+<li>[ ] No secrets or credentials in the diff</li>
+</ul>
+<h3 id="helm-chart-value-verification">Helm chart value verification</h3>
+<p>Before changing any Helm <code>valuesObject</code> in an ArgoCD Application CR:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Verify the key exists in the chart</span>
+helm<span class="w"> </span>show<span class="w"> </span>values<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>--version<span class="w"> </span>&lt;version&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A5<span class="w"> </span><span class="s2">&quot;&lt;key&gt;&quot;</span>
+
+<span class="c1"># Confirm the value renders into the output</span>
+helm<span class="w"> </span>template<span class="w"> </span>&lt;release&gt;<span class="w"> </span>&lt;repo&gt;/&lt;chart&gt;<span class="w"> </span>--version<span class="w"> </span>&lt;version&gt;<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--set<span class="w"> </span>&lt;key&gt;<span class="o">=</span>&lt;value&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-A10<span class="w"> </span><span class="s2">&quot;&lt;expected-output&gt;&quot;</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Charts silently ignore unknown keys</p>
+<p>If a key doesn't appear in <code>helm show values</code>, the chart will accept it without error but it will have <strong>no effect</strong> on the rendered manifests. This was the root cause of the PR #11 incident where <code>controller.securityContext</code> (External Secrets) and <code>infisical.securityContext</code> (Infisical) were silently ignored.</p>
+</div>
+<h3 id="service-compatibility">Service compatibility</h3>
+<ul>
+<li>[ ] Container image supports proposed <code>securityContext</code> (check for s6-overlay, tini, or similar init systems)</li>
+<li>[ ] Volume permissions match <code>fsGroup</code>/<code>runAsUser</code></li>
+<li>[ ] Upstream chart docs confirm the value path</li>
+</ul>
+<h3 id="cross-service-impact">Cross-service impact</h3>
+<ul>
+<li>[ ] Changes don't break sync wave dependencies</li>
+<li>[ ] Shared resources (ClusterRoles, CRDs) are not removed or renamed</li>
+<li>[ ] ExternalSecrets still reference valid keys</li>
+</ul>
+<h2 id="documentation-freshness-checks">Documentation Freshness Checks</h2>
+<p>Every documentation file is mapped to its implementation sources in <a href="https://github.com/holdennguyen/homelab/blob/main/.doc-manifest.yml"><code>.doc-manifest.yml</code></a>. A CI workflow and CLI tool use git history to detect when docs fall behind.</p>
+<h3 id="how-it-works">How it works</h3>
+<pre class="mermaid"><code>flowchart LR
+    Manifest[".doc-manifest.yml\n(doc → source mappings)"]
+    Script["scripts/doc-freshness.py"]
+    Git["git log\n(commit timestamps)"]
+
+    Manifest --&gt; Script
+    Git --&gt; Script
+    Script --&gt;|"source newer than doc"| Stale["STALE\n(X commits behind)"]
+    Script --&gt;|"doc newer or equal"| Fresh["OK"]</code></pre>
+<p>For each entry in the manifest, the script compares the <strong>last commit that touched the doc</strong> vs the <strong>last commit that touched any file in its source directories</strong> (excluding the doc itself). If the source is newer, the doc is stale and the report shows how many commits behind it is.</p>
+<h3 id="ci-workflow-doc-freshness">CI workflow (<code>doc-freshness</code>)</h3>
+<p>The <a href="https://github.com/holdennguyen/homelab/blob/main/.github/workflows/doc-freshness.yml"><code>doc-freshness</code></a> GitHub Actions workflow runs on every PR to <code>main</code>:</p>
+<ol>
+<li>Examines which files the PR changes</li>
+<li>Checks those files against the manifest to find mapped docs</li>
+<li>If a mapped doc was <strong>not</strong> updated in the PR, it posts a warning comment</li>
+</ol>
+<p>The check is <strong>advisory only</strong> — it does not block merge. If the docs genuinely don't need updating (e.g., a comment change in a source file), the warning is safe to ignore.</p>
+<h3 id="local-usage">Local usage</h3>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/doc-freshness.py<span class="w">                </span><span class="c1"># Full freshness table</span>
+python<span class="w"> </span>scripts/doc-freshness.py<span class="w"> </span>--stale<span class="w">        </span><span class="c1"># Only stale docs</span>
+python<span class="w"> </span>scripts/doc-freshness.py<span class="w"> </span>--check-pr<span class="w">     </span><span class="c1"># Files changed on current branch vs origin/main</span>
+python<span class="w"> </span>scripts/doc-freshness.py<span class="w"> </span>--json<span class="w">         </span><span class="c1"># Machine-readable JSON</span>
+python<span class="w"> </span>scripts/doc-freshness.py<span class="w"> </span>--markdown<span class="w">     </span><span class="c1"># Markdown table for PR comments</span>
+</code></pre></div>
+<div class="admonition note">
+<p class="admonition-title"><code>--check-pr</code> requires a feature branch</p>
+<p>The <code>--check-pr</code> flag compares <code>HEAD</code> against <code>origin/main</code>. If you run it on <code>main</code> after a merge, there's no diff and it reports "all up-to-date." Always run it from a feature branch before pushing.</p>
+</div>
+<h3 id="interpreting-the-report">Interpreting the report</h3>
+<div class="highlight"><pre><span></span><code>  Document                             Status    Doc         Source      Behind
+  ───────────────────────────────────  ────────  ──────────  ──────────  ──────────
+  ✗ docs/networking.md                   STALE     331be14f    f591ad60    25 commits
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Status</td>
+<td><code>ok</code> = doc is current, <code>STALE</code> = sources are newer, <code>MISSING</code> = doc file doesn't exist</td>
+</tr>
+<tr>
+<td>Doc</td>
+<td>Short hash of the last commit that touched the doc</td>
+</tr>
+<tr>
+<td>Source</td>
+<td>Short hash of the last commit that touched any source (excluding the doc itself)</td>
+</tr>
+<tr>
+<td>Behind</td>
+<td>Number of source commits since the doc was last updated</td>
+</tr>
+</tbody>
+</table>
+<h3 id="adding-a-new-entry">Adding a new entry</h3>
+<p>When creating a new service or documentation file, add an entry to <code>.doc-manifest.yml</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">doc</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k8s/apps/my-service/README.md</span>
+<span class="w">  </span><span class="nt">sources</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">k8s/apps/my-service/</span>
+</code></pre></div>
+<p>For cross-cutting docs that cover multiple areas, list all relevant source directories.</p>
+<h2 id="post-merge-verification">Post-Merge Verification</h2>
+<p>After every merge to <code>main</code>, verify the deployment succeeded:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. ArgoCD application health (wait ~3 minutes for sync)</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>applications<span class="w"> </span>-n<span class="w"> </span>argocd
+
+<span class="c1"># 2. Pod health across all namespaces</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-A<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span>Running<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span>Completed
+
+<span class="c1"># 3. ExternalSecrets synced</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>externalsecrets<span class="w"> </span>-A
+
+<span class="c1"># 4. Service endpoints reachable</span>
+curl<span class="w"> </span>-sf<span class="w"> </span>http://localhost:30400/api/health<span class="w">        </span><span class="c1"># Grafana</span>
+curl<span class="w"> </span>-sf<span class="w"> </span>http://localhost:30600/api/v3/root/config/<span class="w">  </span><span class="c1"># Authentik</span>
+curl<span class="w"> </span>-sf<span class="w"> </span>http://localhost:30789/health<span class="w">            </span><span class="c1"># OpenClaw</span>
+
+<span class="c1"># 5. No error events</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>events<span class="w"> </span>-A<span class="w"> </span>--sort-by<span class="o">=</span><span class="s1">&#39;.lastTimestamp&#39;</span><span class="w"> </span>--field-selector<span class="w"> </span>type!<span class="o">=</span>Normal<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-10
+</code></pre></div>
+<p><strong>If any check fails</strong>, initiate rollback. See <a href="#rollback-procedures">Rollback Procedures</a>.</p>
+<h2 id="rollback-procedures">Rollback Procedures</h2>
+<p>When a merge to <code>main</code> causes service degradation, roll back via git — ArgoCD auto-syncs the revert.</p>
+<h3 id="standard-rollback-git-revert">Standard rollback (git revert)</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Revert a merge commit</span>
+git<span class="w"> </span>revert<span class="w"> </span>&lt;bad-commit-sha&gt;<span class="w"> </span>-m<span class="w"> </span><span class="m">1</span><span class="w"> </span>--no-edit
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
+</code></pre></div>
+<h3 id="multi-commit-rollback-file-restore">Multi-commit rollback (file restore)</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Restore files to a known-good commit</span>
+git<span class="w"> </span>checkout<span class="w"> </span>&lt;known-good-sha&gt;<span class="w"> </span>--<span class="w"> </span>path/to/file1.yaml<span class="w"> </span>path/to/file2.yaml
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;revert: restore files to pre-&lt;incident&gt; state&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
+</code></pre></div>
+<h3 id="argocd-recovery">ArgoCD recovery</h3>
+<p>If ArgoCD is stuck after a rollback:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Cancel stuck operation</span>
+kubectl<span class="w"> </span>patch<span class="w"> </span>application<span class="w"> </span>&lt;app&gt;<span class="w"> </span>-n<span class="w"> </span>argocd<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--type<span class="w"> </span>json<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;[{&quot;op&quot;:&quot;remove&quot;,&quot;path&quot;:&quot;/operation&quot;}]&#39;</span>
+
+<span class="c1"># Force-delete crashing pods</span>
+kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span>&lt;pod&gt;<span class="w"> </span>-n<span class="w"> </span>&lt;namespace&gt;<span class="w"> </span>--force<span class="w"> </span>--grace-period<span class="o">=</span><span class="m">0</span>
+
+<span class="c1"># Force hard refresh on all applications</span>
+<span class="k">for</span><span class="w"> </span>app<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>applications<span class="w"> </span>-n<span class="w"> </span>argocd<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.items[*].metadata.name}&#39;</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>kubectl<span class="w"> </span>patch<span class="w"> </span>application<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$app</span><span class="s2">&quot;</span><span class="w"> </span>-n<span class="w"> </span>argocd<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--type<span class="w"> </span>merge<span class="w"> </span>-p<span class="w"> </span><span class="s1">&#39;{&quot;metadata&quot;:{&quot;annotations&quot;:{&quot;argocd.argoproj.io/refresh&quot;:&quot;hard&quot;}}}&#39;</span>
+<span class="k">done</span>
+</code></pre></div>
+<h3 id="post-incident-cleanup">Post-incident cleanup</h3>
+<p>After the cluster is recovered:</p>
+<ol>
+<li><strong>Reopen</strong> the auto-closed issue (feature was not delivered)</li>
+<li><strong>Label</strong> the reverted PR with <code>status:reverted</code></li>
+<li><strong>Assign</strong> the issue to a future milestone for re-implementation</li>
+<li><strong>Create per-service sub-issues</strong> for safer re-implementation</li>
+<li><strong>Post a post-incident report</strong> on the PR with timeline, root cause, and action items</li>
+</ol>
+<p>Full procedures are documented in <code>skills/incident-response/SKILL.md</code>.</p>
+<h2 id="semantic-versioning-releases">Semantic Versioning &amp; Releases</h2>
+<p>The repository follows <a href="https://semver.org/">Semantic Versioning 2.0.0</a> (<code>vMAJOR.MINOR.PATCH</code>).</p>
+<h3 id="version-bump-rules">Version bump rules</h3>
+<table>
+<thead>
+<tr>
+<th>Condition</th>
+<th>Bump</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Any PR has <code>semver:breaking</code></td>
+<td><strong>MAJOR</strong></td>
+<td>Terraform state migration, removed service</td>
+</tr>
+<tr>
+<td>At least one <code>type:feat</code> (no breaking)</td>
+<td><strong>MINOR</strong></td>
+<td>New service, new agent, new capability</td>
+</tr>
+<tr>
+<td>Only fixes, chores, docs, refactors, security</td>
+<td><strong>PATCH</strong></td>
+<td>Bug fix, dependency update, doc improvement</td>
+</tr>
+</tbody>
+</table>
+<h3 id="milestones">Milestones</h3>
+<p>GitHub Milestones group issues and PRs into planned releases:</p>
+<ul>
+<li>Named with the target version (e.g., <code>v1.1.0</code>)</li>
+<li>Every issue and PR MUST be assigned to a milestone</li>
+<li><code>homelab-admin</code> creates milestones and adjusts versions if breaking changes appear</li>
+<li>If no open milestone exists, ask the orchestrator (or user) to create one</li>
+</ul>
+<h3 id="release-process">Release process</h3>
+<p>Owned by <code>homelab-admin</code> or the user — sub-agents never create tags or releases:</p>
+<ol>
+<li>Verify all issues in the milestone are closed</li>
+<li>Check for <code>status:reverted</code> PRs (merge + revert = net zero, exclude from changelog)</li>
+<li>Determine the version from the highest-impact non-reverted PR</li>
+<li><strong>Pre-release checklist:</strong><ul>
+<li>All ArgoCD applications are <code>Synced</code> + <code>Healthy</code></li>
+<li>Run <code>python scripts/doc-freshness.py</code> and resolve stale entries</li>
+<li><strong>Review root <code>README.md</code></strong> — architecture diagram, repository structure, deployed services table, documentation index, Quick Start, and Future Plans must reflect the current state</li>
+<li>Run doc freshness again after any updates</li>
+</ul>
+</li>
+<li>Create a git tag and GitHub Release: <code>gh release create "v&lt;version&gt;" --target main --generate-notes --latest</code></li>
+<li>Close the milestone and create the next one</li>
+</ol>
+<h3 id="milestone-reassessment">Milestone reassessment</h3>
+<p>When incidents, reverts, or scope changes alter a milestone's planned work, the release manager must reassess before cutting the release.</p>
+<p><strong>When to reassess:</strong></p>
+<ul>
+<li>A PR in the milestone was merged then reverted</li>
+<li>Sibling PRs from the same batch were closed without merge</li>
+<li>Planned features were deferred to a future milestone</li>
+<li>Orphaned merged PRs (no milestone) are discovered</li>
+</ul>
+<p><strong>Procedure:</strong></p>
+<ol>
+<li>
+<p><strong>Triage sibling PRs</strong> — unreviewed PRs created in the same batch as a reverted PR share the same quality risks. Close them and rewrite with proper pre-merge validation.</p>
+</li>
+<li>
+<p><strong>Move deferred work</strong> — parent issues of closed PRs go to the next milestone with fresh per-service sub-issues.</p>
+</li>
+<li>
+<p><strong>Assign orphaned merged PRs</strong> — any merged PR without a milestone must be assigned:</p>
+</li>
+</ol>
+<div class="highlight"><pre><span></span><code>gh<span class="w"> </span>pr<span class="w"> </span>list<span class="w"> </span>--repo<span class="w"> </span>holdennguyen/homelab<span class="w"> </span>--state<span class="w"> </span>merged<span class="w"> </span>--json<span class="w"> </span>number,title,milestone<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--jq<span class="w"> </span><span class="s1">&#39;.[] | select(.milestone == null) | &quot;\(.number) | \(.title)&quot;&#39;</span>
+</code></pre></div>
+<ol>
+<li><strong>Update milestone description</strong> — explain the scope change:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>gh<span class="w"> </span>api<span class="w"> </span>repos/holdennguyen/homelab/milestones/&lt;number&gt;<span class="w"> </span>--method<span class="w"> </span>PATCH<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-f<span class="w"> </span><span class="nv">description</span><span class="o">=</span><span class="s2">&quot;&lt;updated scope and rationale&gt;&quot;</span>
+</code></pre></div>
+<ol>
+<li>
+<p><strong>Reassess version bump</strong> — if the only <code>type:feat</code> PRs were reverted, the effective bump may change (e.g., MINOR → PATCH).</p>
+</li>
+<li>
+<p><strong>Release what's shipped</strong> — if the milestone has 0 open issues, cut the release with what's already merged. Don't hold a milestone open waiting for deferred work.</p>
+</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Release what you have, not what you planned</p>
+<p>A milestone that lost its flagship feature to a revert is still releasable if it contains other merged work (infrastructure, docs, tooling). Rescope the description, adjust the version if needed, and ship it. Deferred features go to the next milestone.</p>
+</div>
+<h2 id="what-not-to-do">What NOT to Do</h2>
+<ul>
+<li>Never push directly to <code>main</code></li>
+<li>Never force-push to <code>main</code></li>
+<li>Never delete a branch without verifying the PR was merged (<code>gh pr view &lt;number&gt; --json state,mergedAt</code>)</li>
+<li>Never commit secrets, API keys, or credentials</li>
+<li>Never bundle unrelated changes in one PR</li>
+<li>Never assume a Helm value key exists — always verify with <code>helm show values</code></li>
+<li>Never apply <code>securityContext</code> changes without verifying image compatibility</li>
+<li>Never skip documentation updates in implementation PRs</li>
+<li>Never create an issue or PR without labels (OpenClaw agents)</li>
+<li>Never omit the agent footprint from any artifact (OpenClaw agents)</li>
+<li>Never rely on <code>kubectl rollout undo</code> as a permanent fix — ArgoCD will overwrite it</li>
+</ul>
+<h2 id="quick-reference">Quick Reference</h2>
+<h3 id="cursor">Cursor</h3>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>checkout<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main
+git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>feat/my-feature
+<span class="c1"># ... make changes ...</span>
+git<span class="w"> </span>add<span class="w"> </span>.<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;feat: my feature&quot;</span>
+git<span class="w"> </span>fetch<span class="w"> </span>origin<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>merge<span class="w"> </span>origin/main<span class="w"> </span>--no-edit
+git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>HEAD
+gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;feat: my feature&quot;</span><span class="w"> </span>--body<span class="w"> </span><span class="s2">&quot;Summary of changes&quot;</span>
+<span class="c1"># After merge — verify BEFORE deleting:</span>
+gh<span class="w"> </span>pr<span class="w"> </span>view<span class="w"> </span>&lt;number&gt;<span class="w"> </span>--json<span class="w"> </span>state<span class="w"> </span>--jq<span class="w"> </span><span class="s1">&#39;.state&#39;</span><span class="w">  </span><span class="c1"># must say MERGED</span>
+git<span class="w"> </span>checkout<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main
+git<span class="w"> </span>branch<span class="w"> </span>-d<span class="w"> </span>feat/my-feature
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>--delete<span class="w"> </span>feat/my-feature
+</code></pre></div>
+<h3 id="openclaw-agent">OpenClaw agent</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Setup</span>
+<span class="nb">cd</span><span class="w"> </span>/data/workspaces/&lt;agent-id&gt;
+gh<span class="w"> </span>repo<span class="w"> </span>clone<span class="w"> </span>holdennguyen/homelab<span class="w"> </span>homelab<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">(</span><span class="nb">cd</span><span class="w"> </span>homelab<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>checkout<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main<span class="o">)</span>
+<span class="nb">cd</span><span class="w"> </span>homelab
+git<span class="w"> </span>config<span class="w"> </span>user.name<span class="w"> </span><span class="s2">&quot;&lt;agent-id&gt;[bot]&quot;</span>
+git<span class="w"> </span>config<span class="w"> </span>user.email<span class="w"> </span><span class="s2">&quot;&lt;agent-id&gt;@openclaw.homelab&quot;</span>
+
+<span class="c1"># Issue + branch</span>
+gh<span class="w"> </span>issue<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;&lt;type&gt;: &lt;desc&gt;&quot;</span><span class="w"> </span>--label<span class="w"> </span><span class="s2">&quot;agent:&lt;id&gt;,type:&lt;t&gt;,area:&lt;a&gt;,priority:&lt;p&gt;&quot;</span><span class="w"> </span>--milestone<span class="w"> </span><span class="s2">&quot;&lt;ms&gt;&quot;</span><span class="w"> </span>...
+git<span class="w"> </span>checkout<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main
+git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>&lt;agent-id&gt;/&lt;type&gt;/&lt;issue&gt;-&lt;desc&gt;
+
+<span class="c1"># Changes + commit + push + PR</span>
+git<span class="w"> </span>add<span class="w"> </span>&lt;files&gt;
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;&lt;type&gt;: &lt;desc&gt; (#&lt;issue&gt;) [&lt;agent-id&gt;]&quot;</span>
+git<span class="w"> </span>fetch<span class="w"> </span>origin<span class="w"> </span>main<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>merge<span class="w"> </span>origin/main<span class="w"> </span>--no-edit
+git<span class="w"> </span>push<span class="w"> </span>-u<span class="w"> </span>origin<span class="w"> </span>HEAD
+gh<span class="w"> </span>pr<span class="w"> </span>create<span class="w"> </span>--title<span class="w"> </span><span class="s2">&quot;&lt;type&gt;: &lt;desc&gt;&quot;</span><span class="w"> </span>--label<span class="w"> </span><span class="s2">&quot;agent:&lt;id&gt;,...&quot;</span><span class="w"> </span>--milestone<span class="w"> </span><span class="s2">&quot;&lt;ms&gt;&quot;</span><span class="w"> </span>...
+</code></pre></div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.expand", "navigation.top", "navigation.path", "content.code.copy", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

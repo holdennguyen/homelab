@@ -1,0 +1,2464 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://holdennguyen.github.io/homelab/infrastructure/networking/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../security/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Networking - Homelab Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#networking-tailscale-nodeport" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Homelab Docs" class="md-header__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Homelab Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Networking
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Infrastructure
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../services/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Services
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../operations/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Operations
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Homelab Docs" class="md-nav__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Homelab Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#solution-nodeport-tailscale-serve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Solution: NodePort + Tailscale Serve
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#request-path-detailed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request Path (Detailed)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-1-kubernetes-nodeport-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 1: Kubernetes NodePort Services
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Layer 1: Kubernetes NodePort Services">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Port Map
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-2-tailscale-serve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 2: Tailscale Serve
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Layer 2: Tailscale Serve">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-tls-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How TLS Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verify-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manage-serve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manage Serve
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-3-tailscale-network-tailnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 3: Tailscale Network (Tailnet)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Layer 3: Tailscale Network (Tailnet)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#magicdns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MagicDNS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-urls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access URLs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tailscale-serve-vs-funnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tailscale Serve vs Funnel
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-not-an-ingress-controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Not an Ingress Controller?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-network-topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Network Topology
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security-default-deny-network-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security: Default-Deny Network Policies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Security: Default-Deny Network Policies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#policies-in-place" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Policies in Place
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tailscale-cidr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tailscale CIDR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#future-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Future Considerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../secret-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Secret Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../services/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/argocd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ArgoCD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/authentik/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentik
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/external-secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    External Secrets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/infisical/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infisical
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/launchfast/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LaunchFast
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/openclaw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenClaw
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/trivy-operator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Operator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/trivy-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../operations/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/git-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/ai-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/nightly-shutdown/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nightly Shutdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#the-problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Problem
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#solution-nodeport-tailscale-serve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Solution: NodePort + Tailscale Serve
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#request-path-detailed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Request Path (Detailed)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-1-kubernetes-nodeport-services" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 1: Kubernetes NodePort Services
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Layer 1: Kubernetes NodePort Services">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#port-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Port Map
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-2-tailscale-serve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 2: Tailscale Serve
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Layer 2: Tailscale Serve">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configuration-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Commands
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-tls-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How TLS Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#verify-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Verify Status
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#manage-serve" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Manage Serve
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-3-tailscale-network-tailnet" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 3: Tailscale Network (Tailnet)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Layer 3: Tailscale Network (Tailnet)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#magicdns" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        MagicDNS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#access-urls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Access URLs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tailscale-serve-vs-funnel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tailscale Serve vs Funnel
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-not-an-ingress-controller" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why Not an Ingress Controller?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-network-topology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Network Topology
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security-default-deny-network-policies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security: Default-Deny Network Policies
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Security: Default-Deny Network Policies">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#policies-in-place" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Policies in Place
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tailscale-cidr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tailscale CIDR
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#future-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Future Considerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Infrastructure
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="networking-tailscale-nodeport">Networking: Tailscale + NodePort</h1>
+<p>This document explains how services running inside the OrbStack Kubernetes cluster on a headless Mac mini M4 are exposed to all devices on a private Tailscale network (tailnet).</p>
+<h2 id="the-problem">The Problem</h2>
+<p>Three constraints shape the networking setup:</p>
+<ol>
+<li><strong>OrbStack NodePorts bind to localhost only.</strong> Unlike cloud Kubernetes, OrbStack's single-node cluster exposes NodePort services on <code>127.0.0.1</code>, not on the host's LAN or Tailscale interfaces.</li>
+<li><strong>No Ingress controller is installed.</strong> A full nginx/traefik deployment is unnecessary for a homelab.</li>
+<li><strong>The Mac mini is headless.</strong> All access comes from other devices (iPhone, iPad, other machines) over Tailscale.</li>
+</ol>
+<h2 id="solution-nodeport-tailscale-serve">Solution: NodePort + Tailscale Serve</h2>
+<p>The architecture uses two layers:</p>
+<ul>
+<li><strong>NodePort</strong> -- makes Kubernetes services reachable at <code>localhost:&lt;port&gt;</code> on the Mac mini</li>
+<li><strong>Tailscale Serve</strong> -- listens on the Tailscale interface, terminates TLS with auto-provisioned Let's Encrypt certificates, and reverse-proxies to the localhost NodePorts</li>
+</ul>
+<pre class="mermaid"><code>flowchart TD
+    subgraph tailnet["Tailscale Network (private)"]
+        iPhone["iPhone 12 Pro Max\n100.67.153.52"]
+        iPad["iPad mini gen 5\n100.121.193.73"]
+    end
+
+    subgraph mac["Mac mini M4 (holdens-mac-mini)"]
+        subgraph ts["Tailscale Serve"]
+            TLS443["HTTPS :443\nAuthentik (SSO portal)"]
+            TLS8443["HTTPS :8443\nArgoCD"]
+            TLS8444["HTTPS :8444\nGrafana"]
+            TLS8448
+        end
+
+        subgraph orbstack["OrbStack Kubernetes"]
+            subgraph authentikNs["authentik namespace"]
+                AuthentikSvc["authentik\nNodePort 30500"]
+            end
+            subgraph argocdNs["argocd namespace"]
+                ArgoCDSvc["argocd-server\nNodePort 30080 (HTTP, insecure mode)"]
+            end
+            subgraph monNs["monitoring namespace"]
+                GrafanaSvc["grafana\nNodePort 30090"]
+            end
+            subgraph infisicalNs["infisical namespace"]
+                InfisicalSvc["infisical\nNodePort 30445"]
+            end
+            subgraph trivyDashNs["trivy-dashboard namespace"]
+                TrivyDashSvc["trivy-dashboard\nNodePort 30448"]
+            end
+        end
+
+        TLS443 -- "http://localhost:30500" --&gt; AuthentikSvc
+        TLS8443 -- "http://localhost:30080" --&gt; ArgoCDSvc
+        TLS8444 -- "http://localhost:30090" --&gt; GrafanaSvc
+            TLS8445["HTTPS :8445"] -- "http://localhost:30445" --&gt; InfisicalSvc
+            TLS8448["HTTPS :8448"] -- "http://localhost:30448" --&gt; TrivyDashSvc
+    end
+
+    iPhone -- "https://holdens-mac-mini\n.story-larch.ts.net" --&gt; TLS443
+    iPad -- "https://holdens-mac-mini\n.story-larch.ts.net:8443" --&gt; TLS8443
+    iPhone -- ":8444" --&gt; TLS8444
+    iPad -- ":8445" --&gt; TLS8445</code></pre>
+<h2 id="request-path-detailed">Request Path (Detailed)</h2>
+<p>A browser request to <code>https://holdens-mac-mini.story-larch.ts.net</code> traverses five hops:</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Browser as Browser (iPhone)
+    participant MagicDNS as Tailscale MagicDNS
+    participant WG as WireGuard Tunnel
+    participant TServe as tailscale serve
+    participant NodePort as OrbStack NodePort
+    participant Pod as Authentik Pod
+
+    Browser-&gt;&gt;MagicDNS: Resolve holdens-mac-mini.story-larch.ts.net
+    MagicDNS--&gt;&gt;Browser: 100.77.144.4
+    Browser-&gt;&gt;WG: TLS ClientHello (SNI: holdens-mac-mini.story-larch.ts.net)
+    WG-&gt;&gt;TServe: Decrypted WireGuard packet to 100.77.144.4:443
+    TServe-&gt;&gt;TServe: TLS termination (Let's Encrypt cert)
+    TServe-&gt;&gt;NodePort: HTTP GET / -&gt; http://localhost:30500
+    NodePort-&gt;&gt;Pod: Forward to authentik-server pod :9000
+    Pod--&gt;&gt;TServe: HTTP 200 (HTML)
+    TServe--&gt;&gt;Browser: HTTPS 200 (re-encrypted)</code></pre>
+<table>
+<thead>
+<tr>
+<th>Hop</th>
+<th>From</th>
+<th>To</th>
+<th>Protocol</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Browser</td>
+<td>MagicDNS (100.100.100.100)</td>
+<td>DNS</td>
+<td>Resolves <code>*.story-larch.ts.net</code> to Tailscale IP</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Browser</td>
+<td>Mac mini (100.77.144.4)</td>
+<td>WireGuard</td>
+<td>Encrypted tunnel between devices</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Tailscale interface</td>
+<td><code>tailscale serve</code></td>
+<td>TLS</td>
+<td>TLS termination with LE cert</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>tailscale serve</code></td>
+<td><code>localhost:30500</code></td>
+<td>HTTP</td>
+<td>Reverse proxy to NodePort</td>
+</tr>
+<tr>
+<td>5</td>
+<td>NodePort</td>
+<td>Authentik Pod <code>:9000</code></td>
+<td>HTTP</td>
+<td>Kubernetes Service routing</td>
+</tr>
+</tbody>
+</table>
+<h2 id="layer-1-kubernetes-nodeport-services">Layer 1: Kubernetes NodePort Services</h2>
+<h3 id="port-map">Port Map</h3>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Container Port</th>
+<th>NodePort</th>
+<th>localhost URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Authentik</td>
+<td>9000</td>
+<td>30500</td>
+<td><code>http://localhost:30500</code></td>
+</tr>
+<tr>
+<td>ArgoCD HTTP</td>
+<td>8080</td>
+<td>30080</td>
+<td><code>http://localhost:30080</code></td>
+</tr>
+<tr>
+<td>Grafana</td>
+<td>3000</td>
+<td>30090</td>
+<td><code>http://localhost:30090</code></td>
+</tr>
+<tr>
+<td>Infisical</td>
+<td>8080</td>
+<td>30445</td>
+<td><code>http://localhost:30445</code></td>
+</tr>
+<tr>
+<td>Trivy Dashboard</td>
+<td>8900</td>
+<td>30448</td>
+<td><code>http://localhost:30448</code></td>
+</tr>
+<tr>
+<td>OpenClaw</td>
+<td>18789</td>
+<td>30789</td>
+<td><code>http://localhost:30789</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="layer-2-tailscale-serve">Layer 2: Tailscale Serve</h2>
+<p><code>tailscale serve</code> runs as a background daemon on the Mac mini. It listens on the Tailscale network interface (<code>100.77.144.4</code>) and proxies incoming HTTPS requests to local ports.</p>
+<h3 id="configuration-commands">Configuration Commands</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Authentik (SSO portal) — default HTTPS port (443)</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--bg<span class="w"> </span>http://localhost:30500
+
+<span class="c1"># ArgoCD — custom HTTPS port (8443); ArgoCD runs in insecure mode so plain HTTP</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--bg<span class="w"> </span>--https<span class="w"> </span><span class="m">8443</span><span class="w"> </span>http://localhost:30080
+
+<span class="c1"># Grafana — custom HTTPS port (8444)</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--bg<span class="w"> </span>--https<span class="w"> </span><span class="m">8444</span><span class="w"> </span>http://localhost:30090
+
+<span class="c1"># Infisical — custom HTTPS port (8445)</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--bg<span class="w"> </span>--https<span class="w"> </span><span class="m">8445</span><span class="w"> </span>http://localhost:30445
+
+<span class="c1"># LaunchFast — custom HTTPS port (8446)</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--bg<span class="w"> </span>--https<span class="w"> </span><span class="m">8446</span><span class="w"> </span>http://localhost:30100
+
+<span class="c1"># Trivy Dashboard — custom HTTPS port (8448)</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--bg<span class="w"> </span>--https<span class="w"> </span><span class="m">8448</span><span class="w"> </span>http://localhost:30448
+
+<span class="c1"># OpenClaw — custom HTTPS port (8447)</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--bg<span class="w"> </span>--https<span class="w"> </span><span class="m">8447</span><span class="w"> </span>http://localhost:30789
+</code></pre></div>
+<p>The <code>--bg</code> flag runs the proxy as a persistent background service that survives terminal sessions.</p>
+<h3 id="how-tls-works">How TLS Works</h3>
+<pre class="mermaid"><code>flowchart LR
+    subgraph client["Client Device"]
+        Browser["Browser"]
+    end
+
+    subgraph tls["TLS at Tailscale Serve"]
+        Cert["Let's Encrypt cert\n*.story-larch.ts.net"]
+        Proxy["Reverse Proxy"]
+    end
+
+    subgraph k8s["Kubernetes"]
+        Authentik["Authentik :9000\nplain HTTP"]
+        ArgoCD["ArgoCD :8080\nplain HTTP (insecure mode)"]
+        Grafana["Grafana :3000\nplain HTTP"]
+    end
+
+    Browser -- "TLS 1.3\nvalid cert" --&gt; Cert
+    Cert --&gt; Proxy
+    Proxy -- "plain HTTP" --&gt; Authentik
+    Proxy -- "plain HTTP" --&gt; ArgoCD
+    Proxy -- "plain HTTP" --&gt; Grafana</code></pre>
+<p>Tailscale automatically provisions and renews Let's Encrypt certificates for the <code>*.ts.net</code> domain. No manual certificate management, no cert-manager, no self-signed certs.</p>
+<h3 id="verify-status">Verify Status</h3>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>tailscale<span class="w"> </span>serve<span class="w"> </span>status
+
+https://holdens-mac-mini.story-larch.ts.net<span class="w"> </span><span class="o">(</span>tailnet<span class="w"> </span>only<span class="o">)</span>
+<span class="p">|</span>--<span class="w"> </span>/<span class="w"> </span>proxy<span class="w"> </span>http://localhost:30500
+
+https://holdens-mac-mini.story-larch.ts.net:8443<span class="w"> </span><span class="o">(</span>tailnet<span class="w"> </span>only<span class="o">)</span>
+<span class="p">|</span>--<span class="w"> </span>/<span class="w"> </span>proxy<span class="w"> </span>http://localhost:30080
+
+https://holdens-mac-mini.story-larch.ts.net:8444<span class="w"> </span><span class="o">(</span>tailnet<span class="w"> </span>only<span class="o">)</span>
+<span class="p">|</span>--<span class="w"> </span>/<span class="w"> </span>proxy<span class="w"> </span>http://localhost:30090
+
+https://holdens-mac-mini.story-larch.ts.net:8445<span class="w"> </span><span class="o">(</span>tailnet<span class="w"> </span>only<span class="o">)</span>
+<span class="p">|</span>--<span class="w"> </span>/<span class="w"> </span>proxy<span class="w"> </span>http://localhost:30445
+
+https://holdens-mac-mini.story-larch.ts.net:8446<span class="w"> </span><span class="o">(</span>tailnet<span class="w"> </span>only<span class="o">)</span>
+<span class="p">|</span>--<span class="w"> </span>/<span class="w"> </span>proxy<span class="w"> </span>http://localhost:30100
+
+https://holdens-mac-mini.story-larch.ts.net:8447<span class="w"> </span><span class="o">(</span>tailnet<span class="w"> </span>only<span class="o">)</span>
+<span class="p">|</span>--<span class="w"> </span>/<span class="w"> </span>proxy<span class="w"> </span>http://localhost:30789
+
+https://holdens-mac-mini.story-larch.ts.net:8448<span class="w"> </span><span class="o">(</span>tailnet<span class="w"> </span>only<span class="o">)</span>
+<span class="p">|</span>--<span class="w"> </span>/<span class="w"> </span>proxy<span class="w"> </span>http://localhost:30448
+
+https://holdens-mac-mini.story-larch.ts.net:8449<span class="w"> </span><span class="o">(</span>tailnet<span class="w"> </span>only<span class="o">)</span>
+<span class="p">|</span>--<span class="w"> </span>/<span class="w"> </span>proxy<span class="w"> </span>http://localhost:30888
+</code></pre></div>
+<h3 id="manage-serve">Manage Serve</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Stop Authentik proxy</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--https<span class="o">=</span><span class="m">443</span><span class="w"> </span>off
+
+<span class="c1"># Stop ArgoCD proxy</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--https<span class="o">=</span><span class="m">8443</span><span class="w"> </span>off
+
+<span class="c1"># Stop Grafana proxy</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--https<span class="o">=</span><span class="m">8444</span><span class="w"> </span>off
+
+<span class="c1"># Stop LaunchFast proxy</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--https<span class="o">=</span><span class="m">8446</span><span class="w"> </span>off
+
+<span class="c1"># Stop Trivy Dashboard proxy</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--https<span class="o">=</span><span class="m">8448</span><span class="w"> </span>off
+
+<span class="c1"># Stop OpenClaw proxy</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>--https<span class="o">=</span><span class="m">8447</span><span class="w"> </span>off
+
+<span class="c1"># Reset all serve config</span>
+tailscale<span class="w"> </span>serve<span class="w"> </span>reset
+</code></pre></div>
+<h2 id="layer-3-tailscale-network-tailnet">Layer 3: Tailscale Network (Tailnet)</h2>
+<h3 id="magicdns">MagicDNS</h3>
+<p>Tailscale's MagicDNS automatically resolves <code>&lt;hostname&gt;.story-larch.ts.net</code> to the device's Tailscale IP across all devices on the tailnet. No <code>/etc/hosts</code> entries or custom DNS servers needed.</p>
+<table>
+<thead>
+<tr>
+<th>Device</th>
+<th>Tailscale IP</th>
+<th>DNS Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mac mini M4</td>
+<td><code>100.77.144.4</code></td>
+<td><code>holdens-mac-mini.story-larch.ts.net</code></td>
+</tr>
+<tr>
+<td>iPad mini gen 5</td>
+<td><code>100.121.193.73</code></td>
+<td><code>ipad-mini-gen-5.story-larch.ts.net</code></td>
+</tr>
+<tr>
+<td>iPhone 12 Pro Max</td>
+<td><code>100.67.153.52</code></td>
+<td><code>iphone-12-pro-max.story-larch.ts.net</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="access-urls">Access URLs</h3>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>URL</th>
+<th>Port</th>
+<th>Auth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Authentik (SSO)</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net</code></td>
+<td>443 (default)</td>
+<td>SSO portal (Homelab Homepage)</td>
+</tr>
+<tr>
+<td>ArgoCD</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8443</code></td>
+<td>8443</td>
+<td>SSO via Authentik</td>
+</tr>
+<tr>
+<td>Grafana</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8444</code></td>
+<td>8444</td>
+<td>SSO via Authentik</td>
+</tr>
+<tr>
+<td>Infisical</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8445</code></td>
+<td>8445</td>
+<td>Local admin</td>
+</tr>
+<tr>
+<td>LaunchFast</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8446</code></td>
+<td>8446</td>
+<td>SSO portal bookmark</td>
+</tr>
+<tr>
+<td>OpenClaw</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8447</code></td>
+<td>8447</td>
+<td>SSO portal bookmark</td>
+</tr>
+<tr>
+<td>Trivy Dashboard</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8448</code></td>
+<td>8448</td>
+<td>SSO portal bookmark</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tailscale-serve-vs-funnel">Tailscale Serve vs Funnel</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th><code>tailscale serve</code></th>
+<th><code>tailscale funnel</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Audience</td>
+<td>Tailnet devices only</td>
+<td>Public internet</td>
+</tr>
+<tr>
+<td>TLS</td>
+<td>Let's Encrypt via Tailscale</td>
+<td>Let's Encrypt via Tailscale</td>
+</tr>
+<tr>
+<td>Auth</td>
+<td>Tailscale identity (WireGuard)</td>
+<td>None (public)</td>
+</tr>
+<tr>
+<td>Use here</td>
+<td>Yes</td>
+<td>No -- homelab should stay private</td>
+</tr>
+</tbody>
+</table>
+<h2 id="why-not-an-ingress-controller">Why Not an Ingress Controller?</h2>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Pros</th>
+<th>Cons</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tailscale Serve + NodePort</strong> (current)</td>
+<td>Zero config TLS, no extra pods, works on headless Mac, private by default</td>
+<td>Requires Tailscale on all client devices</td>
+</tr>
+<tr>
+<td>nginx-ingress / Traefik</td>
+<td>Standard K8s pattern, works with any client</td>
+<td>Extra pods, manual TLS (cert-manager), DNS setup, overkill for homelab</td>
+</tr>
+<tr>
+<td><code>kubectl port-forward</code></td>
+<td>No config needed</td>
+<td>Manual, dies when terminal closes, no TLS, single user</td>
+</tr>
+<tr>
+<td>LoadBalancer (MetalLB)</td>
+<td>Standard K8s pattern</td>
+<td>Complex setup for single-node, still need TLS and DNS</td>
+</tr>
+</tbody>
+</table>
+<p>For a single-node homelab with Tailscale already in use, NodePort + <code>tailscale serve</code> is the simplest path to secure, private, multi-device access.</p>
+<h2 id="complete-network-topology">Complete Network Topology</h2>
+<pre class="mermaid"><code>flowchart TD
+    subgraph internet["Internet"]
+        GitHub["GitHub\nholdennguyen/homelab"]
+        LetsEncrypt["Let's Encrypt CA"]
+    end
+
+    subgraph tailnet["Tailscale Tailnet (story-larch)"]
+        subgraph mac["Mac mini M4\n100.77.144.4"]
+            TS["tailscale serve\n:443, :8443, :8444, :8445, :8446, :8447, :8448, :8449"]
+
+            subgraph orb["OrbStack Kubernetes"]
+                subgraph authentik["authentik ns"]
+                    AuthentikSvc2["authentik-server\nNodePort 30500"]
+                end
+                subgraph argocd["argocd ns"]
+                    ArgoSvc["argocd-server\nNodePort 30080 (HTTP)"]
+                    ArgoCtrl["application-controller"]
+                end
+                subgraph monNs2["monitoring ns"]
+                    GrafanaSvc2["grafana\nNodePort 30090"]
+                end
+                subgraph infisical_ns["infisical ns"]
+                    InfisicalSvc2["infisical\nNodePort 30445"]
+                end
+                subgraph trivydash_ns["trivy-dashboard ns"]
+                    TrivyDashSvc2["trivy-dashboard\nNodePort 30448"]
+                end
+                subgraph openclaw_ns["openclaw ns"]
+                    OpenClawSvc["openclaw\nNodePort 30789"]
+                end
+            end
+
+            TS -- "localhost:30500" --&gt; AuthentikSvc2
+            TS -- "localhost:30080" --&gt; ArgoSvc
+            TS -- "localhost:30090" --&gt; GrafanaSvc2
+            TS -- "localhost:30445" --&gt; InfisicalSvc2
+            TS -- "localhost:30448" --&gt; TrivyDashSvc2
+            TS -- "localhost:30789" --&gt; OpenClawSvc
+            ArgoCtrl -- "poll" --&gt; GitHub
+            LetsEncrypt -. "auto cert" .-&gt; TS
+        end
+
+        iphone["iPhone\n100.67.153.52"]
+        ipad["iPad\n100.121.193.73"]
+
+        iphone -- "WireGuard" --&gt; TS
+        ipad -- "WireGuard" --&gt; TS
+    end</code></pre>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Could not resolve host: *.story-larch.ts.net</code></td>
+<td>MagicDNS not enabled or not propagated</td>
+<td>Enable MagicDNS in Tailscale admin; or add <code>100.77.144.4 holdens-mac-mini.story-larch.ts.net</code> to <code>/etc/hosts</code></td>
+</tr>
+<tr>
+<td><code>connection refused</code> on NodePort</td>
+<td>Pod not running or Service not NodePort</td>
+<td><code>kubectl get svc,pods -n &lt;namespace&gt;</code></td>
+</tr>
+<tr>
+<td><code>Serve is not enabled on your tailnet</code></td>
+<td>Tailscale Serve feature not activated</td>
+<td>Visit the URL shown in the error to enable it</td>
+</tr>
+<tr>
+<td>TLS certificate error in browser</td>
+<td><code>tailscale serve</code> not running</td>
+<td><code>tailscale serve status</code>; restart with <code>--bg</code> commands</td>
+</tr>
+<tr>
+<td>ArgoCD returns 502</td>
+<td>ArgoCD pod restarting or not ready</td>
+<td><code>kubectl get pods -n argocd</code></td>
+</tr>
+<tr>
+<td>Works from iPhone but not Mac mini</td>
+<td>MagicDNS resolves on mobile but not macOS</td>
+<td>Add <code>/etc/hosts</code> entry or verify macOS Tailscale has MagicDNS enabled</td>
+</tr>
+</tbody>
+</table>
+<h2 id="security-default-deny-network-policies">Security: Default-Deny Network Policies</h2>
+<p>To enforce the principle of least privilege, a comprehensive set of NetworkPolicy resources has been deployed across all application namespaces. These policies implement a <em>default-deny</em> security posture: all ingress and egress traffic is blocked unless explicitly allowed.</p>
+<h3 id="policies-in-place">Policies in Place</h3>
+<p>Each namespace has three foundational policies:</p>
+<ul>
+<li><strong>default-deny-all</strong>: Blocks all ingress and egress traffic.</li>
+<li><strong>allow-same-namespace</strong>: Allows unrestricted communication between pods within the same namespace (required for intra-application communication).</li>
+<li><strong>allow-dns</strong>: Allows egress to the cluster's DNS service (CoreDNS) for name resolution on UDP/TCP port 53.</li>
+</ul>
+<p>Additionally, namespace-specific rules enable required connectivity:</p>
+<ul>
+<li><strong>Tailscale Ingress</strong>: Services exposed via Tailscale have ingress restricted to the Tailscale CIDR (<code>100.64.0.0/10</code>) on the NodePort service ports.</li>
+<li><strong>API Server Access</strong>: Namespaces that need to communicate with the Kubernetes API (e.g., <code>argocd</code>, <code>openclaw</code>, <code>monitoring</code>, <code>external-secrets</code>) have an egress rule permitting traffic to the API server on port 6443.</li>
+<li><strong>Internet Egress</strong>: The <code>argocd</code> and <code>openclaw</code> namespaces are allowed to egress to the internet on ports 443 (HTTPS) and 22 (SSH) to facilitate Git operations and external API calls.</li>
+<li><strong>External Secrets</strong>: The <code>external-secrets</code> namespace can egress to the Infisical API (<code>infisical</code> namespace, port 8080); conversely, <code>infisical</code> has an ingress rule allowing traffic from <code>external-secrets</code> on that port.</li>
+</ul>
+<p>The complete set of policies is stored in <code>k8s/apps/networking-policies/</code>.</p>
+<h3 id="tailscale-cidr">Tailscale CIDR</h3>
+<p>All Tailscale devices are assigned IPs in the range <code>100.64.0.0/10</code>. Ingress rules for services use this CIDR to ensure only tailnet devices can access them.</p>
+<h3 id="future-considerations">Future Considerations</h3>
+<p>When adding new services, corresponding network policies should be created to maintain the default-deny security model.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.expand", "navigation.top", "navigation.path", "content.code.copy", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

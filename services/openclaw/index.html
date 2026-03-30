@@ -1,0 +1,4087 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://holdennguyen.github.io/homelab/services/openclaw/">
+      
+      
+        <link rel="prev" href="../monitoring/">
+      
+      
+        <link rel="next" href="../trivy-operator/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>OpenClaw - Homelab Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#openclaw" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Homelab Docs" class="md-header__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Homelab Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              OpenClaw
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../infrastructure/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Infrastructure
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Services
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../operations/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Operations
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Homelab Docs" class="md-nav__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Homelab Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../infrastructure/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/secret-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Secret Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../argocd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ArgoCD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authentik/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentik
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../external-secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    External Secrets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../infisical/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infisical
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../launchfast/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LaunchFast
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenClaw
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenClaw
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#directory-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Directory Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-fits-in-the-homelab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Fits in the Homelab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-git-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Git Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent Git Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent-footprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Footprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-the-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build the Image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secrets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-more-providers-or-channels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding More Providers or Channels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Model Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-config-convention-important" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model config convention (IMPORTANT)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switching-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switching models
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discord-chat-channel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discord Chat Channel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Discord Chat Channel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#channel-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channel Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automated-notifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Notifications
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discord-concepts-quick-primer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discord Concepts (quick primer)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-create-a-discord-account-skip-if-you-already-have-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Create a Discord Account (skip if you already have one)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-create-a-discord-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Create a Discord Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-create-a-discord-bot-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Create a Discord Bot Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-configure-the-bot-and-get-the-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Configure the Bot and Get the Token
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-invite-the-bot-to-your-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Invite the Bot to Your Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-store-the-token-in-infisical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Store the Token in Infisical
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-deploy-and-connect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Deploy and Connect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-8-verify-the-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8: Verify the Connection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#talking-to-openclaw-via-discord" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Talking to OpenClaw via Discord
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-cli-commands-inside-the-pod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running CLI Commands Inside the Pod
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#first-connection-device-pairing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        First Connection: Device Pairing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="First Connection: Device Pairing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-happens" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Happens
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#approve-the-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Approve the Device
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pairing-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pairing Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retrieve-the-gateway-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retrieve the Gateway Token
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#updating-openclaw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Updating OpenClaw
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Updating OpenClaw">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pull-the-latest-upstream-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pull the latest upstream release
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pin-to-a-specific-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pin to a specific version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clone-the-homelab-repo-fresh-machine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clone the homelab repo (fresh machine)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gateway-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gateway Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-agent-skills-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Agent &amp; Skills Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi-Agent &amp; Skills Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skills" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skills
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sub-agent-spawning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sub-agent spawning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a new agent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-skill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a new skill
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operational Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kubernetes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kubernetes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#openclaw-cli-via-kubectl-exec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenClaw CLI (via kubectl exec)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trivy-operator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Operator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trivy-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../operations/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/git-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/ai-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/nightly-shutdown/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nightly Shutdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#directory-contents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Directory Contents
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-fits-in-the-homelab" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Fits in the Homelab
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-git-workflow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Git Workflow
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent Git Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agent-footprint" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Footprint
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deployment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prerequisites
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build-the-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Build the Image
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Secrets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-more-providers-or-channels" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding More Providers or Channels
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model Configuration
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Model Configuration">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model-config-convention-important" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model config convention (IMPORTANT)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#switching-models" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Switching models
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deploy
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#discord-chat-channel" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discord Chat Channel
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Discord Chat Channel">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#channel-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Channel Architecture
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-it-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Works
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automated-notifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automated Notifications
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#discord-concepts-quick-primer" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discord Concepts (quick primer)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-1-create-a-discord-account-skip-if-you-already-have-one" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1: Create a Discord Account (skip if you already have one)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-create-a-discord-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2: Create a Discord Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-create-a-discord-bot-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3: Create a Discord Bot Application
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-configure-the-bot-and-get-the-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4: Configure the Bot and Get the Token
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-invite-the-bot-to-your-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5: Invite the Bot to Your Server
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-store-the-token-in-infisical" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6: Store the Token in Infisical
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-7-deploy-and-connect" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 7: Deploy and Connect
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-8-verify-the-connection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 8: Verify the Connection
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#talking-to-openclaw-via-discord" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Talking to OpenClaw via Discord
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configuration-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Configuration Reference
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#running-cli-commands-inside-the-pod" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Running CLI Commands Inside the Pod
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#first-connection-device-pairing" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        First Connection: Device Pairing
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="First Connection: Device Pairing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-happens" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Happens
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#approve-the-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Approve the Device
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pairing-rules" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pairing Rules
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#retrieve-the-gateway-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Retrieve the Gateway Token
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#updating-openclaw" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Updating OpenClaw
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Updating OpenClaw">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pull-the-latest-upstream-release" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pull the latest upstream release
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pin-to-a-specific-version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pin to a specific version
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clone-the-homelab-repo-fresh-machine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Clone the homelab repo (fresh machine)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#gateway-configuration" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gateway Configuration
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#multi-agent-skills-architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Multi-Agent &amp; Skills Architecture
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Multi-Agent &amp; Skills Architecture">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#agents" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agents
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#skills" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Skills
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sub-agent-spawning" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sub-agent spawning
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a new agent
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-skill" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a new skill
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational Commands
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Operational Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kubernetes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kubernetes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#openclaw-cli-via-kubectl-exec" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        OpenClaw CLI (via kubectl exec)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Services
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="openclaw">OpenClaw</h1>
+<p>OpenClaw is a multi-channel AI gateway that serves as the agent orchestration layer for the homelab. It connects to AI model providers via OpenRouter and exposes a unified gateway API for AI agent workflows running on the Mac mini.</p>
+<h2 id="architecture">Architecture</h2>
+<pre class="mermaid"><code>flowchart TD
+    subgraph tailnet["Tailscale Network"]
+        Clients["Devices on tailnet\niPhone, iPad, Mac"]
+        TServe["tailscale serve\nHTTPS :8447 → localhost:30789"]
+    end
+
+    subgraph orb["OrbStack Kubernetes Cluster"]
+        subgraph openclawNs["openclaw namespace"]
+            Svc["Service\nNodePort :30789"]
+            Deploy["OpenClaw Gateway\nPort :18789"]
+            CM["ConfigMap: openclaw-config\nopenclaw.json (multi-agent)"]
+            WSHP["hostPath: agents/workspaces\nAGENTS.md personalities"]
+            PVC["PVC: openclaw-data\n5Gi"]
+            ES["ExternalSecret:\nopenclaw-secret"]
+            K8sSecret["K8s Secret:\nopenclaw-secret"]
+        end
+
+        subgraph esoNs["external-secrets namespace"]
+            CSS["ClusterSecretStore:\ninfisical"]
+        end
+    end
+
+    subgraph infisical["Infisical (homelab / prod)"]
+        InfisicalSecrets["OPENCLAW_GATEWAY_TOKEN\nOPENROUTER_API_KEY\nGEMINI_API_KEY\nGITHUB_TOKEN\nDISCORD_BOT_TOKEN\nDISCORD_WEBHOOK_DEUTSCH\nDISCORD_WEBHOOK_ENGLISH\nDISCORD_WEBHOOK_DAILY\nDISCORD_WEBHOOK_ALERTS\nCURSOR_API_KEY"]
+    end
+
+    subgraph providers["AI Model Providers"]
+        OpenRouter["OpenRouter API\nstepfun/step-3.5-flash:free\n(primary)"]
+        Gemini["Google Gemini API\ngemini-2.5-pro\n(fallback)"]
+    end
+
+    subgraph chatChannels["Chat Channels"]
+        Discord["Discord\nBot API"]
+    end
+
+    Clients -- "WireGuard" --&gt; TServe
+    TServe --&gt; Svc
+    Svc --&gt; Deploy
+    CM -- "/config" --&gt; Deploy
+            WSHP -- "init container" --&gt; PVC
+    Deploy --&gt; PVC
+    ES -- "secretStoreRef" --&gt; CSS
+    CSS -- "Universal Auth" --&gt; InfisicalSecrets
+    InfisicalSecrets -- "creates" --&gt; K8sSecret
+    K8sSecret -- "env vars" --&gt; Deploy
+    Deploy -- "primary" --&gt; OpenRouter
+    Deploy -. "fallback" .-&gt; Gemini
+    Deploy &lt;-- "messages" --&gt; Discord</code></pre>
+<h2 id="directory-contents">Directory Contents</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>namespace.yaml</code></td>
+<td>Dedicated <code>openclaw</code> namespace</td>
+</tr>
+<tr>
+<td><code>pvc.yaml</code></td>
+<td>5Gi PVC for state data and agent workspaces</td>
+</tr>
+<tr>
+<td><code>external-secret.yaml</code></td>
+<td>Syncs gateway token, API keys, GitHub token, and Discord bot token from Infisical → <code>openclaw-secret</code></td>
+</tr>
+<tr>
+<td><code>configmap.yaml</code></td>
+<td>Multi-agent <code>openclaw.json</code> config (gateway, agents, channels, skills, tools)</td>
+</tr>
+<tr>
+<td><code>deployment.yaml</code></td>
+<td>Single-replica deployment with config/skills/workspace volumes</td>
+</tr>
+<tr>
+<td><code>service.yaml</code></td>
+<td>NodePort service exposing port 30789</td>
+</tr>
+<tr>
+<td><code>rbac.yaml</code></td>
+<td>ServiceAccount + namespace Role + ClusterRole (<code>openclaw-homelab-admin</code>)</td>
+</tr>
+<tr>
+<td><code>kustomization.yaml</code></td>
+<td>Kustomize resource list</td>
+</tr>
+</tbody>
+</table>
+<p>Related files outside this directory:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Dockerfile.openclaw</code> (repo root)</td>
+<td>Homelab overlay — adds kubectl, helm, terraform, argocd, jq, git, gh</td>
+</tr>
+<tr>
+<td><code>k8s/apps/argocd/applications/openclaw-app.yaml</code></td>
+<td>ArgoCD Application CR</td>
+</tr>
+<tr>
+<td><code>scripts/build-openclaw.sh</code></td>
+<td>Docker image build helper</td>
+</tr>
+<tr>
+<td><code>skills/</code> (repo root)</td>
+<td>Homelab-specific skills (mounted into pod via hostPath)</td>
+</tr>
+<tr>
+<td><code>agents/workspaces/</code> (repo root)</td>
+<td>Agent AGENTS.md personality files (copied into pod by init container)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="security">Security</h2>
+<p>The OpenClaw pod runs as a non-root user to reduce the impact of a potential container breakout. The pod-level securityContext is configured as:</p>
+<ul>
+<li><code>runAsUser: 1000</code></li>
+<li><code>runAsGroup: 1000</code></li>
+<li><code>runAsNonRoot: true</code></li>
+<li><code>fsGroup: 1000</code></li>
+</ul>
+<p>This ensures that the container processes do not have root privileges on the host node. The <code>fsGroup</code> setting also ensures that any shared volumes (like the PVC for workspace data) are accessible by the non-root user.</p>
+<p>Note: OpenClaw uses a <code>hostPath</code> volume to inject agent workspace definitions from the host (<code>/Users/holden.nguyen/homelab/agents/workspaces</code>). This is an exception to the cluster's default-deny network policies and requires the <code>openclaw</code> namespace to be exempt from the <code>restricted</code> pod security profile (due to the use of <code>hostPath</code>).</p>
+<p>The OpenClaw ServiceAccount has a two-layer RBAC model:</p>
+<ul>
+<li><strong>Namespace Role</strong> (<code>openclaw-role</code>) — secrets read + pods/exec in the <code>openclaw</code> namespace only</li>
+<li><strong>ClusterRole</strong> (<code>openclaw-homelab-admin</code>) — cluster-wide read on pods, deployments, services, events, nodes, namespaces, and workload resources; targeted operational writes including patch on deployments/statefulsets (rollout restart, scale), patch on ExternalSecrets (force-sync), and patch on ArgoCD Applications (hard refresh). Does not grant create/delete on any resource, secrets read outside <code>openclaw</code>, or any cluster-scoped resource modification (ClusterRoles, NetworkPolicies, namespaces).</li>
+</ul>
+<p>This gives the homelab-admin agent the ability to monitor everything and operate on running workloads, while all persistent infrastructure changes flow through GitOps. See <a href="../../infrastructure/security/">docs/security.md</a> for the full RBAC breakdown.</p>
+<h2 id="how-it-fits-in-the-homelab">How It Fits in the Homelab</h2>
+<p>OpenClaw runs as a standard Kustomize application managed by ArgoCD, following the same App of Apps pattern as every other service. Its secrets flow through the Infisical → ESO → K8s Secret pipeline.</p>
+<pre class="mermaid"><code>flowchart LR
+    subgraph argocd["ArgoCD (App of Apps)"]
+        RootApp["argocd-apps\n(default project)"]
+    end
+
+    subgraph secretsProj["secrets project"]
+        Infisical["infisical"]
+        ESO["external-secrets"]
+        ESOConfig["external-secrets-config"]
+    end
+
+    subgraph dataProj["data project"]
+        DataPlaceholder["(reserved)"]
+    end
+
+    subgraph appsProj["apps project"]
+        Mon["monitoring"]
+        OC["openclaw"]
+    end
+
+    RootApp --&gt; secretsProj
+    RootApp --&gt; dataProj
+    RootApp --&gt; appsProj</code></pre>
+<h2 id="agent-git-workflow">Agent Git Workflow</h2>
+<p>All agents enforce a mandatory git workflow for any change to the homelab repository. No agent pushes directly to <code>main</code>. Branch protection is enforced: PRs require at least one approving review, force pushes are blocked, and linear history is required.</p>
+<pre class="mermaid"><code>sequenceDiagram
+    participant User
+    participant HA as homelab-admin&lt;br/&gt;(Orchestrator)
+    participant SA as Sub-agent&lt;br/&gt;(devops-sre / software-engineer / security-analyst / qa-tester / cursor-agent)
+    participant GH as GitHub
+    participant Argo as ArgoCD
+
+    User-&gt;&gt;HA: "Add resource X to service Y"
+    HA-&gt;&gt;HA: Analyze request, pick agent
+    HA-&gt;&gt;SA: sessions_spawn with task context
+
+    SA-&gt;&gt;SA: Clone repo + set git identity
+    SA-&gt;&gt;GH: gh issue create (with agent footer)
+    GH--&gt;&gt;SA: Issue #42
+    SA-&gt;&gt;SA: git checkout -b agent-id/feat/42-add-resource-x
+    SA-&gt;&gt;SA: Edit manifests + docs
+    SA-&gt;&gt;SA: git commit (with agent tag in message)
+    SA-&gt;&gt;GH: git push + gh pr create (with agent footer)
+    GH--&gt;&gt;SA: PR URL
+
+    SA--&gt;&gt;HA: Report PR URL
+    HA--&gt;&gt;User: PR created, ArgoCD syncs in ~3min
+
+    User-&gt;&gt;GH: Review &amp; merge PR
+    GH-&gt;&gt;Argo: Push to main triggers sync
+    Argo-&gt;&gt;Argo: Auto-sync within ~3 minutes</code></pre>
+<p>The git workflow details live in the <code>gitops</code> skill (assigned to all agents). Each agent's <code>AGENTS.md</code> is a lean personality definition — identity, tone, role-specific guidance — that references skills for procedural content. Each agent sets its own git identity via <code>git config</code> in the cloned repo (e.g. <code>devops-sre[bot] &lt;devops-sre@openclaw.homelab&gt;</code>), so every commit is traceable to the specific agent. The <code>GITHUB_TOKEN</code> from Infisical powers <code>gh</code> CLI authentication.</p>
+<p><strong>Branch freshness:</strong> Agents are required to keep their feature branch up to date with <code>main</code> by running <code>git fetch origin main &amp;&amp; git merge origin/main --no-edit</code> before every push. This prevents stale branches and merge conflicts when the PR is merged.</p>
+<p><strong>Milestones and releases:</strong> Every issue and PR is assigned to a GitHub Milestone representing the next planned release (<code>vMAJOR.MINOR.PATCH</code>). Version bumps follow semantic versioning — derived from type labels (<code>type:feat</code> → MINOR, <code>type:fix</code> → PATCH) with an explicit <code>semver:breaking</code> label for MAJOR bumps. The <code>homelab-admin</code> orchestrator owns the release process: tagging <code>main</code>, creating GitHub Releases with auto-generated notes, and managing the milestone lifecycle. Sub-agents never create tags or releases.</p>
+<p><strong>Incident response:</strong> Agents follow a structured incident response procedure when deployments cause service degradation. The <code>homelab-admin</code> orchestrator acts as incident commander, <code>devops-sre</code> executes rollbacks and cluster recovery, and <code>qa-tester</code> runs pre-merge and post-rollback verification checklists. All agents with the <code>incident-response</code> skill are trained to verify Helm chart value keys before PRs, check container image compatibility with <code>securityContext</code> changes, and run post-merge health checks. See the <code>incident-response</code> skill for the full procedure.</p>
+<h3 id="agent-footprint">Agent Footprint</h3>
+<p>Every action is traceable to the specific agent that performed it:</p>
+<table>
+<thead>
+<tr>
+<th>Artifact</th>
+<th>Footprint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Git commit author</td>
+<td><code>&lt;agent-id&gt;[bot] &lt;&lt;agent-id&gt;@openclaw.homelab&gt;</code></td>
+</tr>
+<tr>
+<td>Commit message</td>
+<td><code>... [&lt;agent-id&gt;]</code> suffix</td>
+</tr>
+<tr>
+<td>Branch name</td>
+<td><code>&lt;agent-id&gt;/&lt;type&gt;/...</code> prefix</td>
+</tr>
+<tr>
+<td>Issue/PR labels</td>
+<td><code>agent:&lt;agent-id&gt;</code></td>
+</tr>
+<tr>
+<td>Issue/PR body</td>
+<td><code>Agent: &lt;agent-id&gt; \| OpenClaw Homelab</code> footer</td>
+</tr>
+</tbody>
+</table>
+<h2 id="deployment">Deployment</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li>OpenClaw Docker image built locally (see <a href="#build-the-image">Build the Image</a>)</li>
+<li>Secrets added to Infisical (see <a href="#secrets">Secrets</a>)</li>
+<li>OpenRouter API key added to Infisical (see <a href="#secrets">Secrets</a>)</li>
+</ul>
+<h3 id="build-the-image">Build the Image</h3>
+<p>OpenClaw uses a two-stage locally built Docker image. The first stage builds the upstream OpenClaw source (<code>openclaw:base</code>), and the second stage (<code>Dockerfile.openclaw</code>) layers homelab-specific ops tools on top. OrbStack's Kubernetes shares the host Docker daemon, so locally built images are immediately available with <code>imagePullPolicy: Never</code>.</p>
+<div class="highlight"><pre><span></span><code>./scripts/build-openclaw.sh
+</code></pre></div>
+<p>This builds the image as <code>openclaw:latest</code> with the following tools baked in:</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>kubectl</code></td>
+<td>1.32.7</td>
+<td>Kubernetes operations</td>
+</tr>
+<tr>
+<td><code>helm</code></td>
+<td>3.17.3</td>
+<td>Helm chart management</td>
+</tr>
+<tr>
+<td><code>terraform</code></td>
+<td>1.5.7</td>
+<td>Bootstrap layer management</td>
+</tr>
+<tr>
+<td><code>argocd</code></td>
+<td>2.14.11</td>
+<td>ArgoCD CLI</td>
+</tr>
+<tr>
+<td><code>jq</code></td>
+<td>1.6</td>
+<td>JSON processing</td>
+</tr>
+<tr>
+<td><code>git</code></td>
+<td>(apt)</td>
+<td>Git operations for the mandatory git workflow</td>
+</tr>
+<tr>
+<td><code>gh</code></td>
+<td>(apt)</td>
+<td>GitHub CLI for issues, PRs, and repo cloning</td>
+</tr>
+<tr>
+<td><code>tmux</code></td>
+<td>(apt)</td>
+<td>TTY emulation for Cursor CLI automation</td>
+</tr>
+<tr>
+<td><code>agent</code> (Cursor CLI)</td>
+<td>(install script)</td>
+<td>AI-assisted code generation for cursor-agent</td>
+</tr>
+</tbody>
+</table>
+<p>To use a custom tag:</p>
+<div class="highlight"><pre><span></span><code>./scripts/build-openclaw.sh<span class="w"> </span>openclaw:v2026.2.16
+</code></pre></div>
+<p>If using a custom tag, update <code>image:</code> in <code>k8s/apps/openclaw/deployment.yaml</code> to match.</p>
+<p>To update tool versions, edit the <code>ARG</code> lines in <code>Dockerfile.openclaw</code> and rebuild.</p>
+<h3 id="secrets">Secrets</h3>
+<p>Add the following secrets to Infisical under <strong>homelab / prod</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Infisical Key</th>
+<th>How to Generate</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OPENCLAW_GATEWAY_TOKEN</code></td>
+<td><code>openssl rand -hex 32</code></td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><code>OPENROUTER_API_KEY</code></td>
+<td>From <a href="https://openrouter.ai/keys">openrouter.ai/keys</a></td>
+<td>Yes (primary model provider)</td>
+</tr>
+<tr>
+<td><code>GEMINI_API_KEY</code></td>
+<td>From <a href="https://aistudio.google.com/apikey">aistudio.google.com/apikey</a></td>
+<td>Yes (fallback model provider)</td>
+</tr>
+<tr>
+<td><code>GITHUB_TOKEN</code></td>
+<td>GitHub PAT (Fine-grained) with repo scope for <code>holdennguyen/homelab</code></td>
+<td>Yes (for git workflow)</td>
+</tr>
+<tr>
+<td><code>DISCORD_BOT_TOKEN</code></td>
+<td>From <a href="https://discord.com/developers/applications">Discord Developer Portal</a> → Bot → Reset Token</td>
+<td>Yes (for Discord chat channel)</td>
+</tr>
+<tr>
+<td><code>DISCORD_WEBHOOK_DEUTSCH</code></td>
+<td>From Discord <code>#deutsch</code> channel → Integrations → Webhooks</td>
+<td>Yes (for German learning reminders + progress updates)</td>
+</tr>
+<tr>
+<td><code>DISCORD_WEBHOOK_ENGLISH</code></td>
+<td>From Discord <code>#english</code> channel → Integrations → Webhooks</td>
+<td>Yes (for IELTS learning reminders + progress updates)</td>
+</tr>
+<tr>
+<td><code>DISCORD_WEBHOOK_DAILY</code></td>
+<td>From Discord <code>#daily-briefing</code> channel → Integrations → Webhooks</td>
+<td>Yes (for daily routine reminders + schedule updates)</td>
+</tr>
+<tr>
+<td><code>DISCORD_WEBHOOK_ALERTS</code></td>
+<td>From Discord <code>#alerts</code> channel → Integrations → Webhooks</td>
+<td>Yes (for cluster health alerts + incident notifications)</td>
+</tr>
+<tr>
+<td><code>CURSOR_API_KEY</code></td>
+<td>From Cursor account settings (API key for headless CLI auth)</td>
+<td>Yes (for cursor-agent code generation)</td>
+</tr>
+</tbody>
+</table>
+<p>After adding secrets, ESO syncs them into the <code>openclaw-secret</code> K8s Secret within the <code>refreshInterval</code> (1 hour), or force an immediate sync:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>annotate<span class="w"> </span>externalsecret<span class="w"> </span>openclaw-secret<span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>force-sync<span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%s<span class="k">)</span><span class="w"> </span>--overwrite
+</code></pre></div>
+<h3 id="adding-more-providers-or-channels">Adding More Providers or Channels</h3>
+<p>To add a new API key (e.g., <code>ANTHROPIC_API_KEY</code>, <code>OPENAI_API_KEY</code>, or <code>TELEGRAM_BOT_TOKEN</code>; see the Discord channel setup for a complete worked example):</p>
+<ol>
+<li>Add the key to Infisical under <code>homelab / prod</code></li>
+<li>Add a new entry to <code>external-secret.yaml</code>:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ANTHROPIC_API_KEY</span>
+<span class="w">      </span><span class="nt">remoteRef</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ANTHROPIC_API_KEY</span>
+</code></pre></div>
+<ol>
+<li>Add a corresponding <code>env</code> entry to <code>deployment.yaml</code>:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ANTHROPIC_API_KEY</span>
+<span class="w">              </span><span class="nt">valueFrom</span><span class="p">:</span>
+<span class="w">                </span><span class="nt">secretKeyRef</span><span class="p">:</span>
+<span class="w">                  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">openclaw-secret</span>
+<span class="w">                  </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ANTHROPIC_API_KEY</span>
+</code></pre></div>
+<ol>
+<li>Push to <code>main</code> — ArgoCD syncs the change automatically.</li>
+</ol>
+<h3 id="model-configuration">Model Configuration</h3>
+<p><strong>Model strategy:</strong> <code>openrouter/stepfun/step-3.5-flash:free</code> is the primary model (free tier via OpenRouter). <code>google/gemini-2.5-pro</code> is the fallback -- when the primary fails or hits rate limits, OpenClaw automatically falls through to Gemini.</p>
+<p>Both OpenRouter and Google Gemini are built-in providers in OpenClaw. Auth is via <code>OPENROUTER_API_KEY</code> and <code>GEMINI_API_KEY</code> env vars (synced from Infisical).</p>
+<h4 id="model-config-convention-important">Model config convention (IMPORTANT)</h4>
+<p>OpenClaw has two places to set models: <code>agents.defaults.model</code> and per-agent <code>agents.list[].model</code>. The critical rule:</p>
+<blockquote>
+<p><strong>Always set <code>model</code> as an object <code>{ "primary": "...", "fallbacks": ["..."] }</code> on EVERY agent in <code>agents.list[]</code>.</strong></p>
+</blockquote>
+<p>Why:</p>
+<ul>
+<li><code>agents.defaults.model</code> fallbacks <strong>do not propagate</strong> to the per-agent UI view.</li>
+<li>A plain string <code>model</code> (e.g. <code>"model": "google/gemini-2.5-pro"</code>) only sets <code>primary</code> and <strong>discards fallbacks</strong>.</li>
+<li>Only the object form <code>{ "primary", "fallbacks" }</code> on each agent ensures fallbacks are resolved and visible in the UI.</li>
+</ul>
+<p>When changing models, update <strong>both</strong> <code>agents.defaults.model</code> (the canonical source) <strong>and</strong> every <code>agents.list[].model</code> entry. Keep them in sync.</p>
+<h4 id="switching-models">Switching models</h4>
+<div class="highlight"><pre><span></span><code><span class="c1"># In configmap.yaml, update BOTH:</span>
+<span class="c1">#   1. agents.defaults.model.primary and agents.defaults.model.fallbacks</span>
+<span class="c1">#   2. agents.list[].model.primary and agents.list[].model.fallbacks (every agent)</span>
+<span class="c1">#</span>
+<span class="c1"># Example primary refs:</span>
+<span class="c1">#   openrouter/stepfun/step-3.5-flash:free</span>
+<span class="c1">#   openrouter/anthropic/claude-opus-4-6</span>
+<span class="c1">#   openrouter/openai/gpt-5.2</span>
+<span class="c1">#   google/gemini-2.5-pro</span>
+<span class="c1"># Push to main — ArgoCD syncs</span>
+</code></pre></div>
+<h3 id="deploy">Deploy</h3>
+<p>Once the image is built and secrets are in Infisical, push the k8s manifests to <code>main</code>. ArgoCD detects the new Application CR and deploys within ~3 minutes.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Verify the ArgoCD application</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>application<span class="w"> </span>openclaw<span class="w"> </span>-n<span class="w"> </span>argocd
+
+<span class="c1"># Watch pod come up</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>-w
+
+<span class="c1"># Check ExternalSecret resolved</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>externalsecret<span class="w"> </span>-n<span class="w"> </span>openclaw
+</code></pre></div>
+<h2 id="networking">Networking</h2>
+<pre class="mermaid"><code>flowchart LR
+    Browser["Browser / Agent Client"]
+    TS["Tailscale Serve\nHTTPS :8447\nLet's Encrypt cert"]
+    NP["NodePort :30789\nlocalhost"]
+    Pod["OpenClaw Pod\n:18789"]
+
+    Browser -- "WireGuard\nhttps://holdens-mac-mini\n.story-larch.ts.net:8447" --&gt; TS
+    TS -- "http://localhost:30789" --&gt; NP
+    NP --&gt; Pod</code></pre>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Port</th>
+<th>Protocol</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Container</td>
+<td>18789</td>
+<td>HTTP</td>
+</tr>
+<tr>
+<td>NodePort</td>
+<td>30789</td>
+<td>HTTP (localhost only)</td>
+</tr>
+<tr>
+<td>Tailscale Serve</td>
+<td>8447</td>
+<td>HTTPS (Let's Encrypt)</td>
+</tr>
+</tbody>
+</table>
+<p>One-time Tailscale Serve setup:</p>
+<div class="highlight"><pre><span></span><code>tailscale<span class="w"> </span>serve<span class="w"> </span>--bg<span class="w"> </span>--https<span class="w"> </span><span class="m">8447</span><span class="w"> </span>http://localhost:30789
+</code></pre></div>
+<p>Access from any Tailscale device: <code>https://holdens-mac-mini.story-larch.ts.net:8447</code></p>
+<h2 id="discord-chat-channel">Discord Chat Channel</h2>
+<p>OpenClaw connects to Discord as a chat channel, allowing users to converse with homelab agents from any Discord client (mobile, desktop, or web). The Discord server uses a <strong>multi-channel architecture</strong> with per-channel skill isolation, so each channel has a focused purpose.</p>
+<h3 id="channel-architecture">Channel Architecture</h3>
+<pre class="mermaid"><code>flowchart TD
+    subgraph discord["Discord Server: holden.nguyen's homelab"]
+        subgraph category["Homelab (Category)"]
+            General["#general\nFull homelab admin"]
+            Deutsch["#deutsch\nGerman learning tutor"]
+            Alerts["#alerts\nCluster health + incidents"]
+        end
+    end
+
+    subgraph openclaw["OpenClaw Pod"]
+        HA["homelab-admin agent"]
+        DT["deutsch-tutor agent"]
+    end
+
+    subgraph skills_gen["#general skills"]
+        SG1["homelab-admin"] &amp; SG2["gitops"] &amp; SG3["secret-management"] &amp; SG4["incident-response"] &amp; SG5["weather"]
+    end
+
+    subgraph skills_deutsch["#deutsch skills"]
+        SD1["deutsch-tutor"] &amp; SD2["discord"]
+    end
+
+    subgraph skills_alert["#alerts skills"]
+        SA1["homelab-admin"] &amp; SA2["incident-response"]
+    end
+
+    General --&gt; HA
+    Deutsch --&gt; DT
+    Alerts --&gt; HA
+    HA --&gt; skills_gen
+    DT --&gt; skills_deutsch
+    HA --&gt; skills_alert</code></pre>
+<table>
+<thead>
+<tr>
+<th>Channel</th>
+<th>Purpose</th>
+<th>Skills</th>
+<th>Webhook</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>#general</code></td>
+<td>Full homelab admin — cluster ops, GitOps, troubleshooting, general chat</td>
+<td><code>homelab-admin</code>, <code>gitops</code>, <code>secret-management</code>, <code>incident-response</code>, <code>weather</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td><code>#deutsch</code></td>
+<td>AI-powered German language tutor — spaced repetition drills, grammar lessons, conversation practice, writing exercises</td>
+<td><code>deutsch-tutor</code>, <code>discord</code></td>
+<td><code>DISCORD_WEBHOOK_DEUTSCH</code></td>
+</tr>
+<tr>
+<td><code>#english</code></td>
+<td>AI-powered IELTS 8.0 coach — grammar precision, academic vocabulary, essay feedback, speaking simulation</td>
+<td><code>english-tutor</code>, <code>discord</code></td>
+<td><code>DISCORD_WEBHOOK_ENGLISH</code></td>
+</tr>
+<tr>
+<td><code>#daily-briefing</code></td>
+<td>Proactive health &amp; schedule coach — morning briefing, meal reminders, training sessions, hydration, wind-down</td>
+<td><code>daily-routine</code>, <code>weather</code>, <code>discord</code></td>
+<td><code>DISCORD_WEBHOOK_DAILY</code></td>
+</tr>
+<tr>
+<td><code>#alerts</code></td>
+<td>Cluster health — incident alerts, pod failures, ArgoCD sync issues</td>
+<td><code>homelab-admin</code>, <code>incident-response</code></td>
+<td><code>DISCORD_WEBHOOK_ALERTS</code></td>
+</tr>
+</tbody>
+</table>
+<p>Each channel has a system prompt that constrains the agent's behavior to the channel's purpose. The <code>groupPolicy</code> is set to <code>allowlist</code> so the bot only responds in explicitly configured channels. The <code>#deutsch</code> channel routes to the dedicated <code>deutsch-tutor</code> agent instead of <code>homelab-admin</code>.</p>
+<p>The <code>#deutsch</code> channel supports interactive German learning:</p>
+<table>
+<thead>
+<tr>
+<th>Interaction</th>
+<th>Example</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Start drill</td>
+<td>"bắt đầu" / "start"</td>
+<td>Starts a spaced repetition session with due review cards + new cards</td>
+</tr>
+<tr>
+<td>Answer card</td>
+<td>"ich bin"</td>
+<td>Bot checks answer, reveals correct form, asks for self-rating (Again/Hard/Good/Easy)</td>
+</tr>
+<tr>
+<td>Grammar help</td>
+<td>"giải thích Nebensatz"</td>
+<td>Explains the grammar rule in Vietnamese with German examples</td>
+</tr>
+<tr>
+<td>Conversation</td>
+<td>"luyện nói"</td>
+<td>Starts a German dialogue practice on a topic</td>
+</tr>
+<tr>
+<td>Writing</td>
+<td>"viết bài"</td>
+<td>Prompts a writing exercise, then corrects grammar and vocabulary</td>
+</tr>
+<tr>
+<td>Progress</td>
+<td>"tổng kết"</td>
+<td>Shows accuracy stats, streak, weak areas, phase progress</td>
+</tr>
+<tr>
+<td>Any German text</td>
+<td>"Heute ich habe gearbeitet"</td>
+<td>Bot corrects mistakes inline with Vietnamese explanations</td>
+</tr>
+</tbody>
+</table>
+<h3 id="how-it-works">How It Works</h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant User as Discord User
+    participant Discord as Discord API
+    participant OC as OpenClaw Pod
+    participant Model as AI Model Provider
+
+    User-&gt;&gt;Discord: Send message in channel / DM
+    Discord-&gt;&gt;OC: Gateway event (WebSocket)
+    OC-&gt;&gt;OC: Route to homelab-admin with channel-scoped skills
+    OC-&gt;&gt;Model: LLM request
+    Model--&gt;&gt;OC: Response
+    OC-&gt;&gt;Discord: Send reply to channel / DM
+    Discord--&gt;&gt;User: Bot message appears</code></pre>
+<h3 id="automated-notifications">Automated Notifications</h3>
+<table>
+<thead>
+<tr>
+<th>Notification</th>
+<th>Channel</th>
+<th>Schedule</th>
+<th>Mechanism</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Deutsch learning reminder</td>
+<td><code>#deutsch</code></td>
+<td>7:00 AM / 8:00 PM ICT</td>
+<td>Agent → <code>DISCORD_WEBHOOK_DEUTSCH</code></td>
+</tr>
+<tr>
+<td>Weekly progress summary</td>
+<td><code>#deutsch</code></td>
+<td>Sunday 9:00 AM ICT</td>
+<td>Agent → <code>DISCORD_WEBHOOK_DEUTSCH</code></td>
+</tr>
+<tr>
+<td>Cluster alerts</td>
+<td><code>#alerts</code></td>
+<td>On incident detection</td>
+<td>Agent → <code>DISCORD_WEBHOOK_ALERTS</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="discord-concepts-quick-primer">Discord Concepts (quick primer)</h3>
+<p>If you've never used Discord before, here are the key concepts:</p>
+<ul>
+<li><strong>Discord account</strong> — your personal login at <a href="https://discord.com">discord.com</a>. Free to create.</li>
+<li><strong>Server</strong> (also called a "guild") — a shared space you create or join. Think of it like a Slack workspace or a group chat room.</li>
+<li><strong>Channel</strong> — a conversation topic inside a server (e.g. <code>#general</code>, <code>#homelab</code>). Channels are prefixed with <code>#</code>.</li>
+<li><strong>Bot</strong> — an automated user that lives in your server. The OpenClaw bot reads messages and replies using AI agents.</li>
+<li><strong>DM</strong> (direct message) — a private conversation between you and the bot (or another user), outside of any server.</li>
+<li><strong>Mention</strong> — typing <code>@BotName</code> in a message to get the bot's attention. With <code>groupPolicy: "open"</code>, the bot responds to mentions in any channel it can see.</li>
+</ul>
+<h3 id="step-1-create-a-discord-account-skip-if-you-already-have-one">Step 1: Create a Discord Account (skip if you already have one)</h3>
+<ol>
+<li>Go to <a href="https://discord.com/register">discord.com/register</a></li>
+<li>Fill in your email, display name, username, password, and date of birth</li>
+<li>Verify your email address by clicking the link Discord sends you</li>
+<li>(Optional) Download the Discord app for <a href="https://discord.com/download">desktop</a> or mobile (App Store / Google Play) — the web app at <a href="https://discord.com/app">discord.com/app</a> also works</li>
+</ol>
+<h3 id="step-2-create-a-discord-server">Step 2: Create a Discord Server</h3>
+<p>You need a server for the bot to live in. If you already have one, skip to Step 3.</p>
+<ol>
+<li>Open Discord (app or web)</li>
+<li>Click the <strong>+</strong> button in the left sidebar (below your server icons)</li>
+<li>Choose <strong>Create My Own</strong></li>
+<li>Choose <strong>For me and my friends</strong> (or any option — it only affects the default channels)</li>
+<li>Enter a server name (e.g. <code>Homelab</code>) and click <strong>Create</strong></li>
+</ol>
+<p>You now have a server with a <code>#general</code> channel. You can create more channels later (right-click the channel list → <strong>Create Channel</strong>).</p>
+<h3 id="step-3-create-a-discord-bot-application">Step 3: Create a Discord Bot Application</h3>
+<p>This creates the bot identity that OpenClaw will use to connect to Discord.</p>
+<ol>
+<li>Go to the <a href="https://discord.com/developers/applications">Discord Developer Portal</a> and log in with your Discord account</li>
+<li>Click <strong>New Application</strong> (top-right)</li>
+<li>Enter a name (e.g. <code>OpenClaw</code>) and accept the Terms of Service → click <strong>Create</strong></li>
+<li>You are now on the application's <strong>General Information</strong> page. Note the <strong>Application ID</strong> — you may need it later for debugging</li>
+</ol>
+<h3 id="step-4-configure-the-bot-and-get-the-token">Step 4: Configure the Bot and Get the Token</h3>
+<ol>
+<li>In the left sidebar of your application, click <strong>Bot</strong></li>
+<li>Under the <strong>Token</strong> section, click <strong>Reset Token</strong> (you may need to confirm with your password or 2FA)</li>
+<li><strong>Copy the token immediately</strong> — Discord only shows it once. If you lose it, you'll need to reset it again</li>
+<li>Scroll down to <strong>Privileged Gateway Intents</strong> and enable:</li>
+<li><strong>Message Content Intent</strong> — required so the bot can read the content of messages (not just metadata). Without this, the bot sees messages arrive but cannot read what users typed</li>
+</ol>
+<blockquote>
+<p><strong>Security note:</strong> The bot token is a secret credential — treat it like a password. Never paste it in chat, commit it to git, or share it publicly. It goes into Infisical in Step 6.</p>
+</blockquote>
+<h3 id="step-5-invite-the-bot-to-your-server">Step 5: Invite the Bot to Your Server</h3>
+<ol>
+<li>In the left sidebar of your application, click <strong>OAuth2</strong></li>
+<li>Under <strong>OAuth2 URL Generator</strong>, select these scopes:</li>
+<li><code>bot</code> — allows the application to join your server as a bot user</li>
+<li><code>applications.commands</code> — allows the bot to register slash commands (future use)</li>
+<li>A <strong>Bot Permissions</strong> panel appears below. Select:</li>
+<li><code>View Channels</code> — the bot can see the channel list</li>
+<li><code>Send Messages</code> — the bot can post replies</li>
+<li><code>Read Message History</code> — the bot can read previous messages for context</li>
+<li><code>Embed Links</code> — the bot can post rich link previews</li>
+<li><code>Attach Files</code> — the bot can upload files (e.g. images, logs)</li>
+<li><code>Add Reactions</code> — the bot can react to messages (used for acknowledgment)</li>
+<li>Scroll down and copy the <strong>Generated URL</strong></li>
+<li>Open the URL in your browser. Discord asks you to choose a server:</li>
+<li>Select your homelab server from the dropdown</li>
+<li>Click <strong>Authorize</strong></li>
+<li>Complete the CAPTCHA if prompted</li>
+<li>The bot now appears in your server's member list (it will show as offline until OpenClaw connects)</li>
+</ol>
+<h3 id="step-6-store-the-token-in-infisical">Step 6: Store the Token in Infisical</h3>
+<ol>
+<li>Open the Infisical UI at <code>https://holdens-mac-mini.story-larch.ts.net:8445</code></li>
+<li>Navigate to the <strong>homelab</strong> project → <strong>prod</strong> environment</li>
+<li>Click <strong>Add Secret</strong></li>
+<li>Set the key to <code>DISCORD_BOT_TOKEN</code> and paste the bot token you copied in Step 4</li>
+<li>Click <strong>Save</strong></li>
+</ol>
+<h3 id="step-7-deploy-and-connect">Step 7: Deploy and Connect</h3>
+<p>Force ESO to sync the new secret, then restart the pod so OpenClaw picks up the token:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>annotate<span class="w"> </span>externalsecret<span class="w"> </span>openclaw-secret<span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>force-sync<span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%s<span class="k">)</span><span class="w"> </span>--overwrite
+kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment/openclaw<span class="w"> </span>-n<span class="w"> </span>openclaw
+kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/openclaw<span class="w"> </span>-n<span class="w"> </span>openclaw
+</code></pre></div>
+<h3 id="step-8-verify-the-connection">Step 8: Verify the Connection</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check that Discord shows as connected</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>channels<span class="w"> </span>status
+
+<span class="c1"># Look for Discord login confirmation in logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--tail<span class="o">=</span><span class="m">100</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>discord
+</code></pre></div>
+<p>If successful, the bot's status in your Discord server changes from offline to <strong>online</strong>.</p>
+<h3 id="talking-to-openclaw-via-discord">Talking to OpenClaw via Discord</h3>
+<p>Once the bot is online, you can chat with it in two ways:</p>
+<p><strong>In a server channel (mention required):</strong></p>
+<p>Type <code>@OpenClaw &lt;your message&gt;</code> in any channel the bot can see. The bot will reply in the same channel. Other server members can see the conversation.</p>
+<p><strong>In a DM (no mention needed):</strong></p>
+<p>Click the bot's name in the member list → <strong>Message</strong> (or right-click → <strong>Message</strong>). Type your message directly — no <code>@</code> mention needed in DMs.</p>
+<p>Examples of things you can ask:</p>
+<ul>
+<li><code>@OpenClaw what pods are running in the cluster?</code></li>
+<li><code>@OpenClaw check the health of all services</code></li>
+<li><code>@OpenClaw show me the ArgoCD sync status</code></li>
+</ul>
+<p>The bot routes all messages to the <code>homelab-admin</code> orchestrator, which can delegate to sub-agents (<code>devops-sre</code>, <code>software-engineer</code>, <code>security-analyst</code>, <code>qa-tester</code>, <code>cursor-agent</code>) as needed.</p>
+<h3 id="configuration-reference">Configuration Reference</h3>
+<p>Discord requires two config sections in <code>openclaw.json</code>:</p>
+<p><strong>Channel config</strong> (<code>channels.discord</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td><code>true</code></td>
+<td>Activate the Discord channel on startup</td>
+</tr>
+<tr>
+<td><code>groupPolicy</code></td>
+<td><code>"allowlist"</code></td>
+<td>Only respond in explicitly configured guild channels</td>
+</tr>
+<tr>
+<td><code>guilds.&lt;id&gt;.channels.&lt;id&gt;</code></td>
+<td>Per-channel config</td>
+<td>Allowlist, system prompt, and skill scope per channel</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Plugin entry</strong> (<code>plugins.entries.discord</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enabled</code></td>
+<td><code>true</code></td>
+<td>Load the Discord extension plugin at startup</td>
+</tr>
+</tbody>
+</table>
+<p>The plugin entry is required because the ConfigMap is mounted read-only. OpenClaw normally auto-enables channel plugins by writing to the config file at startup, but this fails on a read-only filesystem. Explicitly setting <code>plugins.entries.discord.enabled: true</code> in the ConfigMap bypasses the auto-enable write.</p>
+<p>The bot token is resolved from the <code>DISCORD_BOT_TOKEN</code> environment variable (injected via ESO from Infisical). No token is stored in the config file.</p>
+<p><strong>Per-channel guild config</strong> (under <code>channels.discord.guilds.&lt;guildId&gt;.channels.&lt;channelId&gt;</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>allow</code></td>
+<td><code>boolean</code></td>
+<td>Whether the bot responds in this channel</td>
+</tr>
+<tr>
+<td><code>systemPrompt</code></td>
+<td><code>string</code></td>
+<td>Channel-specific behavior instructions</td>
+</tr>
+<tr>
+<td><code>skills</code></td>
+<td><code>string[]</code></td>
+<td>Restrict which skills the agent can use in this channel</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Available group policies:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Policy</th>
+<th>Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"open"</code></td>
+<td>Bot responds in any channel it can see (when mentioned)</td>
+</tr>
+<tr>
+<td><code>"allowlist"</code></td>
+<td>Bot only responds in channels explicitly listed in <code>channels.discord.guilds.&lt;id&gt;.channels</code>. <strong>This is the current setting.</strong></td>
+</tr>
+<tr>
+<td><code>"disabled"</code></td>
+<td>Block all guild channel messages; only DMs work</td>
+</tr>
+</tbody>
+</table>
+<h2 id="running-cli-commands-inside-the-pod">Running CLI Commands Inside the Pod</h2>
+<p>The OpenClaw CLI is built into the container image. Run any <code>openclaw</code> subcommand via <code>kubectl exec</code>:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>&lt;command&gt;
+</code></pre></div>
+<p>The gateway uses its default port (18789) inside the pod, so CLI commands auto-discover it without extra env vars or flags.</p>
+<p>Common commands:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Gateway health</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>health
+
+<span class="c1"># List devices (paired + pending)</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>devices<span class="w"> </span>list
+
+<span class="c1"># Approve a device</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>devices<span class="w"> </span>approve<span class="w"> </span>&lt;requestId&gt;
+
+<span class="c1"># Print dashboard URL with embedded token</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>dashboard<span class="w"> </span>--no-open
+
+<span class="c1"># Run diagnostics</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>doctor
+</code></pre></div>
+<h2 id="first-connection-device-pairing">First Connection: Device Pairing</h2>
+<p>OpenClaw requires a <strong>one-time device pairing approval</strong> for every new browser or device that connects to the Control UI over the network. This is a security measure separate from the gateway token -- even with the correct token, remote connections must be explicitly approved.</p>
+<h3 id="what-happens">What Happens</h3>
+<ol>
+<li>Open the Control UI at <code>https://holdens-mac-mini.story-larch.ts.net:8447</code></li>
+<li>Enter your <code>OPENCLAW_GATEWAY_TOKEN</code> in the settings panel and click <strong>Connect</strong></li>
+<li>You see: <code>disconnected (1008): pairing required</code></li>
+</ol>
+<p>This is expected. The browser generated a unique device ID and sent a pairing request to the gateway.</p>
+<h3 id="approve-the-device">Approve the Device</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># List pending pairing requests</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>devices<span class="w"> </span>list
+
+<span class="c1"># Find the request ID in the &quot;Request&quot; column and approve it</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>devices<span class="w"> </span>approve<span class="w"> </span>&lt;requestId&gt;
+</code></pre></div>
+<p>After approval, go back to the UI and click <strong>Connect</strong> again. The connection should succeed.</p>
+<h3 id="pairing-rules">Pairing Rules</h3>
+<ul>
+<li><strong>Local connections</strong> (<code>127.0.0.1</code>, e.g., via <code>kubectl port-forward</code>) are auto-approved.</li>
+<li><strong>Remote connections</strong> (Tailscale, LAN) always require explicit approval.</li>
+<li><strong>Each browser profile</strong> generates a unique device ID. Switching browsers, clearing browser data, or using incognito mode requires re-pairing.</li>
+<li><strong>Approval persists</strong> across gateway restarts (stored in the PVC at <code>/data</code>).</li>
+<li><strong>Revoke a device</strong>: <code>kubectl exec -n openclaw deploy/openclaw -- node dist/index.js devices revoke --device &lt;id&gt; --role &lt;role&gt;</code></li>
+</ul>
+<h3 id="retrieve-the-gateway-token">Retrieve the Gateway Token</h3>
+<p>If you need to retrieve the token value stored in the cluster:</p>
+<div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>openclaw-secret<span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data.OPENCLAW_GATEWAY_TOKEN}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>base64<span class="w"> </span>-d
+</code></pre></div>
+<h2 id="updating-openclaw">Updating OpenClaw</h2>
+<p>The <code>openclaw/</code> directory is a <strong>git submodule</strong> pointing to <code>github.com/OpenClaw/OpenClaw</code>. The homelab repo pins a specific commit; openclaw's internal files are not tracked by the homelab repo.</p>
+<h3 id="pull-the-latest-upstream-release">Pull the latest upstream release</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Fetch and update the submodule to the latest upstream commit</span>
+<span class="nb">cd</span><span class="w"> </span>openclaw
+git<span class="w"> </span>fetch<span class="w"> </span>origin
+git<span class="w"> </span>checkout<span class="w"> </span>main
+git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>main
+<span class="nb">cd</span><span class="w"> </span>..
+
+<span class="c1"># 2. Record the new commit in the homelab repo</span>
+git<span class="w"> </span>add<span class="w"> </span>openclaw
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;update openclaw submodule to </span><span class="k">$(</span><span class="nb">cd</span><span class="w"> </span>openclaw<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>log<span class="w"> </span>-1<span class="w"> </span>--format<span class="o">=</span><span class="s1">&#39;%h — %s&#39;</span><span class="k">)</span><span class="s2">&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
+
+<span class="c1"># 3. Rebuild the Docker image with the new source</span>
+./scripts/build-openclaw.sh
+
+<span class="c1"># 4. Restart the deployment to pick up the new image</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment/openclaw<span class="w"> </span>-n<span class="w"> </span>openclaw
+
+<span class="c1"># 5. Watch the rollout</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>status<span class="w"> </span>deployment/openclaw<span class="w"> </span>-n<span class="w"> </span>openclaw
+</code></pre></div>
+<h3 id="pin-to-a-specific-version">Pin to a specific version</h3>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>openclaw
+git<span class="w"> </span>fetch<span class="w"> </span>origin<span class="w"> </span>--tags
+git<span class="w"> </span>checkout<span class="w"> </span>v2026.2.16<span class="w">    </span><span class="c1"># or any tag/commit</span>
+<span class="nb">cd</span><span class="w"> </span>..
+git<span class="w"> </span>add<span class="w"> </span>openclaw
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;pin openclaw submodule to v2026.2.16&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>main
+./scripts/build-openclaw.sh
+kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment/openclaw<span class="w"> </span>-n<span class="w"> </span>openclaw
+</code></pre></div>
+<h3 id="clone-the-homelab-repo-fresh-machine">Clone the homelab repo (fresh machine)</h3>
+<p>When cloning the homelab repo on a new machine, the submodule directory will be empty by default. Initialize it with:</p>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/holdennguyen/homelab.git
+<span class="nb">cd</span><span class="w"> </span>homelab
+git<span class="w"> </span>submodule<span class="w"> </span>update<span class="w"> </span>--init
+</code></pre></div>
+<h2 id="gateway-configuration">Gateway Configuration</h2>
+<p>The <code>openclaw.json</code> config (in <code>configmap.yaml</code>) contains these key settings:</p>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>Key</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>gateway</code></td>
+<td><code>mode</code></td>
+<td><code>"local"</code></td>
+<td>Enables full gateway functionality for the single-node deployment</td>
+</tr>
+<tr>
+<td><code>gateway</code></td>
+<td><code>trustedProxies</code></td>
+<td>RFC 1918 ranges</td>
+<td>Treats internal K8s network traffic as local (fixes proxy header warnings)</td>
+</tr>
+<tr>
+<td><code>agents.defaults.model</code></td>
+<td><code>primary</code> / <code>fallbacks</code></td>
+<td>Step 3.5 Flash (OpenRouter) primary, Gemini 2.5 Pro fallback</td>
+<td>Free primary model with Gemini as fallback</td>
+</tr>
+<tr>
+<td><code>tools.agentToAgent</code></td>
+<td><code>enabled</code> / <code>allow</code></td>
+<td>All 6 agents</td>
+<td>Enables inter-agent communication</td>
+</tr>
+<tr>
+<td><code>tools.sessions</code></td>
+<td><code>visibility</code></td>
+<td><code>"all"</code></td>
+<td>Allows the orchestrator to view sub-agent session history for debugging</td>
+</tr>
+<tr>
+<td><code>agents.defaults.subagents</code></td>
+<td><code>maxSpawnDepth</code></td>
+<td><code>2</code></td>
+<td>Orchestrator → sub-agent → leaf worker</td>
+</tr>
+<tr>
+<td><code>agents.defaults</code></td>
+<td><code>userTimezone</code></td>
+<td><code>"Asia/Ho_Chi_Minh"</code></td>
+<td>Default timezone for all agents' time formatting (affects daily briefing and any time displays)</td>
+</tr>
+<tr>
+<td><code>agents.list[].subagents</code></td>
+<td><code>allowAgents</code></td>
+<td>Per-agent list</td>
+<td>Controls which agents each agent can spawn — only the orchestrator has non-empty lists</td>
+</tr>
+<tr>
+<td><code>channels.discord</code></td>
+<td><code>enabled</code></td>
+<td><code>true</code></td>
+<td>Connect to Discord on startup using <code>DISCORD_BOT_TOKEN</code> env var</td>
+</tr>
+<tr>
+<td><code>channels.discord</code></td>
+<td><code>groupPolicy</code></td>
+<td><code>"allowlist"</code></td>
+<td>Only respond in explicitly configured channels</td>
+</tr>
+<tr>
+<td><code>plugins.entries.discord</code></td>
+<td><code>enabled</code></td>
+<td><code>true</code></td>
+<td>Load Discord extension plugin (required for read-only ConfigMap)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="multi-agent-skills-architecture">Multi-Agent &amp; Skills Architecture</h2>
+<p>OpenClaw runs nine agents in total: a <code>homelab-admin</code> orchestrator, a <code>cursor-agent</code> senior lead (with PR review authority and sub-agent spawning), four junior specialist agents, and three additional specialist agents for domain-specific tasks.</p>
+<pre class="mermaid"><code>flowchart TD
+    subgraph models["Model Providers"]
+        OpenRouterM["OpenRouter\nstepfun/step-3.5-flash:free\n(primary)"]
+        GeminiM["Google Gemini\ngemini-2.5-pro\n(fallback)"]
+    end
+
+    HA["homelab-admin\n(Orchestrator)"]
+    CA["cursor-agent\n(Senior Lead)"]
+    DS["devops-sre\n(Junior)"]
+    SE["software-engineer\n(Junior)"]
+    SA["security-analyst\n(Junior)"]
+    QA["qa-tester\n(Junior)"]
+
+    HA -- "sessions_spawn" --&gt; CA
+    HA -- "sessions_spawn" --&gt; DS
+    HA -- "sessions_spawn" --&gt; SE
+    HA -- "sessions_spawn" --&gt; SA
+    HA -- "sessions_spawn" --&gt; QA
+    CA -- "spawn + review" --&gt; DS
+    CA -- "spawn + review" --&gt; SE
+    CA -- "spawn + review" --&gt; SA
+    CA -- "spawn + review" --&gt; QA
+
+    HA &amp; CA &amp; DS &amp; SE &amp; SA &amp; QA --&gt; OpenRouterM
+    OpenRouterM -. "fallback" .-&gt; GeminiM
+
+    subgraph skills["Skills (/skills)"]
+        S1["homelab-admin"]
+        S2["devops-sre"]
+        S3["software-engineer"]
+        S4["security-analyst"]
+        S5["gitops"]
+        S6["secret-management"]
+        S7["qa-tester"]
+        S8["incident-response"]
+        S9["cursor-agent"]
+        S10["deutsch-tutor"]
+        S11["weather"]
+    end
+
+    HA --&gt; S1 &amp; S5 &amp; S6 &amp; S8 &amp; S10 &amp; S11
+    CA --&gt; S9 &amp; S5 &amp; S3 &amp; S4 &amp; S7
+    DS --&gt; S2 &amp; S5 &amp; S6 &amp; S8
+    SE --&gt; S3 &amp; S5
+    SA --&gt; S4 &amp; S5 &amp; S6
+    QA --&gt; S7 &amp; S5 &amp; S6 &amp; S8</code></pre>
+<p>Each agent has a <code>skills</code> allowlist in the configmap that restricts which skills it can see (omit = all skills; empty array = none):</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Tier</th>
+<th>Assigned Skills</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>homelab-admin</code></td>
+<td>Orchestrator</td>
+<td><code>homelab-admin</code>, <code>gitops</code>, <code>secret-management</code>, <code>incident-response</code>, <code>weather</code>, <code>deutsch-tutor</code>, <code>english-tutor</code>, <code>daily-routine</code></td>
+</tr>
+<tr>
+<td><code>cursor-agent</code></td>
+<td>Senior lead</td>
+<td><code>cursor-agent</code>, <code>gitops</code>, <code>software-engineer</code>, <code>security-analyst</code>, <code>qa-tester</code></td>
+</tr>
+<tr>
+<td><code>devops-sre</code></td>
+<td>Junior</td>
+<td><code>devops-sre</code>, <code>gitops</code>, <code>secret-management</code>, <code>incident-response</code></td>
+</tr>
+<tr>
+<td><code>software-engineer</code></td>
+<td>Junior</td>
+<td><code>software-engineer</code>, <code>gitops</code></td>
+</tr>
+<tr>
+<td><code>security-analyst</code></td>
+<td>Junior</td>
+<td><code>security-analyst</code>, <code>gitops</code>, <code>secret-management</code></td>
+</tr>
+<tr>
+<td><code>qa-tester</code></td>
+<td>Junior</td>
+<td><code>qa-tester</code>, <code>gitops</code>, <code>secret-management</code>, <code>incident-response</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="agents">Agents</h3>
+<table>
+<thead>
+<tr>
+<th>Agent ID</th>
+<th>Tier</th>
+<th>Role</th>
+<th>Workspace</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>homelab-admin</code></td>
+<td>Orchestrator</td>
+<td>Default entry point — coordinates tasks, delegates to all agents</td>
+<td><code>/data/workspaces/homelab-admin</code></td>
+</tr>
+<tr>
+<td><code>cursor-agent</code></td>
+<td>Senior lead</td>
+<td>AI-assisted code gen via Cursor CLI, PR review authority, technical direction, can spawn junior agents</td>
+<td><code>/data/workspaces/cursor-agent</code></td>
+</tr>
+<tr>
+<td><code>devops-sre</code></td>
+<td>Junior</td>
+<td>Infrastructure, K8s ops, Terraform, incident response</td>
+<td><code>/data/workspaces/devops-sre</code></td>
+</tr>
+<tr>
+<td><code>software-engineer</code></td>
+<td>Junior</td>
+<td>Code development, testing</td>
+<td><code>/data/workspaces/software-engineer</code></td>
+</tr>
+<tr>
+<td><code>security-analyst</code></td>
+<td>Junior</td>
+<td>Security audits, vulnerability assessment, hardening</td>
+<td><code>/data/workspaces/security-analyst</code></td>
+</tr>
+<tr>
+<td><code>qa-tester</code></td>
+<td>Junior</td>
+<td>Deployment validation, service health testing, regression checks</td>
+<td><code>/data/workspaces/qa-tester</code></td>
+</tr>
+<tr>
+<td><code>deutsch-tutor</code></td>
+<td>Specialist</td>
+<td>AI German language tutor — spaced repetition, grammar, conversation</td>
+<td><code>/data/workspaces/deutsch-tutor</code></td>
+</tr>
+<tr>
+<td><code>english-tutor</code></td>
+<td>Specialist</td>
+<td>AI IELTS 8.0 coach — grammar precision, academic vocabulary, essay feedback, speaking practice</td>
+<td><code>/data/workspaces/english-tutor</code></td>
+</tr>
+<tr>
+<td><code>daily-routine</code></td>
+<td>Specialist</td>
+<td>Proactive health &amp; schedule coach — morning briefing, meal reminders, training sessions, hydration, wind-down</td>
+<td><code>/data/workspaces/daily-routine</code></td>
+</tr>
+</tbody>
+</table>
+<p>Every agent has an explicit object-form <code>model</code> in the configmap (see <a href="#model-config-convention-important">Model config convention</a>):</p>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Primary</td>
+<td><code>openrouter/stepfun/step-3.5-flash:free</code></td>
+</tr>
+<tr>
+<td>Fallback</td>
+<td><code>google/gemini-2.5-pro</code></td>
+</tr>
+</tbody>
+</table>
+<p>When the primary model fails, OpenClaw automatically falls through to Gemini. Auth is via <code>OPENROUTER_API_KEY</code> and <code>GEMINI_API_KEY</code> (both synced from Infisical).</p>
+<p>Agent configuration is in the <code>openclaw-config</code> ConfigMap (mounted at <code>/config/openclaw.json</code>). Each agent has its own AGENTS.md personality file in <code>agents/workspaces/&lt;id&gt;/AGENTS.md</code>, copied into the pod workspace on every restart by the <code>init-workspaces</code> init container.</p>
+<p>The pod runs with a dedicated ServiceAccount (<code>openclaw</code>) that has a targeted ClusterRole (<code>openclaw-homelab-admin</code>) — cluster-wide read plus scoped operational writes (restart, scale, annotate). Agents execute <code>kubectl</code>, <code>helm</code>, and other ops tools against the cluster, bounded by these RBAC permissions.</p>
+<h3 id="skills">Skills</h3>
+<p>Homelab-specific skills live in <code>skills/</code> at the repo root and are mounted into the pod at <code>/skills</code> via hostPath:</p>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>homelab-admin</code></td>
+<td>Cluster operations, service management, delegation framework, change impact assessment</td>
+</tr>
+<tr>
+<td><code>devops-sre</code></td>
+<td>SRE best practices: SLOs, resource management, deployment strategies, runbooks, incident response, monitoring</td>
+</tr>
+<tr>
+<td><code>software-engineer</code></td>
+<td>Stack conventions (K8s/Terraform/Docker/Bash), manifest best practices, testing, error handling, dependency management</td>
+</tr>
+<tr>
+<td><code>security-analyst</code></td>
+<td>STRIDE threat modeling, CIS hardening, container/image security, RBAC audit, secret lifecycle, supply chain security</td>
+</tr>
+<tr>
+<td><code>qa-tester</code></td>
+<td>Test strategy, per-service acceptance criteria, full cluster validation, chaos testing, defect classification</td>
+</tr>
+<tr>
+<td><code>gitops</code></td>
+<td>ArgoCD App of Apps pattern, sync management, mandatory git workflow, agent footprint conventions</td>
+</tr>
+<tr>
+<td><code>incident-response</code></td>
+<td>Incident triage, rollback procedures, pre-merge validation, post-incident documentation</td>
+</tr>
+<tr>
+<td><code>secret-management</code></td>
+<td>Infisical → ESO → K8s pipeline operations</td>
+</tr>
+<tr>
+<td><code>cursor-agent</code></td>
+<td>Cursor CLI bridge: installation, automation, handoff protocol, code generation workflows</td>
+</tr>
+<tr>
+<td><code>deutsch-tutor</code></td>
+<td>AI German language tutor — spaced repetition (FSRS), flashcard decks (A1/A2/B1), grammar lessons, conversation practice, Vietnamese explanations</td>
+</tr>
+<tr>
+<td><code>english-tutor</code></td>
+<td>AI IELTS 8.0 coach — spaced repetition (FSRS), advanced grammar, academic vocabulary, collocations, writing workshop, speaking simulation, reading/listening strategies</td>
+</tr>
+<tr>
+<td><code>weather</code></td>
+<td>Real-time weather via Open-Meteo and wttr.in (no API key required)</td>
+</tr>
+<tr>
+<td><code>common/Documentation</code></td>
+<td>Standardized documentation generation</td>
+</tr>
+</tbody>
+</table>
+<p>Skills follow the <a href="https://agentskills.io">AgentSkills</a> format with OpenClaw-compatible <code>SKILL.md</code> frontmatter.</p>
+<h3 id="sub-agent-spawning">Sub-agent spawning</h3>
+<p>The orchestrator pattern uses <code>maxSpawnDepth: 2</code>:</p>
+<ul>
+<li><strong>Depth 0</strong> — main agent (<code>homelab-admin</code>) receives user requests</li>
+<li><strong>Depth 1</strong> — orchestrator spawns specialized sub-agents via <code>sessions_spawn</code></li>
+<li><strong>Depth 2</strong> — sub-agents can spawn leaf workers for parallel tasks</li>
+</ul>
+<p>Sub-agents announce results back up the chain. Configure limits in the ConfigMap:</p>
+<ul>
+<li><code>maxConcurrent: 4</code> — max parallel sub-agents</li>
+<li><code>maxChildrenPerAgent: 3</code> — max children per agent session</li>
+<li><code>archiveAfterMinutes: 120</code> — auto-cleanup of finished sub-agent sessions</li>
+</ul>
+<h3 id="adding-a-new-agent">Adding a new agent</h3>
+<ol>
+<li>Add the agent entry to <code>configmap.yaml</code> under <code>agents.list</code> — include a <code>skills</code> array and a <code>subagents.allowAgents</code> list</li>
+<li>Add the new agent ID to the orchestrator's <code>subagents.allowAgents</code> so it can be spawned</li>
+<li>Create <code>agents/workspaces/&lt;id&gt;/AGENTS.md</code> with a lean agent personality (identity, tone, role-specific guidance, rules referencing skills)</li>
+<li>Add the agent ID to the init container's <code>for</code> loop in <code>deployment.yaml</code></li>
+<li>Add the agent ID to <code>tools.agentToAgent.allow</code> in the config</li>
+<li>Push to <code>main</code> via PR (branch protection requires review)</li>
+</ol>
+<h3 id="adding-a-new-skill">Adding a new skill</h3>
+<ol>
+<li>Create <code>skills/&lt;name&gt;/SKILL.md</code> with OpenClaw frontmatter (<code>name</code>, <code>description</code>, optional <code>metadata</code>)</li>
+<li>Add the skill name to the <code>skills</code> array of each agent that should use it in the configmap</li>
+<li>Push to <code>main</code> and restart the pod: <code>kubectl rollout restart deployment/openclaw -n openclaw</code></li>
+</ol>
+<h2 id="operational-commands">Operational Commands</h2>
+<h3 id="kubernetes">Kubernetes</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Pod status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>openclaw
+
+<span class="c1"># Logs (last 100 lines)</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--tail<span class="o">=</span><span class="m">100</span>
+
+<span class="c1"># Follow logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>-f
+
+<span class="c1"># Restart deployment</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment/openclaw<span class="w"> </span>-n<span class="w"> </span>openclaw
+
+<span class="c1"># Check ExternalSecret status</span>
+kubectl<span class="w"> </span>describe<span class="w"> </span>externalsecret<span class="w"> </span>openclaw-secret<span class="w"> </span>-n<span class="w"> </span>openclaw
+
+<span class="c1"># Force secret re-sync</span>
+kubectl<span class="w"> </span>annotate<span class="w"> </span>externalsecret<span class="w"> </span>openclaw-secret<span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>force-sync<span class="o">=</span><span class="k">$(</span>date<span class="w"> </span>+%s<span class="k">)</span><span class="w"> </span>--overwrite
+
+<span class="c1"># Port-forward for local testing (bypasses Tailscale)</span>
+kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>svc/openclaw<span class="w"> </span><span class="m">18789</span>:18789
+
+<span class="c1"># Check ArgoCD application sync status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>application<span class="w"> </span>openclaw<span class="w"> </span>-n<span class="w"> </span>argocd
+</code></pre></div>
+<h3 id="openclaw-cli-via-kubectl-exec">OpenClaw CLI (via kubectl exec)</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Gateway health check</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>health
+
+<span class="c1"># List paired and pending devices</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>devices<span class="w"> </span>list
+
+<span class="c1"># Approve a pending device</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>devices<span class="w"> </span>approve<span class="w"> </span>&lt;requestId&gt;
+
+<span class="c1"># Revoke a device</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>devices<span class="w"> </span>revoke<span class="w"> </span>--device<span class="w"> </span>&lt;id&gt;<span class="w"> </span>--role<span class="w"> </span>&lt;role&gt;
+
+<span class="c1"># Print dashboard URL with embedded token</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>dashboard<span class="w"> </span>--no-open
+
+<span class="c1"># List connected channels</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>channels<span class="w"> </span>status
+
+<span class="c1"># Run diagnostics</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>doctor
+
+<span class="c1"># View/edit gateway config</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>openclaw<span class="w"> </span>deploy/openclaw<span class="w"> </span>--<span class="w"> </span>node<span class="w"> </span>dist/index.js<span class="w"> </span>config<span class="w"> </span>get
+</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>disconnected (1008): pairing required</code></td>
+<td>New browser/device needs approval</td>
+<td><code>kubectl exec -n openclaw deploy/openclaw -- node dist/index.js devices list</code> then <code>devices approve &lt;requestId&gt;</code></td>
+</tr>
+<tr>
+<td><code>unauthorized: gateway token missing</code></td>
+<td>Token not set in UI settings</td>
+<td>Open Control UI settings, paste the <code>OPENCLAW_GATEWAY_TOKEN</code></td>
+</tr>
+<tr>
+<td><code>ErrImageNeverPull</code></td>
+<td>Docker image not built locally</td>
+<td>Run <code>./scripts/build-openclaw.sh</code></td>
+</tr>
+<tr>
+<td>Pod <code>CrashLoopBackOff</code></td>
+<td>Missing secrets or config error</td>
+<td><code>kubectl logs -n openclaw deploy/openclaw</code> — check for missing env vars</td>
+</tr>
+<tr>
+<td>ExternalSecret <code>SecretSyncedError</code></td>
+<td>Secret key missing in Infisical</td>
+<td>Add the missing key to Infisical <code>homelab / prod /</code></td>
+</tr>
+<tr>
+<td><code>connection refused</code> on <code>:30789</code></td>
+<td>Pod not running or not ready</td>
+<td><code>kubectl get pods -n openclaw</code> — wait for <code>Running</code> status</td>
+</tr>
+<tr>
+<td>Health check <code>/health</code> failing</td>
+<td>Gateway still starting up</td>
+<td>Wait 30s for initial startup; check logs for errors</td>
+</tr>
+<tr>
+<td>401 Unauthorized on gateway</td>
+<td>Wrong <code>OPENCLAW_GATEWAY_TOKEN</code></td>
+<td>Verify the token in Infisical matches what you use in requests</td>
+</tr>
+<tr>
+<td>Model API errors</td>
+<td>Invalid or expired API key</td>
+<td>Update the key in Infisical; force ESO re-sync; restart pod</td>
+</tr>
+<tr>
+<td>OpenRouter 401/403</td>
+<td>Invalid or missing <code>OPENROUTER_API_KEY</code></td>
+<td>Add/update the key in Infisical <code>homelab / prod / OPENROUTER_API_KEY</code>; force ESO re-sync; restart pod</td>
+</tr>
+<tr>
+<td>OpenRouter rate limit (429)</td>
+<td>Account credit exhausted</td>
+<td>Top up credits at <a href="https://openrouter.ai/credits">openrouter.ai/credits</a>; or switch to a cheaper model in <code>agents.defaults.model.primary</code></td>
+</tr>
+<tr>
+<td>Tailscale URL not responding</td>
+<td><code>tailscale serve</code> not configured</td>
+<td>Run <code>tailscale serve --bg --https 8447 http://localhost:30789</code></td>
+</tr>
+<tr>
+<td>Discord bot not connecting</td>
+<td>Missing or invalid <code>DISCORD_BOT_TOKEN</code></td>
+<td>Verify the token in Infisical; force ESO re-sync; restart pod</td>
+</tr>
+<tr>
+<td>Discord bot connects but ignores messages</td>
+<td>Message Content Intent not enabled</td>
+<td>Enable it in Discord Developer Portal → Bot → Privileged Gateway Intents</td>
+</tr>
+<tr>
+<td>Discord bot can't see a channel</td>
+<td>Missing permissions in the server</td>
+<td>Ensure the bot role has View Channel + Send Messages on the target channel</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.expand", "navigation.top", "navigation.path", "content.code.copy", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

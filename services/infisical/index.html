@@ -1,0 +1,2568 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://holdennguyen.github.io/homelab/services/infisical/">
+      
+      
+        <link rel="prev" href="../external-secrets/">
+      
+      
+        <link rel="next" href="../launchfast/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Infisical - Homelab Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#infisical" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Homelab Docs" class="md-header__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Homelab Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Infisical
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting-started/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../infrastructure/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Infrastructure
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Services
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../operations/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Operations
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Homelab Docs" class="md-nav__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Homelab Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../getting-started/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../infrastructure/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/secret-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Secret Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../argocd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ArgoCD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../authentik/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentik
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../external-secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    External Secrets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infisical
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infisical
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-infisical-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Infisical Does
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-is-deployed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Is Deployed
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bootstrap-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bootstrap Secrets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bootstrap Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#infisicalinfisical-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        infisical/infisical-secrets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#argocdinfisical-helm-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        argocd/infisical-helm-secrets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-and-environment-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project and Environment Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-secrets-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Secrets Inventory
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Complete Secrets Inventory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sso-monitoring-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSO &amp; Monitoring Credentials
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#first-time-setup-walkthrough" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        First-Time Setup Walkthrough
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="First-Time Setup Walkthrough">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-first-login" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — First Login
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-create-the-homelab-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Create the homelab Project
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-add-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Add Secrets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-create-machine-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4 — Create Machine Identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-grant-project-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5 — Grant Project Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-update-terraform-and-apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6 — Update Terraform and Apply
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessing-the-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accessing the UI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#day-2-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Day-2 Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Day-2 Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-application-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Application Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotating-the-machine-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rotating the Machine Identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotating-encryption_key-emergency-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rotating ENCRYPTION_KEY (Emergency Only)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrading-the-infisical-helm-chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrading the Infisical Helm Chart
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backing-up-infisical-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backing Up Infisical Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../launchfast/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LaunchFast
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../openclaw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenClaw
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trivy-operator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Operator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../trivy-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../operations/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/git-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/ai-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/nightly-shutdown/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nightly Shutdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-infisical-does" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What Infisical Does
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#how-it-is-deployed" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How It Is Deployed
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bootstrap-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bootstrap Secrets
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bootstrap Secrets">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#infisicalinfisical-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        infisical/infisical-secrets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#argocdinfisical-helm-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        argocd/infisical-helm-secrets
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#project-and-environment-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Project and Environment Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#complete-secrets-inventory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Complete Secrets Inventory
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Complete Secrets Inventory">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sso-monitoring-credentials" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SSO &amp; Monitoring Credentials
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#first-time-setup-walkthrough" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        First-Time Setup Walkthrough
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="First-Time Setup Walkthrough">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-first-login" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 1 — First Login
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-create-the-homelab-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 2 — Create the homelab Project
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-add-secrets" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 3 — Add Secrets
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-create-machine-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 4 — Create Machine Identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-grant-project-access" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 5 — Grant Project Access
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-update-terraform-and-apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Step 6 — Update Terraform and Apply
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessing-the-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Accessing the UI
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#day-2-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Day-2 Operations
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Day-2 Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-a-new-application-secret" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Adding a New Application Secret
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotating-the-machine-identity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rotating the Machine Identity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rotating-encryption_key-emergency-only" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rotating ENCRYPTION_KEY (Emergency Only)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#upgrading-the-infisical-helm-chart" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Upgrading the Infisical Helm Chart
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backing-up-infisical-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Backing Up Infisical Data
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operational-commands" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Operational Commands
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Services
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="infisical">Infisical</h1>
+<p>Self-hosted secret management platform. Every application credential in this homelab — database passwords, signing keys, admin passwords, API tokens — is stored in Infisical and pulled into the cluster by the External Secrets Operator.</p>
+<h2 id="what-infisical-does">What Infisical Does</h2>
+<pre class="mermaid"><code>flowchart LR
+    subgraph infisical["Infisical (infisical namespace)"]
+        UI["Web UI\n:8445 via Tailscale"]
+        API["REST API\n:8080 cluster-internal"]
+        PG["PostgreSQL\n(bundled, infisical-internal)"]
+        Redis["Redis\n(bundled, infisical-internal)"]
+        UI --&gt; API
+        API --&gt; PG
+        API --&gt; Redis
+    end
+
+    subgraph consumers["Secret Consumers"]
+        ESO["External Secrets Operator\nMachine Identity auth"]
+        Dev["Developer / Admin\nbrowser login"]
+    end
+
+    ESO -- "GET /api/v3/secrets/raw\nhomelab / prod" --&gt; API
+    Dev -- "HTTPS :8445" --&gt; UI</code></pre>
+<p>Infisical is the <strong>single source of truth</strong> for all secrets. No secret values live in git. Applications access secrets indirectly through Kubernetes <code>Secret</code> objects that ESO keeps in sync with Infisical.</p>
+<h2 id="security">Security</h2>
+<p>Infisical runs as a non-root user by default. The Docker image sets <code>USER 1001</code> (non-root-user), so the container process runs as <code>uid=1001(non-root-user) gid=1001(nodejs)</code> without any Kubernetes <code>securityContext</code> override.</p>
+<p><strong>Note:</strong> The <code>infisical-standalone</code> Helm chart does not expose pod-level or container-level <code>securityContext</code> configuration. The non-root execution relies entirely on the image's <code>USER</code> directive. If a future image version changes this default, there is no Helm-level safeguard to enforce non-root.</p>
+<p>The <code>pod-security.kubernetes.io/enforce: restricted</code> label is <strong>not</strong> applied to the <code>infisical</code> namespace because the ingress-nginx controller sidecar requires capabilities not permitted under the restricted profile.</p>
+<h2 id="how-it-is-deployed">How It Is Deployed</h2>
+<p>Infisical is <strong>not</strong> managed by a git-tracked ArgoCD Application CR. Its Helm values contain sensitive credentials (PostgreSQL and Redis passwords) that cannot be committed to git. Instead:</p>
+<pre class="mermaid"><code>flowchart TD
+    TFVars["terraform/terraform.tfvars\n(gitignored, local only)"]
+
+    subgraph terraform["terraform apply (run once)"]
+        NS["kubernetes_namespace: infisical"]
+        S1["kubernetes_secret: infisical-secrets\nENCRYPTION_KEY + AUTH_SECRET"]
+        S2["kubernetes_secret: infisical-helm-secrets\npostgres + redis passwords"]
+        APP["null_resource: infisical Application CR\nHelm values with passwords embedded"]
+    end
+
+    subgraph argocd["ArgoCD"]
+        InfisicalApp["Application: infisical\n(created by Terraform, not git)"]
+    end
+
+    subgraph infisicalNs["infisical namespace"]
+        Pod["Infisical Pod"]
+        PGPod["PostgreSQL Pod"]
+        RedisPod["Redis Pod"]
+    end
+
+    TFVars --&gt; terraform
+    NS --&gt; S1
+    NS --&gt; APP
+    APP --&gt; InfisicalApp
+    InfisicalApp -- "Helm chart v1.7.2\ninfisical-standalone" --&gt; Pod
+    S1 -- "kubeSecretRef" --&gt; Pod
+    S2 -- "valuesObject passwords" --&gt; PGPod
+    S2 -- "valuesObject passwords" --&gt; RedisPod
+    Pod --&gt; PGPod
+    Pod --&gt; RedisPod</code></pre>
+<p>The Terraform source of truth is <code>terraform/argocd.tf</code>. Any changes to Infisical's Helm configuration (version upgrade, resource limits, etc.) are made there and applied with <code>terraform apply</code>.</p>
+<p>There is intentionally <strong>no</strong> <code>k8s/apps/argocd/applications/infisical-app.yaml</code> — that file would need to embed the DB passwords, which would expose them in git.</p>
+<h2 id="bootstrap-secrets">Bootstrap Secrets</h2>
+<p>These two K8s Secrets are created by Terraform and must exist before Infisical starts:</p>
+<h3 id="infisicalinfisical-secrets"><code>infisical/infisical-secrets</code></h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Purpose</th>
+<th>How to generate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ENCRYPTION_KEY</code></td>
+<td>AES key — Infisical encrypts every stored secret at rest with this</td>
+<td><code>openssl rand -hex 16</code> (must be exactly 32 hex chars)</td>
+</tr>
+<tr>
+<td><code>AUTH_SECRET</code></td>
+<td>JWT signing secret — used to sign user session tokens</td>
+<td><code>openssl rand -base64 32</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Critical:</strong> <code>ENCRYPTION_KEY</code> must never change once Infisical has stored secrets. Changing it without running a migration makes all stored secrets permanently unreadable.</p>
+<h3 id="argocdinfisical-helm-secrets"><code>argocd/infisical-helm-secrets</code></h3>
+<p>Contains a <code>values.yaml</code> blob injected via <code>helm.valuesObject</code> in the Terraform-managed Application CR:</p>
+<table>
+<thead>
+<tr>
+<th>Helm path</th>
+<th>K8s secret key</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>postgresql.auth.password</code></td>
+<td>extracted from <code>values.yaml</code></td>
+<td>Password for Infisical's internal PostgreSQL</td>
+</tr>
+<tr>
+<td><code>redis.auth.password</code></td>
+<td>extracted from <code>values.yaml</code></td>
+<td>Password for Infisical's internal Redis</td>
+</tr>
+</tbody>
+</table>
+<p>Both are generated with <code>openssl rand -hex 12</code> and stored in <code>terraform/terraform.tfvars</code>.</p>
+<h2 id="project-and-environment-structure">Project and Environment Structure</h2>
+<pre class="mermaid"><code>flowchart TD
+    subgraph org["Infisical Organization"]
+        subgraph project["Project: homelab\nslug: homelab"]
+            subgraph prod["Environment: prod"]
+                subgraph root["Path: /  (root)"]
+                    s9["AUTHENTIK_SECRET_KEY"]
+                    s10["AUTHENTIK_BOOTSTRAP_PASSWORD"]
+                    s11["AUTHENTIK_BOOTSTRAP_TOKEN"]
+                    s12["AUTHENTIK_POSTGRES_PASSWORD"]
+                    s13["GRAFANA_ADMIN_PASSWORD"]
+                    s14["GRAFANA_OAUTH_CLIENT_SECRET"]
+                    s16["OPENCLAW_GATEWAY_TOKEN"]
+                    s17["OPENROUTER_API_KEY"]
+                    s17b["GEMINI_API_KEY"]
+                    s18["GITHUB_TOKEN"]
+                end
+            end
+        end
+        subgraph identities["Machine Identities"]
+            MI["homelab-eso\nUniversal Auth\nMember role on homelab project"]
+        end
+    end</code></pre>
+<h2 id="complete-secrets-inventory">Complete Secrets Inventory</h2>
+<h3 id="sso-monitoring-credentials">SSO &amp; Monitoring Credentials</h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Used By</th>
+<th>Value Constraints</th>
+<th>How to Generate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AUTHENTIK_SECRET_KEY</code></td>
+<td>Authentik ExternalSecret</td>
+<td>Never change after first install</td>
+<td><code>openssl rand -hex 32</code></td>
+</tr>
+<tr>
+<td><code>AUTHENTIK_BOOTSTRAP_PASSWORD</code></td>
+<td>Authentik ExternalSecret</td>
+<td>Admin login password</td>
+<td>Choose a strong password</td>
+</tr>
+<tr>
+<td><code>AUTHENTIK_BOOTSTRAP_TOKEN</code></td>
+<td>Authentik ExternalSecret</td>
+<td>API automation token</td>
+<td><code>openssl rand -hex 32</code></td>
+</tr>
+<tr>
+<td><code>AUTHENTIK_POSTGRES_PASSWORD</code></td>
+<td>Authentik ExternalSecret</td>
+<td>Authentik internal PostgreSQL</td>
+<td><code>openssl rand -hex 12</code></td>
+</tr>
+<tr>
+<td><code>GRAFANA_ADMIN_PASSWORD</code></td>
+<td>Grafana ExternalSecret</td>
+<td>Break-glass admin access</td>
+<td><code>openssl rand -hex 12</code></td>
+</tr>
+<tr>
+<td><code>GRAFANA_OAUTH_CLIENT_SECRET</code></td>
+<td>Grafana ExternalSecret</td>
+<td>OIDC client secret for Authentik</td>
+<td>Generated when creating Authentik provider</td>
+</tr>
+<tr>
+<td>### AI Gateway Credentials</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Used By</th>
+<th>Value Constraints</th>
+<th>How to Generate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OPENCLAW_GATEWAY_TOKEN</code></td>
+<td>OpenClaw ExternalSecret</td>
+<td>Any hex string</td>
+<td><code>openssl rand -hex 32</code></td>
+</tr>
+<tr>
+<td><code>OPENROUTER_API_KEY</code></td>
+<td>OpenClaw ExternalSecret</td>
+<td>Valid OpenRouter API key</td>
+<td>From <a href="https://openrouter.ai/keys">openrouter.ai/keys</a></td>
+</tr>
+<tr>
+<td><code>GEMINI_API_KEY</code></td>
+<td>OpenClaw ExternalSecret</td>
+<td>Valid Google Gemini API key</td>
+<td>From <a href="https://aistudio.google.com/apikey">aistudio.google.com/apikey</a></td>
+</tr>
+<tr>
+<td><code>GITHUB_TOKEN</code></td>
+<td>OpenClaw ExternalSecret</td>
+<td>GitHub PAT with repo scope</td>
+<td>Fine-grained PAT for <code>holdennguyen/homelab</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>ArgoCD OIDC client secret</strong> is managed via Terraform (<code>argocd_oidc_client_secret</code> in tfvars), not by ESO. It is injected into <code>argocd-secret</code> via the <code>set_sensitive</code> Helm value in <code>terraform/argocd.tf</code>.</p>
+</blockquote>
+<h2 id="first-time-setup-walkthrough">First-Time Setup Walkthrough</h2>
+<p>This is done once after <code>terraform apply</code> deploys Infisical.</p>
+<pre class="mermaid"><code>flowchart TD
+    A["1. Open https://holdens-mac-mini.story-larch.ts.net:8445"] --&gt; B
+    B["2. Create admin account\n(signup form on first visit)"] --&gt; C
+    C["3. Create project named 'homelab'\nverify slug = 'homelab'"] --&gt; D
+    D["4. Add all secrets in homelab/prod/\n(see inventory table)"] --&gt; E
+    E["5. Create Machine Identity 'homelab-eso'\nUniversal Auth"] --&gt; F
+    F["6. Add homelab-eso to homelab project\nRole: Member"] --&gt; G
+    G["7. Copy clientId + clientSecret\nto terraform.tfvars"] --&gt; H
+    H["8. terraform apply\n(updates infisical-machine-identity secret)"] --&gt; I
+    I["9. ESO connects to Infisical\nClusterSecretStore becomes Valid"] --&gt; J
+    J["All K8s Secrets synced\nAll pods healthy"]</code></pre>
+<h3 id="step-1-first-login">Step 1 — First Login</h3>
+<p>Open <code>https://holdens-mac-mini.story-larch.ts.net:8445</code>. On first visit, Infisical shows a registration screen. Create an admin account. This is the superadmin of the Infisical instance.</p>
+<h3 id="step-2-create-the-homelab-project">Step 2 — Create the <code>homelab</code> Project</h3>
+<ol>
+<li>Click <strong>New Project</strong> → name it <code>homelab</code></li>
+<li>Verify the slug: <strong>Project Settings → General</strong> must show <code>Slug: homelab</code></li>
+</ol>
+<p>The slug is hardcoded in <code>k8s/apps/external-secrets/cluster-secret-store.yaml</code>. If you use a different slug, update both files.</p>
+<h3 id="step-3-add-secrets">Step 3 — Add Secrets</h3>
+<p>Navigate to <code>homelab</code> project → <code>prod</code> environment → click the <strong>+</strong> to add secrets. Add every key in the secrets inventory table above. Pay special attention to:
+- <code>AUTHENTIK_SECRET_KEY</code> must never be changed after first install</p>
+<h3 id="step-4-create-machine-identity">Step 4 — Create Machine Identity</h3>
+<ol>
+<li>Top-left dropdown → <strong>Organization Settings → Machine Identities → Create</strong></li>
+<li>Name: <code>homelab-eso</code>, Auth method: <strong>Universal Auth</strong>, click <strong>Create</strong></li>
+<li>A <code>clientId</code> and <code>clientSecret</code> are shown — copy them immediately (secret is not shown again)</li>
+</ol>
+<h3 id="step-5-grant-project-access">Step 5 — Grant Project Access</h3>
+<ol>
+<li>Open the <code>homelab</code> project → <strong>Access Control → Machine Identities → Add Identity</strong></li>
+<li>Select <code>homelab-eso</code> → Role: <strong>Member</strong> → <strong>Add</strong></li>
+</ol>
+<p>Without this step, ESO gets a 403 when trying to read secrets.</p>
+<h3 id="step-6-update-terraform-and-apply">Step 6 — Update Terraform and Apply</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Edit terraform/terraform.tfvars:</span>
+<span class="nv">infisical_machine_identity_client_id</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;clientId&gt;&quot;</span>
+<span class="nv">infisical_machine_identity_client_secret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&lt;clientSecret&gt;&quot;</span>
+
+<span class="nb">cd</span><span class="w"> </span>terraform<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>terraform<span class="w"> </span>apply
+</code></pre></div>
+<p>Terraform updates only the <code>infisical-machine-identity</code> K8s Secret. ESO picks it up within ~30 seconds.</p>
+<h2 id="accessing-the-ui">Accessing the UI</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>URL</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tailscale (any device)</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8445</code></td>
+<td>Requires Tailscale</td>
+</tr>
+<tr>
+<td>Local (Mac mini only)</td>
+<td><code>http://localhost:30445</code></td>
+<td>Direct NodePort access</td>
+</tr>
+</tbody>
+</table>
+<p>If Tailscale Serve is not yet configured:</p>
+<div class="highlight"><pre><span></span><code>tailscale<span class="w"> </span>serve<span class="w"> </span>--bg<span class="w"> </span>--https<span class="w"> </span><span class="m">8445</span><span class="w"> </span>http://localhost:30445
+</code></pre></div>
+<h2 id="networking">Networking</h2>
+<pre class="mermaid"><code>flowchart LR
+    subgraph tailnet["Tailscale Network"]
+        Device["Browser\nhttps://*.story-larch.ts.net:8445"]
+    end
+
+    subgraph mac["Mac mini"]
+        TS["tailscale serve\n:8445 → localhost:30445"]
+        subgraph k8s["Kubernetes"]
+            SVC["infisical Service\nNodePort :30445"]
+            POD["Infisical Pod\n:8080"]
+            SVC --&gt; POD
+        end
+        TS --&gt; SVC
+    end
+
+    subgraph esoNs["external-secrets namespace"]
+        ESO["ESO Controller"]
+        CSS["ClusterSecretStore\nhttp://infisical-infisical-standalone-infisical\n.infisical.svc.cluster.local:8080"]
+    end
+
+    Device --&gt; TS
+    ESO --&gt; CSS --&gt; POD</code></pre>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Container port</td>
+<td><code>:8080</code></td>
+</tr>
+<tr>
+<td>Kubernetes NodePort</td>
+<td><code>:30445</code></td>
+</tr>
+<tr>
+<td>Tailscale Serve upstream</td>
+<td><code>http://localhost:30445</code></td>
+</tr>
+<tr>
+<td>Tailscale URL</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8445</code></td>
+</tr>
+<tr>
+<td>Internal cluster DNS</td>
+<td><code>infisical-infisical-standalone-infisical.infisical.svc.cluster.local:8080</code></td>
+</tr>
+</tbody>
+</table>
+<p>The internal DNS name is what the <code>ClusterSecretStore</code> uses to reach Infisical — no external network hop, no Tailscale, no NodePort.</p>
+<h2 id="day-2-operations">Day-2 Operations</h2>
+<h3 id="adding-a-new-application-secret">Adding a New Application Secret</h3>
+<ol>
+<li>Open the Infisical UI → <code>homelab / prod</code> → add the new key (e.g. <code>MY_APP_API_KEY</code>)</li>
+<li>Create <code>k8s/apps/my-app/external-secret.yaml</code>:</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">external-secrets.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExternalSecret</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-app-secret</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-app</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">refreshInterval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1h</span>
+<span class="w">  </span><span class="nt">secretStoreRef</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">infisical</span>
+<span class="w">    </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterSecretStore</span>
+<span class="w">  </span><span class="nt">target</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-app-secret</span>
+<span class="w">    </span><span class="nt">creationPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Owner</span>
+<span class="w">  </span><span class="nt">data</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">API_KEY</span>
+<span class="w">      </span><span class="nt">remoteRef</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MY_APP_API_KEY</span>
+</code></pre></div>
+<ol>
+<li>Add it to <code>k8s/apps/my-app/kustomization.yaml</code>, push to git.</li>
+</ol>
+<h3 id="rotating-the-machine-identity">Rotating the Machine Identity</h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Admin
+    participant InfisicalUI as Infisical UI
+    participant TFVars as terraform.tfvars
+    participant TF as terraform apply
+    participant K8s as infisical-machine-identity Secret
+    participant ESO as ESO Controller
+
+    Admin-&gt;&gt;InfisicalUI: Generate new credentials\nfor homelab-eso
+    InfisicalUI--&gt;&gt;Admin: New clientId + clientSecret
+    Admin-&gt;&gt;TFVars: Update credentials
+    Admin-&gt;&gt;TF: terraform apply
+    TF-&gt;&gt;K8s: Update secret data
+    ESO-&gt;&gt;K8s: Detects change (~30s)
+    ESO-&gt;&gt;InfisicalUI: Re-authenticates with new credentials</code></pre>
+<div class="highlight"><pre><span></span><code><span class="c1"># After updating terraform.tfvars:</span>
+<span class="nb">cd</span><span class="w"> </span>terraform<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>terraform<span class="w"> </span>apply
+
+<span class="c1"># Verify ESO reconnected:</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>clustersecretstore<span class="w"> </span>infisical
+<span class="c1"># Should show: Ready: True</span>
+</code></pre></div>
+<h3 id="rotating-encryption_key-emergency-only">Rotating <code>ENCRYPTION_KEY</code> (Emergency Only)</h3>
+<blockquote>
+<p><strong>This is destructive.</strong> Only do this if the key is compromised. You must re-encrypt all stored secrets.</p>
+</blockquote>
+<ol>
+<li>Read the <a href="https://infisical.com/docs/self-hosting/configuration/envars">Infisical key rotation guide</a> first</li>
+<li>Export all secrets from the Infisical UI before proceeding</li>
+<li>Update <code>infisical_encryption_key</code> in <code>terraform/terraform.tfvars</code></li>
+<li><code>terraform apply</code></li>
+<li>Restart Infisical: <code>kubectl rollout restart deployment -n infisical -l app.kubernetes.io/component=infisical</code></li>
+<li>Re-import secrets</li>
+</ol>
+<h3 id="upgrading-the-infisical-helm-chart">Upgrading the Infisical Helm Chart</h3>
+<ol>
+<li>Check available versions: <code>helm search repo infisical/infisical-standalone --versions</code></li>
+<li>Update <code>targetRevision</code> in <code>terraform/argocd.tf</code>:
+   <div class="highlight"><pre><span></span><code><span class="nb">locals</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="na">infisical_app_yaml</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">yamlencode</span><span class="p">({</span>
+<span class="w">    </span><span class="p">...</span>
+<span class="w">    </span><span class="nb">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="na">targetRevision</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;1.8.0&quot;</span><span class="c1">  # &lt;-- update here</span>
+</code></pre></div></li>
+<li><code>terraform apply</code></li>
+<li>ArgoCD detects the change and upgrades the Helm release</li>
+</ol>
+<h3 id="backing-up-infisical-data">Backing Up Infisical Data</h3>
+<p>Infisical stores all data in its bundled PostgreSQL. To back up:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Export all secrets from UI (recommended for disaster recovery)</span>
+<span class="c1"># Infisical UI → homelab project → Export Secrets → JSON or CSV</span>
+
+<span class="c1"># Or pg_dump from the pod</span>
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>infisical<span class="w"> </span>postgresql-0<span class="w"> </span>--<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>pg_dump<span class="w"> </span>-U<span class="w"> </span>infisical<span class="w"> </span>infisicalDB<span class="w"> </span>&gt;<span class="w"> </span>infisical-backup-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.sql
+</code></pre></div>
+<h2 id="operational-commands">Operational Commands</h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check Infisical pod status</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>infisical
+
+<span class="c1"># View Infisical application logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>infisical<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/component<span class="o">=</span>infisical<span class="w"> </span>--tail<span class="o">=</span><span class="m">50</span>
+
+<span class="c1"># View PostgreSQL logs</span>
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>infisical<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/instance<span class="o">=</span>infisical-standalone,app.kubernetes.io/name<span class="o">=</span>postgresql<span class="w"> </span>--tail<span class="o">=</span><span class="m">30</span>
+
+<span class="c1"># Check the bootstrap secret is present and has the right keys</span>
+kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>infisical-secrets<span class="w"> </span>-n<span class="w"> </span>infisical<span class="w"> </span>-o<span class="w"> </span><span class="nv">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.data}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>python3<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import sys,json,base64; d=json.load(sys.stdin); [print(k,&#39;=&#39;,base64.b64decode(v).decode()[:8]+&#39;...&#39;) for k,v in d.items()]&quot;</span>
+
+<span class="c1"># Restart Infisical (e.g. after credential rotation)</span>
+kubectl<span class="w"> </span>rollout<span class="w"> </span>restart<span class="w"> </span>deployment<span class="w"> </span>-n<span class="w"> </span>infisical<span class="w"> </span>-l<span class="w"> </span>app.kubernetes.io/component<span class="o">=</span>infisical
+
+<span class="c1"># Port-forward for local access without Tailscale</span>
+kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>infisical<span class="w"> </span>svc/infisical-infisical-standalone-infisical<span class="w"> </span><span class="m">8080</span>:8080
+<span class="c1"># Then open http://localhost:8080</span>
+</code></pre></div>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<pre class="mermaid"><code>flowchart TD
+    Start["Problem with secrets not syncing"]
+    A["kubectl get clustersecretstore infisical"]
+    Start --&gt; A
+    A --&gt; B{"Ready?"}
+    B -- "No — 401 Unauthorized" --&gt; C["Machine identity credentials wrong\nUpdate terraform.tfvars + terraform apply"]
+    B -- "No — 403 Forbidden" --&gt; D["homelab-eso not added to homelab project\nInfisical UI → Project → Access Control → Machine Identities → Add"]
+    B -- "No — 404 Project not found" --&gt; E["Project slug wrong\nVerify slug in Infisical UI Settings = 'homelab'"]
+    B -- "No — connection refused" --&gt; F["Infisical pod not running\nkubectl get pods -n infisical"]
+    B -- "Yes — Ready: True" --&gt; G["kubectl get externalsecret -A"]
+    G --&gt; H{"ExternalSecret status?"}
+    H -- "SecretSyncedError" --&gt; I["Force refresh:\nkubectl annotate externalsecret &lt;name&gt; -n &lt;ns&gt;\n  force-sync=$(date +%s) --overwrite"]
+    H -- "SecretSynced: True" --&gt; J["Secrets are fine\nCheck the pod consuming them"]</code></pre>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CrashLoopBackOff</code> on first start</td>
+<td>PostgreSQL not ready when Infisical starts DB migration</td>
+<td>Wait — Kubernetes retries automatically. Usually resolves within 2–3 minutes</td>
+</tr>
+<tr>
+<td><code>Error: ENCRYPTION_KEY must be 32 hex characters</code></td>
+<td>Wrong format for <code>ENCRYPTION_KEY</code></td>
+<td>Regenerate: <code>openssl rand -hex 16</code> — output must be exactly 32 characters</td>
+</tr>
+<tr>
+<td><code>Error: invalid AUTH_SECRET</code></td>
+<td><code>AUTH_SECRET</code> missing or malformed in <code>infisical-secrets</code></td>
+<td><code>kubectl describe secret infisical-secrets -n infisical</code> — verify keys exist</td>
+</tr>
+<tr>
+<td><code>ClusterSecretStore</code> 401</td>
+<td>Machine identity credentials are wrong or placeholder values</td>
+<td>Update <code>terraform.tfvars</code> and <code>terraform apply</code></td>
+</tr>
+<tr>
+<td><code>ClusterSecretStore</code> 403</td>
+<td>Machine identity not added to <code>homelab</code> project</td>
+<td>Infisical UI → Project → Access Control → Machine Identities → Add Identity</td>
+</tr>
+<tr>
+<td><code>ClusterSecretStore</code> 404 project not found</td>
+<td><code>projectSlug</code> doesn't match Infisical project</td>
+<td>Infisical UI → Project Settings → confirm Slug field is exactly <code>homelab</code></td>
+</tr>
+<tr>
+<td>UI shows "Invalid login"</td>
+<td>Wrong admin password</td>
+<td>Use the Infisical admin password you set during initial signup (not an application password)</td>
+</tr>
+<tr>
+<td>ESO can read secrets but wrong values</td>
+<td>Secret updated in Infisical but ESO cache not refreshed</td>
+<td><code>kubectl annotate externalsecret &lt;name&gt; -n &lt;ns&gt; force-sync=$(date +%s) --overwrite</code></td>
+</tr>
+<tr>
+<td>Infisical UI inaccessible from Tailscale</td>
+<td><code>tailscale serve</code> not configured for :8445</td>
+<td><code>tailscale serve --bg --https 8445 http://localhost:30445</code></td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.expand", "navigation.top", "navigation.path", "content.code.copy", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

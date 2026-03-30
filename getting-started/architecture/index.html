@@ -1,0 +1,2062 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://holdennguyen.github.io/homelab/getting-started/architecture/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../bootstrap/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Architecture - Homelab Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Homelab Docs" class="md-header__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Homelab Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Architecture
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../infrastructure/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Infrastructure
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../services/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Services
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../operations/" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Operations
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Homelab Docs" class="md-nav__button md-logo" aria-label="Homelab Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Homelab Docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/holdennguyen/homelab" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    holdennguyen/homelab
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-0-terraform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 0: Terraform
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-1-argocd-app-of-apps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 1: ArgoCD (App of Apps)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-2-secret-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 2: Secret Management
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#host-level-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Host-Level Automation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technology-choices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Technology Choices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#repository-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repository Layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../bootstrap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bootstrap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../infrastructure/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infrastructure
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Infrastructure
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/networking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Networking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/security/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Security
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infrastructure/secret-management/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Secret Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../services/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Services
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Services
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/argocd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ArgoCD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/authentik/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Authentik
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/external-secrets/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    External Secrets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/infisical/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infisical
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/launchfast/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LaunchFast
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/openclaw/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OpenClaw
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/trivy-operator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Operator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../services/trivy-dashboard/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trivy Dashboard
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../operations/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operations
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operations
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/git-workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Git Workflow
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/ai-agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AI Agents
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operations/nightly-shutdown/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Nightly Shutdown
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-0-terraform" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 0: Terraform
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-1-argocd-app-of-apps" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 1: ArgoCD (App of Apps)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#layer-2-secret-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Layer 2: Secret Management
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#host-level-automation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Host-Level Automation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Service Map
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#networking" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Networking
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#technology-choices" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Technology Choices
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#repository-layout" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Repository Layout
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#security" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Security
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="architecture">Architecture</h1>
+<p><strong>Last reviewed:</strong> March 21, 2026 — architecture remains current; removed Cilium evaluation (OrbStack CNI constraint); updated documentation to reflect current cluster state.</p>
+<p>This document describes the full architecture of the homelab: how the three infrastructure layers relate to each other, how services are deployed and connected, and how all configuration flows from code to running pods.</p>
+<h2 id="overview">Overview</h2>
+<p>The homelab runs on a single <strong>Mac mini M4</strong> using <strong>OrbStack</strong> as the Kubernetes runtime. Everything is codified — no ad-hoc <code>kubectl</code> commands are part of normal operations. The infrastructure is organized into three distinct layers with clear responsibilities:</p>
+<pre class="mermaid"><code>flowchart TD
+    subgraph layer0["Layer 0 — Terraform (bootstrap, run once)"]
+        TF["terraform apply"]
+        TF --&gt; A["ArgoCD Helm release"]
+        TF --&gt; B["Bootstrap K8s Secrets\nnever in git"]
+        TF --&gt; C["ArgoCD root Application\nApp of Apps"]
+        TF --&gt; D["Infisical Application CR\nwith sensitive Helm values"]
+    end
+
+    subgraph layer1["Layer 1 — ArgoCD (GitOps, driven by git push)"]
+        C --&gt; E["Application: infisical"]
+        C --&gt; F["Application: external-secrets"]
+        C --&gt; G["Application: external-secrets-config"]
+        C --&gt; J["Application: monitoring"]
+        C --&gt; K["Application: authentik"]
+        D --&gt; E
+    end
+
+    subgraph layer2["Layer 2 — Infisical + ESO (secret management)"]
+        E --&gt; InfisicalSvc["Infisical service\nrunning in cluster"]
+        F --&gt; ESOOperator["ESO operator"]
+        G --&gt; CSS["ClusterSecretStore\nconnected to Infisical"]
+    end</code></pre>
+<h2 id="layer-0-terraform">Layer 0: Terraform</h2>
+<p>Terraform bootstraps the cluster exactly once. After <code>terraform apply</code>, no more Terraform is needed for day-to-day operations — only for credential rotation or ArgoCD version upgrades.</p>
+<p><strong>What Terraform creates:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Where</th>
+<th>Why Terraform (not git)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>argocd</code> namespace</td>
+<td>cluster</td>
+<td>Must exist before Helm install</td>
+</tr>
+<tr>
+<td>ArgoCD Helm release</td>
+<td><code>argocd</code> namespace</td>
+<td>Installs ArgoCD itself — can't use ArgoCD to deploy ArgoCD</td>
+</tr>
+<tr>
+<td><code>infisical-secrets</code> K8s Secret</td>
+<td><code>infisical</code> namespace</td>
+<td>Contains <code>ENCRYPTION_KEY</code> + <code>AUTH_SECRET</code> — Infisical needs these before it can run, so they can't come from Infisical</td>
+</tr>
+<tr>
+<td><code>infisical-helm-secrets</code> K8s Secret</td>
+<td><code>argocd</code> namespace</td>
+<td>Postgres + Redis passwords for the Infisical Helm chart. ArgoCD <code>Application</code> CRs don't support <code>valuesFrom</code> referencing K8s Secrets, so Terraform injects them via <code>helm.valuesObject</code></td>
+</tr>
+<tr>
+<td><code>infisical-machine-identity</code> K8s Secret</td>
+<td><code>external-secrets</code> namespace</td>
+<td>ESO uses this to authenticate to Infisical. Terraform owns it so the credential can be rotated with <code>terraform apply</code></td>
+</tr>
+<tr>
+<td>ArgoCD root Application (<code>argocd-apps</code>)</td>
+<td><code>argocd</code> namespace</td>
+<td>Triggers the App of Apps — the root of all GitOps</td>
+</tr>
+<tr>
+<td>ArgoCD Infisical Application (<code>infisical</code>)</td>
+<td><code>argocd</code> namespace</td>
+<td>Created by Terraform because its Helm values embed sensitive credentials</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why Terraform for ArgoCD, not <code>kubectl apply</code>?</strong></p>
+<p>Every <code>kubectl apply</code> invocation is an untracked side-effect. Terraform tracks all resources in <code>terraform.tfstate</code>, which means:</p>
+<ul>
+<li><code>terraform plan</code> shows exactly what will change before applying</li>
+<li><code>terraform destroy</code> cleanly removes everything</li>
+<li>The full bootstrap is reproducible from a fresh cluster with a single command</li>
+</ul>
+<h2 id="layer-1-argocd-app-of-apps">Layer 1: ArgoCD (App of Apps)</h2>
+<p>ArgoCD watches the GitHub repository and applies any changes to <code>k8s/apps/</code> automatically. The pattern used is <strong>App of Apps</strong>: one root Application (<code>argocd-apps</code>) points to <code>k8s/apps/argocd/</code>, which contains AppProject and Application CRs for every other service.</p>
+<p>Applications are organized into three <strong>AppProjects</strong> that scope which repos, namespaces, and cluster-scoped resources each group of apps can access:</p>
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Purpose</th>
+<th>Applications</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>secrets</code></td>
+<td>Secret management infrastructure</td>
+<td><code>infisical</code>, <code>external-secrets</code>, <code>external-secrets-config</code></td>
+</tr>
+<tr>
+<td><code>data</code></td>
+<td>Databases and data stores</td>
+<td>(reserved for future use)</td>
+</tr>
+<tr>
+<td><code>apps</code></td>
+<td>User-facing applications</td>
+<td><code>monitoring</code>, <code>authentik</code>, <code>openclaw</code>, <code>trivy-operator</code>, <code>trivy-operator-vulnerability-scanner</code>, <code>trivy-dashboard</code>, <code>launchfast</code>, <code>namespace-security</code>, <code>networking-policies</code></td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td>Bootstrap only</td>
+<td><code>argocd-apps</code> (root)</td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>flowchart LR
+    subgraph git["GitHub: holdennguyen/homelab"]
+        direction TB
+        RootDir["k8s/apps/argocd/\nkustomization.yaml"]
+        ESDir["k8s/apps/external-secrets/"]
+        MonDir["k8s/apps/argocd/applications/\nmonitoring-app.yaml (Helm)"]
+        OCDir["k8s/apps/openclaw/"]
+        LFDir["k8s/apps/launchfast/"]
+    end
+
+    subgraph argocd["ArgoCD (argocd namespace)"]
+        RootApp["argocd-apps\n(default project)"]
+
+        subgraph secretsProj["secrets project"]
+            InfisicalApp["infisical\n(Terraform-managed)"]
+            ESOApp["external-secrets"]
+            ESCApp["external-secrets-config"]
+        end
+
+        subgraph dataProj["data project"]
+            DataPlaceholder["(reserved)"]
+        end
+
+        subgraph appsProj["apps project"]
+            MonApp["monitoring"]
+            AuthApp["authentik"]
+            OCApp["openclaw"]
+            TrivyApp["trivy-operator"]
+            TrivyDashApp["trivy-dashboard"]
+            LFApp["launchfast"]
+            NSApp["namespace-security"]
+            NPApp["networking-policies"]
+        end
+    end
+
+    RootApp -- "syncs" --&gt; RootDir
+    RootDir -- "creates" --&gt; secretsProj
+    RootDir -- "creates" --&gt; dataProj
+    RootDir -- "creates" --&gt; appsProj
+
+    ESOApp -- "syncs Helm chart" --&gt; ESOChart["charts.external-secrets.io"]
+    ESCApp -- "syncs" --&gt; ESDir
+    MonApp -- "syncs Helm chart" --&gt; MonChart["prometheus-community\nHelm repo"]
+    OCApp -- "syncs" --&gt; OCDir
+    LFApp -- "syncs" --&gt; LFDir
+    InfisicalApp -- "syncs Helm chart" --&gt; InfisicalChart["cloudsmith Helm repo"]</code></pre>
+<p>Every Application CR carries standard <code>app.kubernetes.io/*</code> labels (<code>name</code>, <code>part-of</code>, <code>component</code>, <code>managed-by</code>). See the <a href="../k8s/apps/argocd/README.md#adding-a-new-application">ArgoCD README</a> for the full labeling rules and new-application template.</p>
+<p><strong>Branch protection</strong> on <code>main</code>:</p>
+<ul>
+<li>PRs require at least one approving review before merge</li>
+<li>Force pushes and branch deletion are blocked</li>
+<li>Linear history is required (no merge commits)</li>
+<li>Admin bypass is available for emergencies (<code>enforce_admins: false</code>)</li>
+</ul>
+<p><strong>Sync policies</strong> on all applications:</p>
+<ul>
+<li><code>automated.prune: true</code> — resources removed from git are deleted from the cluster</li>
+<li><code>automated.selfHeal: true</code> — any manual <code>kubectl</code> change is reverted within ~3 minutes</li>
+<li>All applications target <code>targetRevision: HEAD</code> — every merge to <code>main</code> is deployed</li>
+</ul>
+<h2 id="layer-2-secret-management">Layer 2: Secret Management</h2>
+<p>Secrets never live in git. All application credentials flow from <strong>Infisical</strong> (the secret store) through <strong>External Secrets Operator</strong> into Kubernetes Secrets that pods consume.</p>
+<pre class="mermaid"><code>flowchart TD
+    subgraph infisical_ui["Infisical UI / CLI"]
+        dev["Developer adds secret\nPOSTGRES_PASSWORD = abc123"]
+    end
+
+    subgraph infisical_svc["Infisical (infisical namespace)"]
+        InfisicalAPI["Infisical API\nproject: homelab / prod"]
+    end
+
+    subgraph eso["External Secrets Operator (external-secrets namespace)"]
+        CSS["ClusterSecretStore\ninfisical\nauthenticates via machine identity"]
+        ES["ExternalSecret\npostgresql-secret"]
+    end
+
+    subgraph target_ns["target namespace"]
+        K8sSecret["K8s Secret\n(created by ESO)"]
+        TargetPod["Application Pod\nenv from secret"]
+    end
+
+    dev --&gt; InfisicalAPI
+    CSS -- "Universal Auth\nclientId + clientSecret" --&gt; InfisicalAPI
+    InfisicalAPI -- "GET /api/v3/secrets/raw\n?workspaceSlug=homelab\n&amp;environment=prod" --&gt; ES
+    ES -- "creates/updates" --&gt; K8sSecret
+    K8sSecret -- "envFrom / secretKeyRef" --&gt; TargetPod</code></pre>
+<p>For the full secret management reference, see <a href="../../infrastructure/secret-management/">docs/secret-management.md</a>.</p>
+<h2 id="host-level-automation">Host-Level Automation</h2>
+<p>Some operational tasks are managed outside of Kubernetes using macOS launchd:</p>
+<ul>
+<li><strong>Nightly shutdown/startup</strong>: The OrbStack Kubernetes cluster automatically stops at 23:59 and starts at 04:59 daily to save power and reduce host wear. This is implemented with wrapper scripts (<code>scripts/orb-stop.sh</code>, <code>scripts/orb-start.sh</code>) and launchd plists (<code>scripts/com.homelab.orbstop.plist</code>, <code>scripts/com.homelab.orbstart.plist</code>). See <a href="../../operations/nightly-shutdown/">Nightly Shutdown Documentation</a> for full details.</li>
+</ul>
+<p>These components run on the host macOS and are not managed by ArgoCD (since ArgoCD itself runs inside the cluster that gets shut down).</p>
+<h2 id="service-map">Service Map</h2>
+<pre class="mermaid"><code>flowchart TD
+    subgraph infisicalNs["infisical namespace"]
+        InfisicalPod["Infisical\nNodePort :30445"]
+        InfisicalPG["PostgreSQL\n(Infisical internal)"]
+        InfisicalRedis["Redis\n(Infisical internal)"]
+        InfisicalPod --&gt; InfisicalPG
+        InfisicalPod --&gt; InfisicalRedis
+    end
+
+    subgraph esoNs["external-secrets namespace"]
+        ESOPod["ESO operator"]
+        CSS["ClusterSecretStore: infisical"]
+    end
+
+    subgraph argocdNs["argocd namespace"]
+        ArgoServer["argocd-server\nNodePort :30080"]
+        ArgoController["application-controller"]
+        ArgoRepo["repo-server"]
+    end
+
+    subgraph monNs["monitoring namespace"]
+        GrafanaPod["Grafana\nNodePort :30090"]
+        PromPod["Prometheus\n60s scrape interval"]
+        TrivyPod["Trivy Operator\n(ClientServer mode)\nDaily scheduled scans"]
+        GrafanaPod --&gt; PromPod
+    end
+
+    subgraph authentikNs["authentik namespace"]
+        AuthentikPod["Authentik SSO\nNodePort :30500"]
+        AuthentikPG["PostgreSQL\n(Authentik internal)"]
+        AuthentikPod --&gt; AuthentikPG
+    end
+
+    subgraph openclawNs["openclaw namespace"]
+        OpenClawPod["OpenClaw Gateway\nNodePort :30789"]
+    end
+
+    subgraph trivyDashNs["trivy-dashboard namespace"]
+        TrivyDashPod["Trivy Dashboard\nNodePort :30448"]
+    end
+
+
+    AuthentikPod -. "OIDC" .-&gt; GrafanaPod
+    AuthentikPod -. "OIDC" .-&gt; ArgoServer
+    ESOPod --&gt; CSS
+    CSS -- "Universal Auth" --&gt; InfisicalPod
+    CSS -- "ExternalSecret" --&gt; OpenClawPod
+    OpenClawPod -- "primary" --&gt; OpenRouterAPI["OpenRouter\nstepfun/step-3.5-flash:free"]
+    OpenClawPod -. "fallback" .-&gt; GeminiAPI["Google Gemini\ngemini-2.5-pro"]
+    ArgoController -- "poll git" --&gt; GitHub["GitHub\nholdennguyen/homelab"]</code></pre>
+<h2 id="networking">Networking</h2>
+<p>Services are exposed through <strong>Tailscale Serve</strong>, which provides automatic TLS certificates and makes services accessible from any device on the tailnet. OrbStack NodePorts only bind to <code>localhost</code>, and Tailscale Serve bridges the gap.</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>NodePort</th>
+<th>Tailscale URL</th>
+<th>Tailscale Port</th>
+<th>Auth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Authentik (SSO)</td>
+<td><code>:30500</code></td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net</code></td>
+<td>443 (default)</td>
+<td>SSO portal</td>
+</tr>
+<tr>
+<td>ArgoCD</td>
+<td><code>:30080</code> (HTTP)</td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8443</code></td>
+<td>8443</td>
+<td>SSO via Authentik</td>
+</tr>
+<tr>
+<td>Grafana</td>
+<td><code>:30090</code></td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8444</code></td>
+<td>8444</td>
+<td>SSO via Authentik</td>
+</tr>
+<tr>
+<td>Infisical</td>
+<td><code>:30445</code></td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8445</code></td>
+<td>8445</td>
+<td>Local admin</td>
+</tr>
+<tr>
+<td>OpenClaw</td>
+<td><code>:30789</code></td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8447</code></td>
+<td>8447</td>
+<td>Local</td>
+</tr>
+<tr>
+<td>Trivy Dashboard</td>
+<td><code>:30448</code></td>
+<td><code>https://holdens-mac-mini.story-larch.ts.net:8448</code></td>
+<td>8448</td>
+<td>Bookmark via Authentik</td>
+</tr>
+</tbody>
+</table>
+<p>For the full networking reference, see <a href="../../infrastructure/networking/">docs/networking.md</a>.</p>
+<h2 id="technology-choices">Technology Choices</h2>
+<table>
+<thead>
+<tr>
+<th>Technology</th>
+<th>Role</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OrbStack</strong></td>
+<td>Kubernetes runtime</td>
+<td>Lightweight, single-node, Mac-native, fast startup</td>
+</tr>
+<tr>
+<td><strong>Terraform</strong></td>
+<td>Bootstrap layer</td>
+<td>Tracks cluster setup as code; reproducible; safe credential injection via tfvars</td>
+</tr>
+<tr>
+<td><strong>ArgoCD</strong></td>
+<td>GitOps controller</td>
+<td>Continuous sync from git; self-healing; declarative; App of Apps for service lifecycle</td>
+</tr>
+<tr>
+<td><strong>Infisical</strong></td>
+<td>Secret store</td>
+<td>Self-hosted; UI for secret management; supports ESO Universal Auth; project/environment scoping</td>
+</tr>
+<tr>
+<td><strong>External Secrets Operator</strong></td>
+<td>Secret sync</td>
+<td>Bridges Infisical to Kubernetes Secrets; polling refresh; decoupled from app manifests</td>
+</tr>
+<tr>
+<td><strong>Tailscale</strong></td>
+<td>Private networking</td>
+<td>Zero-config WireGuard VPN; MagicDNS; auto TLS via <code>tailscale serve</code>; works across all devices</td>
+</tr>
+<tr>
+<td><strong>OpenRouter</strong></td>
+<td>Model provider</td>
+<td>Unified API for Anthropic, OpenAI, Google, Mistral models; single API key; usage-based billing</td>
+</tr>
+<tr>
+<td><strong>Kustomize</strong></td>
+<td>Manifest rendering</td>
+<td>Native in <code>kubectl apply -k</code> and ArgoCD; overlays without templating language</td>
+</tr>
+</tbody>
+</table>
+<h2 id="repository-layout">Repository Layout</h2>
+<div class="highlight"><pre><span></span><code>homelab/
+├── .gitignore                      # Guards terraform.tfvars, .terraform/, *.tfstate
+├── .github/workflows/docs.yml     # GitHub Pages deploy on push to main
+├── README.md                       # Quick-start and service table
+├── mkdocs.yml                      # MkDocs Material site config
+├── Dockerfile.openclaw             # Homelab overlay for OpenClaw image (kubectl, helm, git, gh, etc.)
+├── terraform/                      # Layer 0 — bootstrap (run once)
+│   ├── README.md                   # Terraform variables and day-2 ops reference
+│   ├── providers.tf                # kubernetes + helm + local + null providers
+│   ├── argocd.tf                   # ArgoCD Helm release, Infisical App, root App
+│   ├── bootstrap-secrets.tf        # K8s Secrets created from tfvars
+│   ├── variables.tf                # All variable declarations
+│   ├── outputs.tf                  # Post-apply instructions
+│   └── terraform.tfvars.example   # Template — copy to terraform.tfvars
+├── k8s/                            # Layer 1 — GitOps manifests
+│   └── apps/
+│       ├── argocd/                 # App of Apps: AppProjects + Application CRs
+│       │   ├── projects/           # AppProject CRs (secrets, data, apps)
+│       │   └── applications/       # Application CRs
+│       ├── authentik/              # Authentik SSO ExternalSecret
+│       ├── external-secrets/       # ClusterSecretStore
+│       ├── infisical/              # (Helm chart managed by Terraform-created Application)
+│       ├── monitoring/             # Grafana ExternalSecret
+│       ├── openclaw/               # OpenClaw AI gateway manifests
+│       ├── trivy-operator/         # Trivy vulnerability scanner (README only; deployed via Helm)
+│       ├── trivy-dashboard/       # Trivy Operator Dashboard web UI
+│       ├── namespace-security/     # Pod Security Standard labels for namespaces
+│       └── networking-policies/    # Default-deny NetworkPolicies for all namespaces
+├── docs/                           # MkDocs documentation site
+│   ├── architecture.md             # This file
+│   ├── bootstrap.md                # Day-1 setup walkthrough
+│   ├── networking.md               # Tailscale + NodePort deep-dive
+│   ├── secret-management.md       # Infisical + ESO reference
+│   ├── argocd.md                   # ArgoCD (includes k8s/apps/argocd/README.md)
+│   ├── authentik.md                # Authentik SSO and OIDC integration
+│   ├── external-secrets.md         # ESO (includes k8s/apps/external-secrets/README.md)
+│   ├── infisical.md                # Infisical (includes k8s/apps/infisical/README.md)
+│   ├── monitoring.md               # Grafana + Prometheus monitoring stack
+│   ├── openclaw.md                 # OpenClaw AI gateway
+│   └── ai-agents.md               # Cursor rules + OpenClaw agents/skills
+├── agents/workspaces/              # OpenClaw agent AGENTS.md personality files
+├── skills/                         # Homelab-specific OpenClaw skills
+├── openclaw/                       # OpenClaw source (git submodule)
+└── scripts/                        # Helper scripts (image builds, etc.)
+</code></pre></div>
+<h2 id="security">Security</h2>
+<p>The homelab implements defense-in-depth across network isolation (Tailscale-only, default-deny NetworkPolicies), workload hardening (Pod Security Standards, non-root containers, least-privilege RBAC), and secret hygiene (Infisical pipeline, never in git). A dedicated section covers LLM/AI agent (OpenClaw) permissions including RBAC scope, secret access, and agent workflow guardrails.</p>
+<p>For the full security report — including per-namespace PSS compliance, RBAC inventory, container security audit, supply chain controls, OpenClaw agent permissions detail, vulnerability scanning, and the hardening roadmap — see <a href="../../infrastructure/security/">docs/security.md</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.expand", "navigation.top", "navigation.path", "content.code.copy", "search.highlight", "search.suggest"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
